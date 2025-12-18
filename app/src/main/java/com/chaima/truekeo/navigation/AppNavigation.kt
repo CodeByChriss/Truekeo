@@ -4,8 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.chaima.truekeo.screens.LoginScreen
 import com.chaima.truekeo.screens.SplashScreen
+import com.chaima.truekeo.screens.LoginScreen
+import com.chaima.truekeo.screens.SignupScreen
 
 @Composable
 fun AppNavigation(){
@@ -18,7 +19,7 @@ fun AppNavigation(){
         // Pantalla 1: Splash
         composable(Routes.Splash.route) {
             SplashScreen(onNextScreen = {
-                navController.navigate(Routes.Login.route) {
+                navController.navigate(Routes.Main.route) {
                     popUpTo(Routes.Splash.route) { inclusive = true }
                 }
             })
@@ -27,6 +28,16 @@ fun AppNavigation(){
         // Pantalla 2: Login
         composable(Routes.Login.route) {
             LoginScreen()
+        }
+
+        // Pantalla 3: Signup
+        composable(Routes.Signup.route) {
+            SignupScreen()
+        }
+
+        // Navegación entre pantallas una vez autenticado
+        composable(Routes.Main.route) {
+            MainScaffold()
         }
     }
 }
