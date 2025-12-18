@@ -16,7 +16,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.chaima.truekeo.R
 import kotlinx.coroutines.delay
 
@@ -38,11 +41,12 @@ fun SplashScreen(onNextScreen: () -> Unit){
                 contentDescription = "logo truekeo",
                 modifier = Modifier.size(150.dp)
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(24.dp))
             Text(
                 text = "Truekeo",
-                style = MaterialTheme.typography.headlineMedium,
-                color = Color.Black
+                fontSize = 36.sp,
+                fontFamily = FontFamily(Font(R.font.saira_medium)),
+                color = MaterialTheme.colorScheme.primary
             )
         }
     }
