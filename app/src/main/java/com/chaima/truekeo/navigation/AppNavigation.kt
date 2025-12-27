@@ -19,7 +19,7 @@ fun AppNavigation(){
         // Pantalla 1: Splash
         composable(Routes.Splash.route) {
             SplashScreen(onNextScreen = {
-                navController.navigate(Routes.Main.route) {
+                navController.navigate(Routes.Login.route) {
                     popUpTo(Routes.Splash.route) { inclusive = true }
                 }
             })
