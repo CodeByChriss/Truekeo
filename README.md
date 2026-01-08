@@ -1,6 +1,8 @@
 # Truekeo - Proyecto integrador del grado de DAM
 
-Este proyecto tiene como objetivo desarrollar una aplicación móvil para facilitar el intercambio de bienes y servicios entre usuarios sin necesidad de utilizar dinero. Permitirá a los usuarios publicar artículos o servicios que desean intercambiar, así como buscar ofertas disponibles en su área con un mapa.
+Somos una plataforma de economía circular diseñada para facilitar la donación y el trueque a nivel local. A través de un mapa interactivo en tiempo real, los usuarios pueden localizar puntos oficiales de reciclaje o crear anuncios temporales para ofrecer objetos específicos a sus vecinos.
+
+Nuestra misión es eliminar las barreras de la logística vecinal, permitiendo que instituciones y ciudadanos colaboren para reducir residuos y fortalecer el tejido social mediante el intercambio responsable.
 
 ### Equipo de proyecto:
 [SM] **Scrum Master** [malmorox](https://github.com/malmorox)<br>
@@ -11,7 +13,7 @@ Este proyecto tiene como objetivo desarrollar una aplicación móvil para facili
 
 El diseño inicial de la aplicación ha sido desarrollado en Figma, donde se ha definido la estructura visual, los flujos de navegación y las principales pantallas de la app.
 
-![Prototipo](resources/figma-prototype.png)
+[ ![Prototipo en figma](resources/figma-prototype.png) ](https://www.figma.com/design/iiBDX15OGVsRuzPoiFn4LV/Truekeo)
 
 🔗 [Enlace al prototipo en Figma](https://www.figma.com/design/iiBDX15OGVsRuzPoiFn4LV/Truekeo?node-id=0-1&t=ABp0jil8KM5YN9Hf-1)
 
