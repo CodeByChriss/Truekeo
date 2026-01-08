@@ -3,6 +3,7 @@ package com.chaima.truekeo.screens
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -124,12 +125,22 @@ fun LoginScreen() {
                     )
                 }
                 Spacer(modifier = Modifier.height(24.dp))
-                Text(
-                    text = "Si no tienes cuenta, crea una aquí.",
-                    fontSize = 12.sp,
-                    fontFamily = FontFamily(Font(R.font.saira_regular)),
-                    color = Color.Black
-                )
+                Row {
+                    Text(
+                        text = "Si no tienes cuenta, crea una ",
+                        fontSize = 12.sp,
+                        fontFamily = FontFamily(Font(R.font.saira_regular))
+                    )
+                    Text(
+                        text = "aquí.",
+                        fontSize = 12.sp,
+                        fontFamily = FontFamily(Font(R.font.saira_medium)),
+                        color = MaterialTheme.colorScheme.secondary,
+                        modifier = Modifier.clickable {
+                            // ir a sign up
+                        }
+                    )
+                }
                 Spacer(modifier = Modifier.height(24.dp))
                 Text(
                     text = "O",
