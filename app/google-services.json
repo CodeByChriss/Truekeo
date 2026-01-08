@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1014848725574",
+    "project_id": "truekeo-f4f8e",
+    "storage_bucket": "truekeo-f4f8e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1014848725574:android:2898b784ab0d46cffe2047",
+        "android_client_info": {
+          "package_name": "com.chaima.truekeo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBb2_5XYgnMLS55glHAmCUbGPNbdWGB2UQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
