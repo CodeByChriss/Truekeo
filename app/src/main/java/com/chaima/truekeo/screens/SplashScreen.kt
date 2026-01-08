@@ -21,33 +21,38 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.chaima.truekeo.R
+import com.chaima.truekeo.ui.theme.TruekeoTheme
 import kotlinx.coroutines.delay
 
 @Composable
-fun SplashScreen(onNextScreen: () -> Unit){
+fun SplashScreen(onNextScreen: () -> Unit) {
     // A los dos segundos lanza la función lambda
     LaunchedEffect(key1 = true) {
         delay(2000)
         onNextScreen()
     }
 
-    Box(
-        modifier = Modifier.fillMaxSize().background(Color.White),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Image(
-                painter = painterResource(id = R.drawable.logo),
-                contentDescription = "logo truekeo",
-                modifier = Modifier.size(150.dp)
-            )
-            Spacer(modifier = Modifier.height(24.dp))
-            Text(
-                text = "Truekeo",
-                fontSize = 36.sp,
-                fontFamily = FontFamily(Font(R.font.saira_medium)),
-                color = MaterialTheme.colorScheme.primary
-            )
+    TruekeoTheme() {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Image(
+                    painter = painterResource(id = R.drawable.logo),
+                    contentDescription = "logo truekeo",
+                    modifier = Modifier.size(156.dp)
+                )
+                Spacer(modifier = Modifier.height(24.dp))
+                Text(
+                    text = "Truekeo",
+                    fontSize = 36.sp,
+                    fontFamily = FontFamily(Font(R.font.saira_medium)),
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
         }
     }
 }
