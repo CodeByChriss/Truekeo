@@ -24,7 +24,7 @@ El desarrollo del proyecto se está llevando a cabo siguiendo la metodología á
 ### Sprint 1 – Análisis y prototipado
 Durante el primer sprint se sentaron las bases del proyecto, centrando el trabajo en la definición visual y conceptual de la aplicación.
 
-<u>Objetivos alcanzados:</u>
+***Objetivos alcanzados:***
 
 - Definición de la idea y alcance del proyecto (con ayuda del profesor).
 - Creación del prototipo de la aplicación.
@@ -34,7 +34,7 @@ Durante el primer sprint se sentaron las bases del proyecto, centrando el trabaj
 
 En el segundo sprint se ha comenzado con el desarrollo técnico del proyecto y la implementación de la interfaz.
 
-<u>Objetivos en desarrollo / alcanzados:</u>
+***Objetivos en desarrollo / alcanzados:***
 
 - Metodología de trabajo e inicio de la interfaz.
 - Creación del proyecto en GitHub.
