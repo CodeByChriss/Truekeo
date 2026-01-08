@@ -1,0 +1,42 @@
+# Truekeo - Proyecto integrador del grado de DAM
+
+Este proyecto tiene como objetivo desarrollar una aplicación móvil para facilitar el intercambio de bienes y servicios entre usuarios sin necesidad de utilizar dinero. Permitirá a los usuarios publicar artículos o servicios que desean intercambiar, así como buscar ofertas disponibles en su área con un mapa.
+
+### Equipo de proyecto:
+[SM] **Scrum Master** [malmorox](https://github.com/malmorox)<br>
+[CM] **Cloud Master**  [CodeByChriss](https://github.com/CodeByChriss)<br>
+[DS] **Designer** [aiitttor](https://github.com/aiitttor)
+
+## Prototipo (Figma)
+
+El diseño inicial de la aplicación ha sido desarrollado en Figma, donde se ha definido la estructura visual, los flujos de navegación y las principales pantallas de la app.
+
+![Prototipo](resources/figma-prototype.png)
+
+🔗 [Enlace al prototipo en Figma](https://www.figma.com/design/iiBDX15OGVsRuzPoiFn4LV/Truekeo?node-id=0-1&t=ABp0jil8KM5YN9Hf-1)
+
+## Metodología ágil SCRUM
+
+El desarrollo del proyecto se está llevando a cabo siguiendo la metodología ágil SCRUM, organizando el trabajo en sprints para facilitar la planificación, el seguimiento y la entrega incremental de funcionalidades.
+
+### Sprint 1 – Análisis y prototipado
+Durante el primer sprint se sentaron las bases del proyecto, centrando el trabajo en la definición visual y conceptual de la aplicación.
+
+<u>Objetivos alcanzados:</u>
+
+- Definición de la idea y alcance del proyecto (con ayuda del profesor).
+- Creación del prototipo de la aplicación.
+- Diseño inicial de pantallas.
+
+### Sprint 2 – Metodología de trabajo e inicio de interfaz
+
+En el segundo sprint se ha comenzado con el desarrollo técnico del proyecto y la implementación de la interfaz.
+
+<u>Objetivos en desarrollo / alcanzados:</u>
+
+- Metodología de trabajo e inicio de la interfaz.
+- Creación del proyecto en GitHub.
+- Implementación de las pantallas de:
+    - Login
+    - Registro
+    - Splash
