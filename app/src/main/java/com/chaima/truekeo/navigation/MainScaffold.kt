@@ -12,6 +12,7 @@ import com.chaima.truekeo.screens.CreateEventScreen
 import com.chaima.truekeo.screens.HomeScreen
 import com.chaima.truekeo.screens.MessagesScreen
 import com.chaima.truekeo.screens.ProfileScreen
+import com.chaima.truekeo.screens.MyTruekesScreen
 
 @Composable
 fun MainScaffold() {
@@ -26,8 +27,9 @@ fun MainScaffold() {
             modifier = Modifier.padding(padding)
         ) {
             composable(NavBarRoutes.Home.route) { HomeScreen() }
-            composable(NavBarRoutes.Messages.route) { MessagesScreen() }
+            composable(NavBarRoutes.MyTruekes.route) { MyTruekesScreen() }
             composable(NavBarRoutes.Create.route) { CreateEventScreen() }
+            composable(NavBarRoutes.Messages.route) { MessagesScreen() }
             composable(NavBarRoutes.Profile.route) { ProfileScreen() }
         }
     }
