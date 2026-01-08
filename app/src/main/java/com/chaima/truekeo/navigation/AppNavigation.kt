@@ -27,7 +27,11 @@ fun AppNavigation(){
 
         // Pantalla 2: Login
         composable(Routes.Login.route) {
-            LoginScreen()
+            LoginScreen(onSignUp = {
+                navController.navigate(Routes.Signup.route){
+                    popUpTo(Routes.Login.route) { inclusive = false }
+                }
+            })
         }
 
         // Pantalla 3: Signup
