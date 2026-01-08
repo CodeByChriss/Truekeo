@@ -32,7 +32,7 @@ fun SplashScreen(onNextScreen: () -> Unit) {
         onNextScreen()
     }
 
-    TruekeoTheme() {
+    TruekeoTheme(dynamicColor = false) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
