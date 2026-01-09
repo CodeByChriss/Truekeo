@@ -8,4 +8,15 @@ data class Item(
     val condition: ItemCondition = ItemCondition.GOOD
 )
 
-enum class ItemCondition { NEW, LIKE_NEW, GOOD, FAIR, POOR }
+enum class ItemCondition {
+     NEW, LIKE_NEW, GOOD, FAIR, POOR;
+
+    fun displayName(): String = when (this) {
+        NEW -> "Nuevo"
+        LIKE_NEW -> "Casi nuevo"
+        GOOD -> "Muy bueno"
+        FAIR -> "Bueno"
+        POOR -> "Satisfactorio"
+    }
+
+}

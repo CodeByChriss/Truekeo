@@ -113,6 +113,8 @@ private fun TruekeSheetContent(trueke: Trueke, modifier: Modifier = Modifier) {
             Text(text = trueke.description!!, style = MaterialTheme.typography.bodyMedium)
         }
 
+        Text(text = "Estado: ${trueke.hostItem.condition.displayName()}", style = MaterialTheme.typography.bodyMedium)
+
         Spacer(Modifier.height(8.dp))
 
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
