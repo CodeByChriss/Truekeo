@@ -19,10 +19,9 @@ import com.mapbox.maps.extension.compose.MapboxMap
 import com.mapbox.maps.extension.compose.annotation.Marker
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
 
-
 @OptIn(ExperimentalMaterial3Api::class, MapboxExperimental::class)
 @Composable
-fun HomeScreen() {
+fun HomeTab() {
     val madrid = Point.fromLngLat(-3.7038, 40.4168)
 
     //truekes de prueba
@@ -57,6 +56,7 @@ fun HomeScreen() {
     var showSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
+    // Mapa de Mapbox con marcadores para cada trueke
     MapboxMap(
         modifier = Modifier.fillMaxSize(),
         mapViewportState = rememberMapViewportState {
@@ -103,6 +103,7 @@ fun HomeScreen() {
     }
 }
 
+// Contenido del bottom sheet que muestra los detalles del trueke seleccionado
 @Composable
 private fun TruekeSheetContent(trueke: Trueke, modifier: Modifier = Modifier) {
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {

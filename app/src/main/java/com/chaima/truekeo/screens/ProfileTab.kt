@@ -12,14 +12,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun CreateEventScreen(){
+fun ProfileTab(){
     Box(
         modifier = Modifier.fillMaxSize().background(Color.White),
         contentAlignment = Alignment.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
-                text = "Pantalla para crear un evento",
+                text = "Pantalla de perfil",
                 fontSize = 24.sp
             )
         }
