@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.chaima.truekeo.navigation.NavBarRoutes
+import androidx.compose.ui.graphics.Color
 
 private data class BottomItem(
     val route: String,
@@ -29,14 +30,19 @@ fun BottomNavBar(navController: NavController) {
             icon = { Icon(Icons.Filled.Check, contentDescription = "Home") }
         ),
         BottomItem(
-            route = NavBarRoutes.Messages.route,
-            label = "Messages",
-            icon = { Icon(Icons.Filled.Check, contentDescription = "Messages") }
+            route = NavBarRoutes.MyTruekes.route,
+            label = "My Truekes",
+            icon = { Icon(Icons.Filled.Check, contentDescription = "My Truekes") }
         ),
         BottomItem(
             route = NavBarRoutes.Create.route,
             label = "Create",
             icon = { Icon(Icons.Filled.Check, contentDescription = "Create") }
+        ),
+        BottomItem(
+            route = NavBarRoutes.Messages.route,
+            label = "Messages",
+            icon = { Icon(Icons.Filled.Check, contentDescription = "Messages") }
         ),
         BottomItem(
             route = NavBarRoutes.Profile.route,
@@ -45,7 +51,9 @@ fun BottomNavBar(navController: NavController) {
         )
     )
 
-    NavigationBar {
+    NavigationBar(
+        containerColor = Color(0xFFFFFFFF)
+    ) {
         items.forEach { item ->
             val selected = currentRoute == item.route
 
