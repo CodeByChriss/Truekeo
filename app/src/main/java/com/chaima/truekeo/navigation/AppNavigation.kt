@@ -14,7 +14,7 @@ fun AppNavigation(){
 
     NavHost(
         navController = navController,
-        startDestination = Routes.Main.route //cambiar a Splash para ver la pantalla de inicio
+        startDestination = Routes.Splash.route
     ) {
         // Pantalla 1: Splash
         composable(Routes.Splash.route) {
