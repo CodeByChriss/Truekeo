@@ -106,29 +106,94 @@ fun HomeTab() {
 // Contenido del bottom sheet que muestra los detalles del trueke seleccionado
 @Composable
 private fun TruekeSheetContent(trueke: Trueke, modifier: Modifier = Modifier) {
-    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
 
-        Text(text = trueke.name, style = MaterialTheme.typography.titleLarge)
+        TruekeInfoSection(trueke)
 
-        if (!trueke.description.isNullOrBlank()) {
-            Text(text = trueke.description!!, style = MaterialTheme.typography.bodyMedium)
-        }
+        Divider()
 
-        Text(text = "Estado: ${trueke.hostItem.condition.displayName()}", style = MaterialTheme.typography.bodyMedium)
+        TruekeHostItemSection(trueke.hostItem)
 
-        Spacer(Modifier.height(8.dp))
-
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
             OutlinedButton(
                 onClick = { /* abrir chat */ },
                 modifier = Modifier.weight(1f)
-            ) { Text("Escribir") }
+            ) {
+                Text("Escribir")
+            }
 
             Button(
-                onClick = { /* aceptar / chatear */ },
+                onClick = { /* aceptar */ },
                 modifier = Modifier.weight(1f),
                 enabled = trueke.status == TruekeStatus.OPEN
-            ) { Text("Aceptar") }
+            ) {
+                Text("Aceptar")
+            }
+        }
+    }
+}
+
+// Sección que muestra la información general del trueke
+@Composable
+private fun TruekeInfoSection(trueke: Trueke) {
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+
+        Text(
+            text = trueke.name,
+            style = MaterialTheme.typography.titleLarge
+        )
+
+        if (!trueke.description.isNullOrBlank()) {
+            Text(
+                text = trueke.description!!,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+
+        trueke.location?.let {
+            Text(
+                text = "Ubicación: ${it.lat}, ${it.lng}",
+                style = MaterialTheme.typography.bodySmall
+            )
+        }
+
+        trueke.dateTime?.let {
+            Text(
+                text = "Fecha: $it",
+                style = MaterialTheme.typography.bodySmall
+            )
+        }
+    }
+}
+
+// Sección que muestra el ítem ofrecido por el host del trueke
+@Composable
+private fun TruekeHostItemSection(item: Item) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text(
+            text = "Producto ofrecido",
+            style = MaterialTheme.typography.titleMedium
+        )
+
+        Text(
+            text = item.title,
+            style = MaterialTheme.typography.bodyLarge
+        )
+
+        Text(
+            text = "Estado: ${item.condition.displayName()}",
+            style = MaterialTheme.typography.bodyMedium
+        )
+
+        if (!item.details.isNullOrBlank()) {
+            Text(text = item.details!!, style = MaterialTheme.typography.bodyMedium)
         }
     }
 }

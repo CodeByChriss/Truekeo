@@ -225,7 +225,10 @@ private fun ItemConditionDropdown(
             singleLine = true,
             label = { Text("Estado del producto") },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
-            modifier = Modifier.menuAnchor()
+            shape = RoundedCornerShape(8.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor()
         )
         ExposedDropdownMenu(
             expanded = expanded,
