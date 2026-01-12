@@ -5,6 +5,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -123,14 +124,20 @@ private fun TruekeSheetContent(trueke: Trueke, modifier: Modifier = Modifier) {
         ) {
             OutlinedButton(
                 onClick = { /* abrir chat */ },
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
+                    .height(52.dp),
+                shape = RoundedCornerShape(12.dp)
             ) {
                 Text("Escribir")
             }
 
             Button(
                 onClick = { /* aceptar */ },
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .height(52.dp),
+                shape = RoundedCornerShape(12.dp),
                 enabled = trueke.status == TruekeStatus.OPEN
             ) {
                 Text("Aceptar")
