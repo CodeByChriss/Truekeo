@@ -8,11 +8,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import com.chaima.truekeo.models.GeoPoint
 import com.chaima.truekeo.models.Item
 import com.chaima.truekeo.models.ItemCondition
 import com.chaima.truekeo.models.Trueke
-import com.chaima.truekeo.models.TruekeStatus
+import com.chaima.truekeo.components.TruekeSheetContent
 import com.mapbox.geojson.Point
 import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.extension.compose.MapboxMap
@@ -32,7 +33,7 @@ fun HomeTab() {
                 name = "Cambio PS4 por bici",
                 description = "Quedamos por Sol",
                 hostUserId = "u1",
-                hostItem = Item(id = "i1", title = "PS4 Slim", null, "", ItemCondition.NEW),
+                hostItem = Item(id = "i1", title = "PS4 Slim", "hola estos son los detalles hola estos son los detalles hola estos son los detalles", "", ItemCondition.NEW),
                 location = GeoPoint(-3.7038, 40.4168)
             ),
             Trueke(
@@ -90,110 +91,16 @@ fun HomeTab() {
             onDismissRequest = {
                 showSheet = false
                 selectedTrueke = null
-            }
+            },
+            scrimColor = Color.Transparent
         ) {
             TruekeSheetContent(
                 trueke = t,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
+                    .padding(horizontal = 20.dp)
                     .padding(bottom = 24.dp)
             )
-        }
-    }
-}
-
-// Contenido del bottom sheet que muestra los detalles del trueke seleccionado
-@Composable
-private fun TruekeSheetContent(trueke: Trueke, modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(20.dp)
-    ) {
-
-        TruekeInfoSection(trueke)
-
-        Divider()
-
-        TruekeHostItemSection(trueke.hostItem)
-
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            OutlinedButton(
-                onClick = { /* abrir chat */ },
-                modifier = Modifier.weight(1f)
-            ) {
-                Text("Escribir")
-            }
-
-            Button(
-                onClick = { /* aceptar */ },
-                modifier = Modifier.weight(1f),
-                enabled = trueke.status == TruekeStatus.OPEN
-            ) {
-                Text("Aceptar")
-            }
-        }
-    }
-}
-
-// Sección que muestra la información general del trueke
-@Composable
-private fun TruekeInfoSection(trueke: Trueke) {
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-
-        Text(
-            text = trueke.name,
-            style = MaterialTheme.typography.titleLarge
-        )
-
-        if (!trueke.description.isNullOrBlank()) {
-            Text(
-                text = trueke.description!!,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-
-        trueke.location?.let {
-            Text(
-                text = "Ubicación: ${it.lat}, ${it.lng}",
-                style = MaterialTheme.typography.bodySmall
-            )
-        }
-
-        trueke.dateTime?.let {
-            Text(
-                text = "Fecha: $it",
-                style = MaterialTheme.typography.bodySmall
-            )
-        }
-    }
-}
-
-// Sección que muestra el ítem ofrecido por el host del trueke
-@Composable
-private fun TruekeHostItemSection(item: Item) {
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(
-            text = "Producto ofrecido",
-            style = MaterialTheme.typography.titleMedium
-        )
-
-        Text(
-            text = item.title,
-            style = MaterialTheme.typography.bodyLarge
-        )
-
-        Text(
-            text = "Estado: ${item.condition.displayName()}",
-            style = MaterialTheme.typography.bodyMedium
-        )
-
-        if (!item.details.isNullOrBlank()) {
-            Text(text = item.details!!, style = MaterialTheme.typography.bodyMedium)
         }
     }
 }

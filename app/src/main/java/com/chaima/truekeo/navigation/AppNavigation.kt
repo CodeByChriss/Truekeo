@@ -14,7 +14,7 @@ fun AppNavigation(){
 
     NavHost(
         navController = navController,
-        startDestination = Routes.Splash.route
+        startDestination = Routes.Main.route
     ) {
         // Pantalla 1: Splash
         composable(Routes.Splash.route) {
@@ -27,7 +27,11 @@ fun AppNavigation(){
 
         // Pantalla 2: Login
         composable(Routes.Login.route) {
-            LoginScreen()
+            LoginScreen(onSignUp = {
+                navController.navigate(Routes.Signup.route){
+                    popUpTo(Routes.Login.route) { inclusive = false }
+                }
+            })
         }
 
         // Pantalla 3: Signup
