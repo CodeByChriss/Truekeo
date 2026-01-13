@@ -4,7 +4,7 @@ Somos una plataforma de economía circular diseñada para facilitar la donación
 
 Nuestra misión es eliminar las barreras de la logística vecinal, permitiendo que instituciones y ciudadanos colaboren para reducir residuos y fortalecer el tejido social mediante el intercambio responsable.
 
-## Equipo de proyecto:
+## Equipo de trabajo:
 [SM] **Scrum Master** [malmorox](https://github.com/malmorox)<br>
 [CM] **Cloud Master**  [CodeByChriss](https://github.com/CodeByChriss)<br>
 [DS] **Designer** [aiitttor](https://github.com/aiitttor)
