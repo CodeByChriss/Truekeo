@@ -4,11 +4,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -25,7 +27,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.chaima.truekeo.R
 import com.chaima.truekeo.utils.resolvePlaceName
 import com.chaima.truekeo.models.Item
 import com.chaima.truekeo.models.Trueke
@@ -56,7 +62,11 @@ fun TruekeSheetContent(trueke: Trueke, modifier: Modifier = Modifier) {
                     .height(52.dp),
                 shape = RoundedCornerShape(12.dp)
             ) {
-                Text("Escribir")
+                Text(
+                    text = "Escribir",
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontFamily = FontFamily(Font(R.font.saira_medium)),
+                )
             }
 
             Button(
@@ -67,7 +77,11 @@ fun TruekeSheetContent(trueke: Trueke, modifier: Modifier = Modifier) {
                 shape = RoundedCornerShape(12.dp),
                 enabled = trueke.status == TruekeStatus.OPEN
             ) {
-                Text("Aceptar")
+                Text(
+                    text = "Aceptar",
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontFamily = FontFamily(Font(R.font.saira_medium)),
+                )
             }
         }
     }
@@ -93,21 +107,25 @@ private fun TruekeInfoSection(trueke: Trueke) {
 
         Text(
             text = trueke.name,
-            style = MaterialTheme.typography.titleLarge
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.primary,
+            fontFamily = FontFamily(Font(R.font.saira_medium)),
         )
 
         if (!trueke.description.isNullOrBlank()) {
             Text(
                 text = trueke.description!!,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontFamily = FontFamily(Font(R.font.saira_regular)),
             )
         }
 
         location?.let { loc ->
             Text(
-                text = "Ubicación: ${placeName ?: "${loc.lat}, ${loc.lng}"}",
-                style = MaterialTheme.typography.bodySmall
+                text = placeName ?: "${loc.lat}, ${loc.lng}",
+                style = MaterialTheme.typography.bodyMedium,
+                fontFamily = FontFamily(Font(R.font.saira_regular)),
             )
         }
 
@@ -126,13 +144,14 @@ private fun TruekeHostItemSection(item: Item) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
             text = "Producto ofrecido",
-            style = MaterialTheme.typography.titleMedium
+            style = MaterialTheme.typography.titleMedium,
+            fontFamily = FontFamily(Font(R.font.saira_medium)),
         )
 
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
 
             KeyValueRow(label = "Nombre", value = item.title)
-            Divider()
+            RowDivider(color = Color.Black, thickness = 1.dp)
 
             if (!item.details.isNullOrBlank()) {
                 KeyValueRow(
@@ -140,11 +159,11 @@ private fun TruekeHostItemSection(item: Item) {
                     value = item.details!!,
                     multiline = true
                 )
-                Divider()
+                RowDivider(color = Color.Black, thickness = 1.dp)
             }
 
             KeyValueRow(label = "Estado", value = item.condition.displayName())
-            Divider()
+            RowDivider(color = Color.Black, thickness = 1.dp)
 
             KeyValueRow(label = "Marca", value = item.title)
         }
@@ -159,14 +178,16 @@ private fun KeyValueRow(
 ) {
     Row(
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .height(IntrinsicSize.Min),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
             text = label,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.width(110.dp)
+            fontFamily = FontFamily(Font(R.font.saira_regular)),
+            modifier = Modifier.width(70.dp)
         )
 
         Box(
@@ -179,8 +200,23 @@ private fun KeyValueRow(
         Text(
             text = value,
             style = MaterialTheme.typography.bodyMedium,
+            fontFamily = FontFamily(Font(R.font.saira_regular)),
             modifier = Modifier.weight(1f),
             maxLines = if (multiline) Int.MAX_VALUE else 1
         )
     }
+}
+
+@Composable
+private fun RowDivider(
+    modifier: Modifier = Modifier,
+    thickness: Dp = 1.dp,
+    color: Color = Color.Black
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(thickness)
+            .background(color)
+    )
 }

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import com.chaima.truekeo.models.GeoPoint
 import com.chaima.truekeo.models.Item
 import com.chaima.truekeo.models.ItemCondition
@@ -32,7 +33,7 @@ fun HomeTab() {
                 name = "Cambio PS4 por bici",
                 description = "Quedamos por Sol",
                 hostUserId = "u1",
-                hostItem = Item(id = "i1", title = "PS4 Slim", null, "", ItemCondition.NEW),
+                hostItem = Item(id = "i1", title = "PS4 Slim", "hola estos son los detalles hola estos son los detalles hola estos son los detalles", "", ItemCondition.NEW),
                 location = GeoPoint(-3.7038, 40.4168)
             ),
             Trueke(
@@ -90,13 +91,14 @@ fun HomeTab() {
             onDismissRequest = {
                 showSheet = false
                 selectedTrueke = null
-            }
+            },
+            scrimColor = Color.Transparent
         ) {
             TruekeSheetContent(
                 trueke = t,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
+                    .padding(horizontal = 20.dp)
                     .padding(bottom = 24.dp)
             )
         }
