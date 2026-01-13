@@ -10,14 +10,19 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -116,17 +121,28 @@ private fun TruekeInfoSection(trueke: Trueke) {
             Text(
                 text = trueke.description!!,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontFamily = FontFamily(Font(R.font.saira_regular)),
             )
         }
 
         location?.let { loc ->
-            Text(
-                text = placeName ?: "${loc.lat}, ${loc.lng}",
-                style = MaterialTheme.typography.bodyMedium,
-                fontFamily = FontFamily(Font(R.font.saira_regular)),
-            )
+            Row {
+                Icon(
+                    imageVector = Icons.Outlined.LocationOn,
+                    contentDescription = "Ubicación",
+                    tint = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier
+                        .size(20.dp)
+                        .offset(x = (-3).dp)
+                )
+
+                Text(
+                    text = placeName ?: "${loc.lat}, ${loc.lng}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.secondary,
+                    fontFamily = FontFamily(Font(R.font.saira_regular)),
+                )
+            }
         }
 
         trueke.dateTime?.let {
@@ -148,7 +164,7 @@ private fun TruekeHostItemSection(item: Item) {
             fontFamily = FontFamily(Font(R.font.saira_medium)),
         )
 
-        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        Column {
 
             KeyValueRow(label = "Nombre", value = item.title)
             RowDivider(color = Color.Black, thickness = 1.dp)
@@ -179,15 +195,16 @@ private fun KeyValueRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(IntrinsicSize.Min),
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
+            .height(IntrinsicSize.Min)
     ) {
         Text(
             text = label,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontFamily = FontFamily(Font(R.font.saira_regular)),
-            modifier = Modifier.width(70.dp)
+            modifier = Modifier
+                .width(80.dp)
+                .padding(0.dp, 8.dp, 8.dp, 8.dp)
         )
 
         Box(
@@ -201,7 +218,9 @@ private fun KeyValueRow(
             text = value,
             style = MaterialTheme.typography.bodyMedium,
             fontFamily = FontFamily(Font(R.font.saira_regular)),
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .weight(1f)
+                .padding(8.dp),
             maxLines = if (multiline) Int.MAX_VALUE else 1
         )
     }
