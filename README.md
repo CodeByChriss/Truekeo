@@ -4,20 +4,26 @@ Somos una plataforma de economía circular diseñada para facilitar la donación
 
 Nuestra misión es eliminar las barreras de la logística vecinal, permitiendo que instituciones y ciudadanos colaboren para reducir residuos y fortalecer el tejido social mediante el intercambio responsable.
 
-### Equipo de proyecto:
+## Equipo de proyecto:
 [SM] **Scrum Master** [malmorox](https://github.com/malmorox)<br>
 [CM] **Cloud Master**  [CodeByChriss](https://github.com/CodeByChriss)<br>
 [DS] **Designer** [aiitttor](https://github.com/aiitttor)
+
+## Tecnologías utilizadas
+![Kotlin](https://img.shields.io/badge/Kotlin-B125EA?style=for-the-badge&logo=kotlin&logoColor=white)
+![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-4285F4?style=for-the-badge&logo=Jetpack%20Compose&logoColor=white)
+![Mapbox](https://img.shields.io/badge/Mapbox-007afc.svg?style=for-the-badge&logo=Mapbox&logoColor=white)
+![Firebase](https://img.shields.io/badge/firebase-ffca28?style=for-the-badge&logo=firebase&logoColor=black)
 
 ## Prototipo (Figma)
 
 El diseño inicial de la aplicación ha sido desarrollado en Figma, donde se ha definido la estructura visual, los flujos de navegación y las principales pantallas de la app.
 
-[ ![Prototipo en figma](resources/figma-prototype.png) ](https://www.figma.com/design/iiBDX15OGVsRuzPoiFn4LV/Truekeo)
+[ ![Prototipo en figma](resources/figma-prototype.png)](https://www.figma.com/design/iiBDX15OGVsRuzPoiFn4LV/Truekeo)
 
 🔗 [Enlace al prototipo en Figma](https://www.figma.com/design/iiBDX15OGVsRuzPoiFn4LV/Truekeo?node-id=0-1&t=ABp0jil8KM5YN9Hf-1)
 
-## Metodología ágil SCRUM
+## Metodología de trabajo
 
 El desarrollo del proyecto se está llevando a cabo siguiendo la metodología ágil SCRUM, organizando el trabajo en sprints para facilitar la planificación, el seguimiento y la entrega incremental de funcionalidades.
 
@@ -27,7 +33,7 @@ Durante el primer sprint se sentaron las bases del proyecto, centrando el trabaj
 ***Objetivos alcanzados:***
 
 - Definición de la idea y alcance del proyecto (con ayuda del profesor).
-- Creación del prototipo de la aplicación.
+- Creación del prototipo de la aplicación en Figma.
 - Diseño inicial de pantallas.
 
 ### Sprint 2 – Metodología de trabajo e inicio de interfaz
@@ -36,9 +42,9 @@ En el segundo sprint se ha comenzado con el desarrollo técnico del proyecto y l
 
 ***Objetivos en desarrollo / alcanzados:***
 
-- Metodología de trabajo e inicio de la interfaz.
 - Creación del proyecto en GitHub.
 - Implementación de las pantallas de:
+    - Splash
     - Login
     - Registro
-    - Splash
+- Diseño y uso de temas/estilos en Compose
