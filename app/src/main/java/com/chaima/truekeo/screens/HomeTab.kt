@@ -9,11 +9,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import com.chaima.truekeo.models.GeoPoint
 import com.chaima.truekeo.models.Item
 import com.chaima.truekeo.models.ItemCondition
 import com.chaima.truekeo.models.Trueke
 import com.chaima.truekeo.models.TruekeStatus
+import com.chaima.truekeo.utils.resolvePlaceName
 import com.mapbox.geojson.Point
 import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.extension.compose.MapboxMap
@@ -149,6 +151,19 @@ private fun TruekeSheetContent(trueke: Trueke, modifier: Modifier = Modifier) {
 // Sección que muestra la información general del trueke
 @Composable
 private fun TruekeInfoSection(trueke: Trueke) {
+    val context = LocalContext.current
+    val location = trueke.location
+
+    var placeName by remember(trueke.id) { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(trueke.id) {
+        location?.let {
+            placeName = runCatching {
+                resolvePlaceName(context, it.lng, it.lat)
+            }.getOrNull()
+        }
+    }
+
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
 
         Text(
@@ -164,9 +179,9 @@ private fun TruekeInfoSection(trueke: Trueke) {
             )
         }
 
-        trueke.location?.let {
+        location?.let { loc ->
             Text(
-                text = "Ubicación: ${it.lat}, ${it.lng}",
+                text = "Ubicación: ${placeName ?: "${loc.lat}, ${loc.lng}"}",
                 style = MaterialTheme.typography.bodySmall
             )
         }
