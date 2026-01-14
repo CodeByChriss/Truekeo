@@ -9,24 +9,35 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import com.chaima.truekeo.models.GeoPoint
 import com.chaima.truekeo.models.Item
 import com.chaima.truekeo.models.ItemCondition
 import com.chaima.truekeo.models.Trueke
 import com.chaima.truekeo.components.TruekeSheetContent
 import com.mapbox.geojson.Point
+import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.extension.compose.MapboxMap
 import com.mapbox.maps.extension.compose.annotation.Marker
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
-import com.mapbox.maps.extension.style.color.colorTheme
+import com.mapbox.maps.plugin.animation.MapAnimationOptions
 import java.time.Instant
 import java.time.temporal.ChronoUnit
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, MapboxExperimental::class)
 @Composable
 fun HomeTab() {
     val madrid = Point.fromLngLat(-3.7038, 40.4168)
+    val mapViewportState = rememberMapViewportState {
+        setCameraOptions {
+            center(madrid)
+            zoom(12.0)
+        }
+    }
+    val scope = rememberCoroutineScope()
 
     //truekes de prueba
     val truekes = remember {
@@ -39,7 +50,7 @@ fun HomeTab() {
                 hostItem = Item(
                     id = "i1",
                     title = "PS4 Slim",
-                    "hola estos son los detalles hola estos son los detalles hola estos son los detalles",
+                    "hola estos son los detalles hola estos son los detalles hola estos son los detalles hola estos son los detalles hola estos son los detalles hola estos son los detalles",
                     "",
                     brand = "Sony",
                     ItemCondition.NEW
@@ -84,15 +95,50 @@ fun HomeTab() {
     var showSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
+    // Altura máxima del sheet
+    val maxSheetHeight = 500.dp
+
+    // Calcular altura del sheet para ajustar el padding del mapa
+    val density = LocalDensity.current
+    val sheetHeightPx = with(density) { maxSheetHeight.toPx() }
+
+    val extraMarkerOffsetDp = 72.dp
+    val extraMarkerOffsetPx = with(density) { extraMarkerOffsetDp.toPx() }
+
+    val animationDurationMs = 800L
+
+    // Función para centrar el marcador teniendo en cuenta el sheet
+    fun centerMarker(trueke: Trueke) {
+        val loc = trueke.location ?: return
+
+        scope.launch {
+            // Calcular el offset vertical para centrar el marcador en el espacio visible
+            val offsetPx = (sheetHeightPx / 2) + extraMarkerOffsetPx
+
+            mapViewportState.flyTo(
+                cameraOptions = CameraOptions.Builder()
+                    .center(Point.fromLngLat(loc.lng, loc.lat))
+                    .padding(
+                        com.mapbox.maps.EdgeInsets(
+                            0.0,  // top
+                            0.0,  // left
+                            offsetPx.toDouble(),  // bottom - espacio para el sheet
+                            0.0   // right
+                        )
+                    )
+                    .zoom(14.0)
+                    .build(),
+                animationOptions = MapAnimationOptions.mapAnimationOptions {
+                    duration(800)
+                }
+            )
+        }
+    }
+
     // Mapa de Mapbox con marcadores para cada trueke
     MapboxMap(
         modifier = Modifier.fillMaxSize(),
-        mapViewportState = rememberMapViewportState {
-            setCameraOptions {
-                center(madrid)
-                zoom(12.0)
-            }
-        }
+        mapViewportState = mapViewportState
     ) {
         truekes
             .filter { it.location != null }
@@ -106,6 +152,7 @@ fun HomeTab() {
                     onClick = {
                         selectedTrueke = trueke
                         showSheet = true
+                        centerMarker(trueke)
                         true
                     }
                 )
@@ -120,16 +167,33 @@ fun HomeTab() {
             onDismissRequest = {
                 showSheet = false
                 selectedTrueke = null
+                scope.launch {
+                    mapViewportState.flyTo(
+                        cameraOptions = CameraOptions.Builder()
+                            .padding(com.mapbox.maps.EdgeInsets(0.0, 0.0, 0.0, 0.0))
+                            .build(),
+                        animationOptions = MapAnimationOptions.mapAnimationOptions {
+                            duration(200)
+                        }
+                    )
+                }
             },
             scrimColor = Color.Transparent
         ) {
-            TruekeSheetContent(
-                trueke = t,
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
-                    .padding(bottom = 24.dp)
-            )
+                    .heightIn(max = maxSheetHeight)
+                    .wrapContentHeight()
+            ) {
+                TruekeSheetContent(
+                    trueke = t,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp)
+                        .padding(bottom = 24.dp)
+                )
+            }
         }
     }
 }
