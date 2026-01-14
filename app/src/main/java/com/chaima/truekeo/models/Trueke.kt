@@ -14,7 +14,6 @@ data class Trueke(
     val takerItem: Item? = null,
 
     val location: GeoPoint? = null,
-    val dateTime: Instant? = null,
 
     val status: TruekeStatus = TruekeStatus.OPEN,
     val createdAt: Instant = Instant.now()

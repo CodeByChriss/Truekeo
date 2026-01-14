@@ -19,6 +19,9 @@ import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.extension.compose.MapboxMap
 import com.mapbox.maps.extension.compose.annotation.Marker
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
+import com.mapbox.maps.extension.style.color.colorTheme
+import java.time.Instant
+import java.time.temporal.ChronoUnit
 
 @OptIn(ExperimentalMaterial3Api::class, MapboxExperimental::class)
 @Composable
@@ -33,22 +36,46 @@ fun HomeTab() {
                 name = "Cambio PS4 por bici",
                 description = "Quedamos por Sol",
                 hostUserId = "u1",
-                hostItem = Item(id = "i1", title = "PS4 Slim", "hola estos son los detalles hola estos son los detalles hola estos son los detalles", "", ItemCondition.NEW),
-                location = GeoPoint(-3.7038, 40.4168)
+                hostItem = Item(
+                    id = "i1",
+                    title = "PS4 Slim",
+                    "hola estos son los detalles hola estos son los detalles hola estos son los detalles",
+                    "",
+                    brand = "Sony",
+                    ItemCondition.NEW
+                ),
+                location = GeoPoint(-3.7038, 40.4168),
+                createdAt = Instant.now().minus(13, ChronoUnit.MINUTES)
             ),
             Trueke(
                 id = "t2",
                 name = "Cambio monitor por teclado mecánico",
                 hostUserId = "u2",
-                hostItem = Item(id = "i2", title = "Monitor 24''", null, "", ItemCondition.NEW),
-                location = GeoPoint(-3.7123, 40.4250)
+                hostItem = Item(
+                    id = "i2",
+                    title = "Monitor 24''",
+                    null,
+                    "",
+                    null,
+                    ItemCondition.NEW
+                ),
+                location = GeoPoint(-3.7123, 40.4250),
+                createdAt = Instant.now().minus(2, ChronoUnit.HOURS)
             ),
             Trueke(
                 id = "t3",
                 name = "Cambio libros",
                 hostUserId = "u3",
-                hostItem = Item(id = "i3", title = "Pack libros DAM", null, "", ItemCondition.NEW),
-                location = GeoPoint(-3.6890, 40.4095)
+                hostItem = Item(
+                    id = "i3",
+                    title = "Pack libros DAM",
+                    null,
+                    "",
+                    "Anaya",
+                    ItemCondition.NEW
+                ),
+                location = GeoPoint(-3.6890, 40.4095),
+                createdAt = Instant.now().minus(45, ChronoUnit.DAYS)
             )
         )
     }
@@ -74,6 +101,8 @@ fun HomeTab() {
 
                 Marker(
                     point = Point.fromLngLat(loc.lng, loc.lat),
+                    color = MaterialTheme.colorScheme.tertiary,
+                    stroke = MaterialTheme.colorScheme.primary,
                     onClick = {
                         selectedTrueke = trueke
                         showSheet = true

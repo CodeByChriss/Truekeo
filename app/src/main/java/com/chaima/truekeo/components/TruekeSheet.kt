@@ -41,6 +41,7 @@ import com.chaima.truekeo.utils.resolvePlaceName
 import com.chaima.truekeo.models.Item
 import com.chaima.truekeo.models.Trueke
 import com.chaima.truekeo.models.TruekeStatus
+import com.chaima.truekeo.utils.timeAgo
 
 // Contenido del bottom sheet que muestra los detalles del trueke seleccionado
 @Composable
@@ -145,12 +146,12 @@ private fun TruekeInfoSection(trueke: Trueke) {
             }
         }
 
-        trueke.dateTime?.let {
-            Text(
-                text = "Fecha: $it",
-                style = MaterialTheme.typography.bodySmall
-            )
-        }
+        Text(
+            text = timeAgo(trueke.createdAt),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            fontFamily = FontFamily(Font(R.font.saira_regular)),
+        )
     }
 }
 
@@ -167,21 +168,27 @@ private fun TruekeHostItemSection(item: Item) {
         Column {
 
             KeyValueRow(label = "Nombre", value = item.title)
-            RowDivider(color = Color.Black, thickness = 1.dp)
+            RowDivider(color = MaterialTheme.colorScheme.onSurfaceVariant, thickness = 1.dp)
 
             if (!item.details.isNullOrBlank()) {
                 KeyValueRow(
                     label = "Detalles",
-                    value = item.details!!,
+                    value = item.details,
                     multiline = true
                 )
-                RowDivider(color = Color.Black, thickness = 1.dp)
+                RowDivider(color = MaterialTheme.colorScheme.onSurfaceVariant, thickness = 1.dp)
+            }
+
+            if (!item.brand.isNullOrBlank()) {
+                KeyValueRow(
+                    label = "Marca",
+                    value = item.brand,
+                    multiline = true
+                )
+                RowDivider(color = MaterialTheme.colorScheme.onSurfaceVariant, thickness = 1.dp)
             }
 
             KeyValueRow(label = "Estado", value = item.condition.displayName())
-            RowDivider(color = Color.Black, thickness = 1.dp)
-
-            KeyValueRow(label = "Marca", value = item.title)
         }
     }
 }
@@ -210,14 +217,15 @@ private fun KeyValueRow(
         Box(
             modifier = Modifier
                 .fillMaxHeight()
-                .width(1.dp)
-                .background(Color.Black)
+                .width(0.5.dp)
+                .background(MaterialTheme.colorScheme.onSurfaceVariant)
         )
 
         Text(
             text = value,
             style = MaterialTheme.typography.bodyMedium,
-            fontFamily = FontFamily(Font(R.font.saira_regular)),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            fontFamily = FontFamily(Font(R.font.saira_medium)),
             modifier = Modifier
                 .weight(1f)
                 .padding(8.dp),
@@ -229,7 +237,7 @@ private fun KeyValueRow(
 @Composable
 private fun RowDivider(
     modifier: Modifier = Modifier,
-    thickness: Dp = 1.dp,
+    thickness: Dp = 0.5.dp,
     color: Color = Color.Black
 ) {
     Box(
