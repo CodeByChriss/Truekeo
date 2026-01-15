@@ -199,7 +199,8 @@ fun CreateEventTab(){
                 ) {
                     Text(
                         text = "CREAR",
-                        fontFamily = FontFamily(Font(R.font.saira_regular))
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontFamily = FontFamily(Font(R.font.saira_medium))
                     )
                 }
 

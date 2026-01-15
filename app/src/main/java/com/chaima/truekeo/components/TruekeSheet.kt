@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -31,6 +32,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -43,6 +45,7 @@ import com.chaima.truekeo.utils.resolvePlaceName
 import com.chaima.truekeo.models.Item
 import com.chaima.truekeo.models.Trueke
 import com.chaima.truekeo.models.TruekeStatus
+import com.chaima.truekeo.models.User
 import com.chaima.truekeo.utils.timeAgo
 
 // Contenido del bottom sheet que muestra los detalles del trueke seleccionado
@@ -61,6 +64,12 @@ fun TruekeSheetContent(trueke: Trueke, modifier: Modifier = Modifier) {
 
         TruekeHostItemSection(trueke.hostItem)
 
+        Divider()
+
+        UploadedByRow(trueke.hostUser)
+
+        Spacer(modifier = Modifier.height(0.dp))
+
         Row(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier.fillMaxWidth()
@@ -75,7 +84,7 @@ fun TruekeSheetContent(trueke: Trueke, modifier: Modifier = Modifier) {
                 Text(
                     text = "Escribir",
                     style = MaterialTheme.typography.bodyLarge,
-                    fontFamily = FontFamily(Font(R.font.saira_medium)),
+                    fontFamily = FontFamily(Font(R.font.saira_medium))
                 )
             }
 
@@ -90,7 +99,7 @@ fun TruekeSheetContent(trueke: Trueke, modifier: Modifier = Modifier) {
                 Text(
                     text = "Aceptar",
                     style = MaterialTheme.typography.bodyLarge,
-                    fontFamily = FontFamily(Font(R.font.saira_medium)),
+                    fontFamily = FontFamily(Font(R.font.saira_medium))
                 )
             }
         }
@@ -170,9 +179,8 @@ private fun TruekeHostItemSection(item: Item) {
         )
 
         Column {
-
             KeyValueRow(label = "Nombre", value = item.title)
-            RowDivider(color = MaterialTheme.colorScheme.onSurfaceVariant, thickness = 1.dp)
+            RowDivider(thickness = 0.5.dp, color = MaterialTheme.colorScheme.onSurfaceVariant)
 
             if (!item.details.isNullOrBlank()) {
                 KeyValueRow(
@@ -180,7 +188,7 @@ private fun TruekeHostItemSection(item: Item) {
                     value = item.details,
                     multiline = true
                 )
-                RowDivider(color = MaterialTheme.colorScheme.onSurfaceVariant, thickness = 1.dp)
+                RowDivider(thickness = 0.5.dp, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
 
             if (!item.brand.isNullOrBlank()) {
@@ -189,12 +197,14 @@ private fun TruekeHostItemSection(item: Item) {
                     value = item.brand,
                     multiline = true
                 )
-                RowDivider(color = MaterialTheme.colorScheme.onSurfaceVariant, thickness = 1.dp)
+                RowDivider(thickness = 0.5.dp, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
 
             KeyValueRow(label = "Estado", value = item.condition.displayName())
         }
     }
+
+    ProductImage(item)
 }
 
 @Composable
@@ -242,7 +252,7 @@ private fun KeyValueRow(
 private fun RowDivider(
     modifier: Modifier = Modifier,
     thickness: Dp = 0.5.dp,
-    color: Color = Color.Black
+    color: Color = MaterialTheme.colorScheme.onSurfaceVariant
 ) {
     Box(
         modifier = modifier
@@ -250,4 +260,35 @@ private fun RowDivider(
             .height(thickness)
             .background(color)
     )
+}
+
+@Composable
+private fun UploadedByRow(hostUser: User) {
+    Row (
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = "Subido por",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            fontFamily = FontFamily(Font(R.font.saira_regular)),
+        )
+
+        Spacer(Modifier.width(6.dp))
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(3.dp)
+        ) {
+            UserAvatarImage(hostUser, size = 20.dp)
+
+            Text(
+                text = "@${hostUser.username}",
+                style = MaterialTheme.typography.bodyMedium,
+                fontFamily = FontFamily(Font(R.font.saira_medium)),
+                maxLines = 1
+            )
+        }
+    }
 }

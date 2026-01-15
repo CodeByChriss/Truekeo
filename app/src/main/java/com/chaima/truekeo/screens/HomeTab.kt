@@ -16,6 +16,7 @@ import com.chaima.truekeo.models.Item
 import com.chaima.truekeo.models.ItemCondition
 import com.chaima.truekeo.models.Trueke
 import com.chaima.truekeo.components.TruekeSheetContent
+import com.chaima.truekeo.models.User
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapboxExperimental
@@ -39,6 +40,13 @@ fun HomeTab() {
     }
     val scope = rememberCoroutineScope()
 
+    //usuario de prueba
+    val user = User(
+        id = "u1",
+        username = "Chaima",
+        avatarUrl = "https://img.freepik.com/foto-gratis/hombre-negro-posando_23-2148171639.jpg?semt=ais_hybrid&w=740&q=80",
+    )
+
     //truekes de prueba
     val truekes = remember {
         listOf(
@@ -46,12 +54,12 @@ fun HomeTab() {
                 id = "t1",
                 name = "Cambio PS4 por bici",
                 description = "Quedamos por Sol",
-                hostUserId = "u1",
+                hostUser = user,
                 hostItem = Item(
                     id = "i1",
                     title = "PS4 Slim",
                     "hola estos son los detalles hola estos son los detalles hola estos son los detalles hola estos son los detalles hola estos son los detalles hola estos son los detalles",
-                    "",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT86S_ZlKylXOd3eTqAW5KXxkngeiP-uUxtNA&s",
                     brand = "Sony",
                     ItemCondition.NEW
                 ),
@@ -61,12 +69,12 @@ fun HomeTab() {
             Trueke(
                 id = "t2",
                 name = "Cambio monitor por teclado mecánico",
-                hostUserId = "u2",
+                hostUser = user,
                 hostItem = Item(
                     id = "i2",
                     title = "Monitor 24''",
                     null,
-                    "",
+                    "https://fotografiamejorparavendermas.com/wp-content/uploads/2017/06/La-importancia-de-la-imagen.jpg",
                     null,
                     ItemCondition.NEW
                 ),
@@ -76,12 +84,12 @@ fun HomeTab() {
             Trueke(
                 id = "t3",
                 name = "Cambio libros",
-                hostUserId = "u3",
+                hostUser = user,
                 hostItem = Item(
                     id = "i3",
                     title = "Pack libros DAM",
                     null,
-                    "",
+                    "https://r-charts.com/es/miscelanea/procesamiento-imagenes-magick_files/figure-html/color-fondo-imagen-r.png",
                     "Anaya",
                     ItemCondition.NEW
                 ),
@@ -104,8 +112,6 @@ fun HomeTab() {
 
     val extraMarkerOffsetDp = 72.dp
     val extraMarkerOffsetPx = with(density) { extraMarkerOffsetDp.toPx() }
-
-    val animationDurationMs = 800L
 
     // Función para centrar el marcador teniendo en cuenta el sheet
     fun centerMarker(trueke: Trueke) {
