@@ -8,21 +8,44 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import com.chaima.truekeo.models.GeoPoint
 import com.chaima.truekeo.models.Item
 import com.chaima.truekeo.models.ItemCondition
 import com.chaima.truekeo.models.Trueke
-import com.chaima.truekeo.models.TruekeStatus
+import com.chaima.truekeo.components.TruekeSheetContent
+import com.chaima.truekeo.models.User
 import com.mapbox.geojson.Point
+import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapboxExperimental
 import com.mapbox.maps.extension.compose.MapboxMap
 import com.mapbox.maps.extension.compose.annotation.Marker
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
+import com.mapbox.maps.plugin.animation.MapAnimationOptions
+import java.time.Instant
+import java.time.temporal.ChronoUnit
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, MapboxExperimental::class)
 @Composable
 fun HomeTab() {
     val madrid = Point.fromLngLat(-3.7038, 40.4168)
+    val mapViewportState = rememberMapViewportState {
+        setCameraOptions {
+            center(madrid)
+            zoom(12.0)
+        }
+    }
+    val scope = rememberCoroutineScope()
+
+    //usuario de prueba
+    val user = User(
+        id = "u1",
+        username = "Chaima",
+        avatarUrl = "https://img.freepik.com/foto-gratis/hombre-negro-posando_23-2148171639.jpg?semt=ais_hybrid&w=740&q=80",
+    )
 
     //truekes de prueba
     val truekes = remember {
@@ -31,23 +54,47 @@ fun HomeTab() {
                 id = "t1",
                 name = "Cambio PS4 por bici",
                 description = "Quedamos por Sol",
-                hostUserId = "u1",
-                hostItem = Item(id = "i1", title = "PS4 Slim", null, "", ItemCondition.NEW),
-                location = GeoPoint(-3.7038, 40.4168)
+                hostUser = user,
+                hostItem = Item(
+                    id = "i1",
+                    title = "PS4 Slim",
+                    "hola estos son los detalles hola estos son los detalles hola estos son los detalles hola estos son los detalles hola estos son los detalles hola estos son los detalles",
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT86S_ZlKylXOd3eTqAW5KXxkngeiP-uUxtNA&s",
+                    brand = "Sony",
+                    ItemCondition.NEW
+                ),
+                location = GeoPoint(-3.7038, 40.4168),
+                createdAt = Instant.now().minus(13, ChronoUnit.MINUTES)
             ),
             Trueke(
                 id = "t2",
                 name = "Cambio monitor por teclado mecánico",
-                hostUserId = "u2",
-                hostItem = Item(id = "i2", title = "Monitor 24''", null, "", ItemCondition.NEW),
-                location = GeoPoint(-3.7123, 40.4250)
+                hostUser = user,
+                hostItem = Item(
+                    id = "i2",
+                    title = "Monitor 24''",
+                    null,
+                    "https://fotografiamejorparavendermas.com/wp-content/uploads/2017/06/La-importancia-de-la-imagen.jpg",
+                    null,
+                    ItemCondition.NEW
+                ),
+                location = GeoPoint(-3.7123, 40.4250),
+                createdAt = Instant.now().minus(2, ChronoUnit.HOURS)
             ),
             Trueke(
                 id = "t3",
                 name = "Cambio libros",
-                hostUserId = "u3",
-                hostItem = Item(id = "i3", title = "Pack libros DAM", null, "", ItemCondition.NEW),
-                location = GeoPoint(-3.6890, 40.4095)
+                hostUser = user,
+                hostItem = Item(
+                    id = "i3",
+                    title = "Pack libros DAM",
+                    null,
+                    "https://r-charts.com/es/miscelanea/procesamiento-imagenes-magick_files/figure-html/color-fondo-imagen-r.png",
+                    "Anaya",
+                    ItemCondition.NEW
+                ),
+                location = GeoPoint(-3.6890, 40.4095),
+                createdAt = Instant.now().minus(45, ChronoUnit.DAYS)
             )
         )
     }
@@ -56,15 +103,48 @@ fun HomeTab() {
     var showSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
+    // Altura máxima del sheet
+    val maxSheetHeight = 500.dp
+
+    // Calcular altura del sheet para ajustar el padding del mapa
+    val density = LocalDensity.current
+    val sheetHeightPx = with(density) { maxSheetHeight.toPx() }
+
+    val extraMarkerOffsetDp = 72.dp
+    val extraMarkerOffsetPx = with(density) { extraMarkerOffsetDp.toPx() }
+
+    // Función para centrar el marcador teniendo en cuenta el sheet
+    fun centerMarker(trueke: Trueke) {
+        val loc = trueke.location ?: return
+
+        scope.launch {
+            // Calcular el offset vertical para centrar el marcador en el espacio visible
+            val offsetPx = (sheetHeightPx / 2) + extraMarkerOffsetPx
+
+            mapViewportState.flyTo(
+                cameraOptions = CameraOptions.Builder()
+                    .center(Point.fromLngLat(loc.lng, loc.lat))
+                    .padding(
+                        com.mapbox.maps.EdgeInsets(
+                            0.0,  // top
+                            0.0,  // left
+                            offsetPx.toDouble(),  // bottom - espacio para el sheet
+                            0.0   // right
+                        )
+                    )
+                    .zoom(14.0)
+                    .build(),
+                animationOptions = MapAnimationOptions.mapAnimationOptions {
+                    duration(800)
+                }
+            )
+        }
+    }
+
     // Mapa de Mapbox con marcadores para cada trueke
     MapboxMap(
         modifier = Modifier.fillMaxSize(),
-        mapViewportState = rememberMapViewportState {
-            setCameraOptions {
-                center(madrid)
-                zoom(12.0)
-            }
-        }
+        mapViewportState = mapViewportState
     ) {
         truekes
             .filter { it.location != null }
@@ -73,9 +153,12 @@ fun HomeTab() {
 
                 Marker(
                     point = Point.fromLngLat(loc.lng, loc.lat),
+                    color = MaterialTheme.colorScheme.tertiary,
+                    stroke = MaterialTheme.colorScheme.primary,
                     onClick = {
                         selectedTrueke = trueke
                         showSheet = true
+                        centerMarker(trueke)
                         true
                     }
                 )
@@ -90,110 +173,33 @@ fun HomeTab() {
             onDismissRequest = {
                 showSheet = false
                 selectedTrueke = null
-            }
+                scope.launch {
+                    mapViewportState.flyTo(
+                        cameraOptions = CameraOptions.Builder()
+                            .padding(com.mapbox.maps.EdgeInsets(0.0, 0.0, 0.0, 0.0))
+                            .build(),
+                        animationOptions = MapAnimationOptions.mapAnimationOptions {
+                            duration(200)
+                        }
+                    )
+                }
+            },
+            scrimColor = Color.Transparent
         ) {
-            TruekeSheetContent(
-                trueke = t,
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .padding(bottom = 24.dp)
-            )
-        }
-    }
-}
-
-// Contenido del bottom sheet que muestra los detalles del trueke seleccionado
-@Composable
-private fun TruekeSheetContent(trueke: Trueke, modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(20.dp)
-    ) {
-
-        TruekeInfoSection(trueke)
-
-        Divider()
-
-        TruekeHostItemSection(trueke.hostItem)
-
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            OutlinedButton(
-                onClick = { /* abrir chat */ },
-                modifier = Modifier.weight(1f)
+                    .heightIn(max = maxSheetHeight)
+                    .wrapContentHeight()
             ) {
-                Text("Escribir")
+                TruekeSheetContent(
+                    trueke = t,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp)
+                        .padding(bottom = 24.dp)
+                )
             }
-
-            Button(
-                onClick = { /* aceptar */ },
-                modifier = Modifier.weight(1f),
-                enabled = trueke.status == TruekeStatus.OPEN
-            ) {
-                Text("Aceptar")
-            }
-        }
-    }
-}
-
-// Sección que muestra la información general del trueke
-@Composable
-private fun TruekeInfoSection(trueke: Trueke) {
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-
-        Text(
-            text = trueke.name,
-            style = MaterialTheme.typography.titleLarge
-        )
-
-        if (!trueke.description.isNullOrBlank()) {
-            Text(
-                text = trueke.description!!,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-
-        trueke.location?.let {
-            Text(
-                text = "Ubicación: ${it.lat}, ${it.lng}",
-                style = MaterialTheme.typography.bodySmall
-            )
-        }
-
-        trueke.dateTime?.let {
-            Text(
-                text = "Fecha: $it",
-                style = MaterialTheme.typography.bodySmall
-            )
-        }
-    }
-}
-
-// Sección que muestra el ítem ofrecido por el host del trueke
-@Composable
-private fun TruekeHostItemSection(item: Item) {
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(
-            text = "Producto ofrecido",
-            style = MaterialTheme.typography.titleMedium
-        )
-
-        Text(
-            text = item.title,
-            style = MaterialTheme.typography.bodyLarge
-        )
-
-        Text(
-            text = "Estado: ${item.condition.displayName()}",
-            style = MaterialTheme.typography.bodyMedium
-        )
-
-        if (!item.details.isNullOrBlank()) {
-            Text(text = item.details!!, style = MaterialTheme.typography.bodyMedium)
         }
     }
 }

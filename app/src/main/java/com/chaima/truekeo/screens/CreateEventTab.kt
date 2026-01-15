@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.chaima.truekeo.R
 import com.chaima.truekeo.models.ItemCondition
+import com.chaima.truekeo.ui.theme.TruekeoTheme
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -51,154 +52,160 @@ fun CreateEventTab(){
         if (uri != null) itemImageUri = uri
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-            .padding(horizontal = 24.dp)
-    ) {
-        Column(
+    TruekeoTheme(dynamicColor = false) {
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(scrollState)
-                .imePadding(),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .background(Color.White)
+                .padding(horizontal = 24.dp)
         ) {
-            Spacer(Modifier.height(28.dp))
-
-            Text(
-                text = "Crear trueke",
-                fontSize = 30.sp,
-                fontFamily = FontFamily(Font(R.font.saira_medium)),
-                color = MaterialTheme.colorScheme.primary
-            )
-
-            Spacer(Modifier.height(22.dp))
-
-            // Sección de información del trueke
-            OutlinedTextField(
-                value = title,
-                onValueChange = { title = it },
-                placeholder = { Text("Título") },
-                singleLine = true,
-                shape = RoundedCornerShape(8.dp),
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-            )
-
-            Spacer(Modifier.height(14.dp))
-
-            OutlinedTextField(
-                value = description,
-                onValueChange = { description = it },
-                placeholder = { Text("Detalles") },
-                shape = RoundedCornerShape(8.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(140.dp),
-                maxLines = 6
-            )
-
-            Spacer(Modifier.height(14.dp))
-
-            OutlinedTextField(
-                value = selectedDate?.format(dateFormatter) ?: "",
-                onValueChange = {},
-                placeholder = { Text("DD / MM / YYYY") },
-                shape = RoundedCornerShape(8.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-            )
-
-            Spacer(Modifier.height(14.dp))
-
-            OutlinedTextField(
-                value = locationText,
-                onValueChange = { locationText = it },
-                placeholder = { Text("Ubicación") },
-                singleLine = true,
-                shape = RoundedCornerShape(8.dp),
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(Modifier.height(18.dp))
-
-            // Sección de información del producto del trueke
-            Text(
-                text = "Producto del trueque",
-                fontFamily = FontFamily(Font(R.font.saira_medium)),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-            Spacer(Modifier.height(10.dp))
-
-            OutlinedCard(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(10.dp)
+                    .fillMaxSize()
+                    .verticalScroll(scrollState)
+                    .imePadding(),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Column(Modifier.padding(14.dp)) {
-                    OutlinedTextField(
-                        value = itemTitle,
-                        onValueChange = { itemTitle = it },
-                        placeholder = { Text("Nombre del producto") },
-                        singleLine = true,
-                        shape = RoundedCornerShape(8.dp),
-                        modifier = Modifier.fillMaxWidth()
+                Spacer(Modifier.height(28.dp))
+
+                Text(
+                    text = "Crear trueke",
+                    fontSize = 30.sp,
+                    fontFamily = FontFamily(Font(R.font.saira_medium)),
+                    color = MaterialTheme.colorScheme.primary
+                )
+
+                Spacer(Modifier.height(22.dp))
+
+                // Sección de información del trueke
+                OutlinedTextField(
+                    value = title,
+                    onValueChange = { title = it },
+                    label = { Text("Título") },
+                    singleLine = true,
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
+
+                Spacer(Modifier.height(14.dp))
+
+                OutlinedTextField(
+                    value = description,
+                    onValueChange = { description = it },
+                    label = { Text("Detalles") },
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(140.dp),
+                    maxLines = 6
+                )
+
+                Spacer(Modifier.height(14.dp))
+
+                OutlinedTextField(
+                    value = selectedDate?.format(dateFormatter) ?: "",
+                    onValueChange = {},
+                    placeholder = { Text("DD / MM / YYYY") },
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
+
+                Spacer(Modifier.height(14.dp))
+
+                OutlinedTextField(
+                    value = locationText,
+                    onValueChange = { locationText = it },
+                    label = { Text("Ubicación") },
+                    singleLine = true,
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(Modifier.height(18.dp))
+
+                // Sección de información del producto del trueke
+                Text(
+                    text = "Producto a truekear",
+                    fontFamily = FontFamily(Font(R.font.saira_medium)),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+                Spacer(Modifier.height(10.dp))
+
+                OutlinedCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(10.dp),
+                    colors = CardDefaults.outlinedCardColors(
+                        containerColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.35f)
                     )
-
-                    Spacer(Modifier.height(12.dp))
-
-                    OutlinedTextField(
-                        value = itemDetails,
-                        onValueChange = { itemDetails = it },
-                        placeholder = { Text("Detalles del producto") },
-                        shape = RoundedCornerShape(8.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(110.dp),
-                        maxLines = 5
-                    )
-
-                    Spacer(Modifier.height(12.dp))
-
-                    // Dropdown condición
-                    ItemConditionDropdown(
-                        value = itemCondition,
-                        onValueChange = { itemCondition = it },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    Spacer(Modifier.height(12.dp))
-
-                    OutlinedButton(
-                        onClick = { pickItemImageLauncher.launch("image/*") },
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(8.dp)
-                    ) {
-                        Text(
-                            text = if (itemImageUri == null) "Subir imagen del producto" else "Cambiar imagen del producto",
-                            fontFamily = FontFamily(Font(R.font.saira_medium))
+                ) {
+                    Column(Modifier.padding(14.dp)) {
+                        OutlinedTextField(
+                            value = itemTitle,
+                            onValueChange = { itemTitle = it },
+                            label = { Text("Nombre del producto") },
+                            singleLine = true,
+                            shape = RoundedCornerShape(8.dp),
+                            modifier = Modifier.fillMaxWidth()
                         )
+
+                        Spacer(Modifier.height(12.dp))
+
+                        OutlinedTextField(
+                            value = itemDetails,
+                            onValueChange = { itemDetails = it },
+                            label = { Text("Detalles del producto") },
+                            shape = RoundedCornerShape(8.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(110.dp),
+                            maxLines = 5
+                        )
+
+                        Spacer(Modifier.height(12.dp))
+
+                        // Dropdown condición
+                        ItemConditionDropdown(
+                            value = itemCondition,
+                            onValueChange = { itemCondition = it },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
+                        Spacer(Modifier.height(12.dp))
+
+                        OutlinedButton(
+                            onClick = { pickItemImageLauncher.launch("image/*") },
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Text(
+                                text = if (itemImageUri == null) "Subir imagen del producto" else "Cambiar imagen del producto",
+                                fontFamily = FontFamily(Font(R.font.saira_medium))
+                            )
+                        }
                     }
                 }
+
+                Spacer(Modifier.height(22.dp))
+
+                Button(
+                    onClick = {},
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text(
+                        text = "CREAR",
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontFamily = FontFamily(Font(R.font.saira_medium))
+                    )
+                }
+
+                Spacer(Modifier.height(24.dp))
             }
-
-            Spacer(Modifier.height(22.dp))
-
-            Button(
-                onClick = {},
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(52.dp),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Text(
-                    text = "CREAR",
-                    fontFamily = FontFamily(Font(R.font.saira_regular))
-                )
-            }
-
-            Spacer(Modifier.height(24.dp))
         }
     }
 }
@@ -222,7 +229,6 @@ private fun ItemConditionDropdown(
             value = value.displayName(),
             onValueChange = {},
             readOnly = true,
-            singleLine = true,
             label = { Text("Estado del producto") },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
             shape = RoundedCornerShape(8.dp),

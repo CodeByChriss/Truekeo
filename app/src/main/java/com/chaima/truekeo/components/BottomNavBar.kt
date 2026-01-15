@@ -1,7 +1,11 @@
 package com.chaima.truekeo.components
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.DateRange
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -27,27 +31,27 @@ fun BottomNavBar(navController: NavController) {
         BottomItem(
             route = NavBarRoutes.Home.route,
             label = "Home",
-            icon = { Icon(Icons.Filled.Check, contentDescription = "Home") }
+            icon = { Icon(Icons.Outlined.Home, contentDescription = "Home") }
         ),
         BottomItem(
             route = NavBarRoutes.MyTruekes.route,
             label = "My Truekes",
-            icon = { Icon(Icons.Filled.Check, contentDescription = "My Truekes") }
+            icon = { Icon(Icons.Outlined.DateRange, contentDescription = "My Truekes") }
         ),
         BottomItem(
             route = NavBarRoutes.Create.route,
             label = "Create",
-            icon = { Icon(Icons.Filled.Check, contentDescription = "Create") }
+            icon = { Icon(Icons.Outlined.Add, contentDescription = "Create") }
         ),
         BottomItem(
             route = NavBarRoutes.Messages.route,
             label = "Messages",
-            icon = { Icon(Icons.Filled.Check, contentDescription = "Messages") }
+            icon = { Icon(Icons.Outlined.Email, contentDescription = "Messages") }
         ),
         BottomItem(
             route = NavBarRoutes.Profile.route,
             label = "Profile",
-            icon = { Icon(Icons.Filled.Check, contentDescription = "Profile") }
+            icon = { Icon(Icons.Outlined.Person, contentDescription = "Profile") }
         )
     )
 
