@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Truekeo</string>
     <string name="title_activity_splash_screen">SplashScreen</string>
+
+    <!-- para la autenticación con tu cuenta de Google -->
+    <string name="default_web_client_id">1014848725574-kb2ucqs2hadqt47pou7qigsln5fljjj1.apps.googleusercontent.com</string>
 </resources>
