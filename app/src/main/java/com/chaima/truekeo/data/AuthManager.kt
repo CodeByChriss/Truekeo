@@ -43,8 +43,27 @@ class AuthManager {
         }
     }
 
-    suspend fun login(email: String, pass: String): Result<Unit> {
+    suspend fun login(emailoUsuario: String, pass: String): Result<Unit> {
         return try {
+            var email = emailoUsuario
+
+            if(!email.contains('@')){
+                val username = email.lowercase()
+
+                val snapshot = db.collection("users")
+                    .whereEqualTo("username", username)
+                    .limit(1)
+                    .get()
+                    .await()
+
+                if (snapshot.isEmpty) {
+                    return Result.failure(Exception("Usuario no encontrado"))
+                }
+
+                email = snapshot.documents[0].getString("email")
+                    ?: return Result.failure(Exception("Email no encontrado para este usuario"))
+            }
+
             auth.signInWithEmailAndPassword(email, pass).await()
             Result.success(Unit)
         } catch (e: Exception) {

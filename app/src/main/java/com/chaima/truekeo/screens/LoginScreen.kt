@@ -61,7 +61,7 @@ import kotlinx.coroutines.launch
 fun LoginScreen(onSignUp: () -> Unit, onLogin: () -> Unit) {
     val authManager = remember { AuthManager() }
     val scope = rememberCoroutineScope()
-    var email by remember { mutableStateOf("") }
+    var emailOusuario by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var showPassword by remember { mutableStateOf(false) }
     val context = LocalContext.current
@@ -101,9 +101,9 @@ fun LoginScreen(onSignUp: () -> Unit, onLogin: () -> Unit) {
                 )
                 Spacer(modifier = Modifier.height(24.dp))
                 OutlinedTextField(
-                    value = email,
-                    onValueChange = { email = it },
-                    label = { Text("Email") },
+                    value = emailOusuario,
+                    onValueChange = { emailOusuario = it },
+                    label = { Text("Email o Nombre de Usuario") },
                     shape = RoundedCornerShape(8.dp),
                     modifier = Modifier
                         .width(300.dp)
@@ -136,7 +136,7 @@ fun LoginScreen(onSignUp: () -> Unit, onLogin: () -> Unit) {
                 Button(
                     onClick = {
                         scope.launch {
-                            val result = authManager.login(email, password)
+                            val result = authManager.login(emailOusuario, password)
                             if (result.isSuccess) {
                                 onLogin()
                             } else {
