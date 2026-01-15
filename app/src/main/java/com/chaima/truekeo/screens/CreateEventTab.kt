@@ -35,7 +35,7 @@ fun CreateEventTab(){
 
     // Info del trueke a crear
     var title by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
+    var details by remember { mutableStateOf("") }
     var locationText by remember { mutableStateOf("") }
     var showDatePicker by remember { mutableStateOf(false) }
     var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
@@ -43,7 +43,7 @@ fun CreateEventTab(){
 
     // Producto (Item)
     var itemTitle by remember { mutableStateOf("") }
-    var itemDetails by remember { mutableStateOf("") }
+    var itemDescription by remember { mutableStateOf("") }
     var itemCondition by remember { mutableStateOf(ItemCondition.GOOD) }
     var itemImageUri by remember { mutableStateOf<Uri?>(null) }
     val pickItemImageLauncher = rememberLauncherForActivityResult(
@@ -88,31 +88,20 @@ fun CreateEventTab(){
                         .fillMaxWidth()
                 )
 
-                Spacer(Modifier.height(14.dp))
+                Spacer(Modifier.height(7.dp))
 
                 OutlinedTextField(
-                    value = description,
-                    onValueChange = { description = it },
+                    value = details,
+                    onValueChange = { details = it },
                     label = { Text("Detalles") },
                     shape = RoundedCornerShape(8.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(140.dp),
-                    maxLines = 6
+                    maxLines = 5
                 )
 
-                Spacer(Modifier.height(14.dp))
-
-                OutlinedTextField(
-                    value = selectedDate?.format(dateFormatter) ?: "",
-                    onValueChange = {},
-                    placeholder = { Text("DD / MM / YYYY") },
-                    shape = RoundedCornerShape(8.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
-
-                Spacer(Modifier.height(14.dp))
+                Spacer(Modifier.height(7.dp))
 
                 OutlinedTextField(
                     value = locationText,
@@ -141,7 +130,7 @@ fun CreateEventTab(){
                         containerColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.35f)
                     )
                 ) {
-                    Column(Modifier.padding(14.dp)) {
+                    Column(Modifier.padding(14.dp, 9.dp, 14.dp, 14.dp)) {
                         OutlinedTextField(
                             value = itemTitle,
                             onValueChange = { itemTitle = it },
@@ -151,12 +140,12 @@ fun CreateEventTab(){
                             modifier = Modifier.fillMaxWidth()
                         )
 
-                        Spacer(Modifier.height(12.dp))
+                        Spacer(Modifier.height(7.dp))
 
                         OutlinedTextField(
-                            value = itemDetails,
-                            onValueChange = { itemDetails = it },
-                            label = { Text("Detalles del producto") },
+                            value = itemDescription,
+                            onValueChange = { itemDescription = it },
+                            label = { Text("Descripción del producto") },
                             shape = RoundedCornerShape(8.dp),
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -164,7 +153,7 @@ fun CreateEventTab(){
                             maxLines = 5
                         )
 
-                        Spacer(Modifier.height(12.dp))
+                        Spacer(Modifier.height(9.dp))
 
                         // Dropdown condición
                         ItemConditionDropdown(
@@ -173,7 +162,7 @@ fun CreateEventTab(){
                             modifier = Modifier.fillMaxWidth()
                         )
 
-                        Spacer(Modifier.height(12.dp))
+                        Spacer(Modifier.height(9.dp))
 
                         OutlinedButton(
                             onClick = { pickItemImageLauncher.launch("image/*") },

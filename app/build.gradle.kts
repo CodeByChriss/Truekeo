@@ -51,8 +51,6 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
-    implementation("com.mapbox.maps:android-ndk27:11.17.1")
-    implementation("com.mapbox.extension:maps-compose-ndk27:11.17.1")
     implementation(libs.googleid)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -66,6 +64,7 @@ dependencies {
 
     implementation("com.mapbox.maps:android:11.17.1")
     implementation("com.mapbox.extension:maps-compose:11.17.1")
+    implementation("com.mapbox.search:mapbox-search-android-ui:2.17.1")
     implementation("com.mapbox.search:mapbox-search-android:2.17.1")
     implementation(platform("com.google.firebase:firebase-bom:34.7.0"))
     implementation("com.google.firebase:firebase-analytics")

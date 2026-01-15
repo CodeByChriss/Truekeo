@@ -59,7 +59,7 @@ fun HomeTab() {
                     id = "i1",
                     title = "PS4 Slim",
                     "hola estos son los detalles hola estos son los detalles hola estos son los detalles hola estos son los detalles hola estos son los detalles hola estos son los detalles",
-                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT86S_ZlKylXOd3eTqAW5KXxkngeiP-uUxtNA&s",
+                    "https://cdn.wallapop.com/images/10420/k5/qk/__/c10420p1218961628/i6217265588.jpg?pictureSize=W320",
                     brand = "Sony",
                     ItemCondition.NEW
                 ),
@@ -74,7 +74,7 @@ fun HomeTab() {
                     id = "i2",
                     title = "Monitor 24''",
                     null,
-                    "https://fotografiamejorparavendermas.com/wp-content/uploads/2017/06/La-importancia-de-la-imagen.jpg",
+                    "https://cdn.wallapop.com/images/10420/ee/jl/__/c10420p870955066/i3115083731.jpg?pictureSize=W640",
                     null,
                     ItemCondition.NEW
                 ),
@@ -89,7 +89,7 @@ fun HomeTab() {
                     id = "i3",
                     title = "Pack libros DAM",
                     null,
-                    "https://r-charts.com/es/miscelanea/procesamiento-imagenes-magick_files/figure-html/color-fondo-imagen-r.png",
+                    "https://cdn.wallapop.com/images/10420/k5/ti/__/c10420p1219098489/i6218005841.jpg?pictureSize=W320",
                     "Anaya",
                     ItemCondition.NEW
                 ),
