@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.chaima.truekeo.R
@@ -66,16 +67,18 @@ fun CreateEventTab(){
                     .imePadding(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Spacer(Modifier.height(28.dp))
+                Spacer(Modifier.height(24.dp))
 
                 Text(
                     text = "Crear trueke",
-                    fontSize = 30.sp,
+                    fontSize = 32.sp,
                     fontFamily = FontFamily(Font(R.font.saira_medium)),
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Start
                 )
 
-                Spacer(Modifier.height(22.dp))
+                Spacer(Modifier.height(12.dp))
 
                 // Sección de información del trueke
                 OutlinedTextField(
@@ -119,7 +122,9 @@ fun CreateEventTab(){
                     text = "Producto a truekear",
                     fontFamily = FontFamily(Font(R.font.saira_medium)),
                     style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onBackground
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Start
                 )
                 Spacer(Modifier.height(10.dp))
 
