@@ -15,7 +15,7 @@ fun AppNavigation(){
 
     NavHost(
         navController = navController,
-        startDestination = Routes.Splash.route
+        startDestination = Routes.Main.route
     ) {
         // Pantalla 1: Splash
         composable(Routes.Splash.route) {
@@ -34,7 +34,7 @@ fun AppNavigation(){
                 }
             },
                 onLogin = {
-                    navController.navigate(Routes.HomeTab.route){
+                    navController.navigate(Routes.Main.route){
                         popUpTo(Routes.Splash.route) { inclusive = true }
                     }
                 })
@@ -47,10 +47,6 @@ fun AppNavigation(){
                     popUpTo(Routes.Signup.route) { inclusive = true }
                 }
             })
-        }
-
-        composable(Routes.HomeTab.route){
-            HomeTab()
         }
 
         // Navegación entre pantallas una vez autenticado
