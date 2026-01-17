@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.chaima.truekeo.R
@@ -35,7 +36,7 @@ fun CreateEventTab(){
 
     // Info del trueke a crear
     var title by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
+    var details by remember { mutableStateOf("") }
     var locationText by remember { mutableStateOf("") }
     var showDatePicker by remember { mutableStateOf(false) }
     var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
@@ -43,7 +44,7 @@ fun CreateEventTab(){
 
     // Producto (Item)
     var itemTitle by remember { mutableStateOf("") }
-    var itemDetails by remember { mutableStateOf("") }
+    var itemDescription by remember { mutableStateOf("") }
     var itemCondition by remember { mutableStateOf(ItemCondition.GOOD) }
     var itemImageUri by remember { mutableStateOf<Uri?>(null) }
     val pickItemImageLauncher = rememberLauncherForActivityResult(
@@ -66,16 +67,18 @@ fun CreateEventTab(){
                     .imePadding(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Spacer(Modifier.height(28.dp))
+                Spacer(Modifier.height(24.dp))
 
                 Text(
                     text = "Crear trueke",
-                    fontSize = 30.sp,
+                    fontSize = 32.sp,
                     fontFamily = FontFamily(Font(R.font.saira_medium)),
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Start
                 )
 
-                Spacer(Modifier.height(22.dp))
+                Spacer(Modifier.height(12.dp))
 
                 // Sección de información del trueke
                 OutlinedTextField(
@@ -88,31 +91,20 @@ fun CreateEventTab(){
                         .fillMaxWidth()
                 )
 
-                Spacer(Modifier.height(14.dp))
+                Spacer(Modifier.height(7.dp))
 
                 OutlinedTextField(
-                    value = description,
-                    onValueChange = { description = it },
+                    value = details,
+                    onValueChange = { details = it },
                     label = { Text("Detalles") },
                     shape = RoundedCornerShape(8.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(140.dp),
-                    maxLines = 6
+                    maxLines = 5
                 )
 
-                Spacer(Modifier.height(14.dp))
-
-                OutlinedTextField(
-                    value = selectedDate?.format(dateFormatter) ?: "",
-                    onValueChange = {},
-                    placeholder = { Text("DD / MM / YYYY") },
-                    shape = RoundedCornerShape(8.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
-
-                Spacer(Modifier.height(14.dp))
+                Spacer(Modifier.height(7.dp))
 
                 OutlinedTextField(
                     value = locationText,
@@ -130,7 +122,9 @@ fun CreateEventTab(){
                     text = "Producto a truekear",
                     fontFamily = FontFamily(Font(R.font.saira_medium)),
                     style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onBackground
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Start
                 )
                 Spacer(Modifier.height(10.dp))
 
@@ -141,7 +135,7 @@ fun CreateEventTab(){
                         containerColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.35f)
                     )
                 ) {
-                    Column(Modifier.padding(14.dp)) {
+                    Column(Modifier.padding(14.dp, 9.dp, 14.dp, 14.dp)) {
                         OutlinedTextField(
                             value = itemTitle,
                             onValueChange = { itemTitle = it },
@@ -151,12 +145,12 @@ fun CreateEventTab(){
                             modifier = Modifier.fillMaxWidth()
                         )
 
-                        Spacer(Modifier.height(12.dp))
+                        Spacer(Modifier.height(7.dp))
 
                         OutlinedTextField(
-                            value = itemDetails,
-                            onValueChange = { itemDetails = it },
-                            label = { Text("Detalles del producto") },
+                            value = itemDescription,
+                            onValueChange = { itemDescription = it },
+                            label = { Text("Descripción del producto") },
                             shape = RoundedCornerShape(8.dp),
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -164,7 +158,7 @@ fun CreateEventTab(){
                             maxLines = 5
                         )
 
-                        Spacer(Modifier.height(12.dp))
+                        Spacer(Modifier.height(9.dp))
 
                         // Dropdown condición
                         ItemConditionDropdown(
@@ -173,7 +167,7 @@ fun CreateEventTab(){
                             modifier = Modifier.fillMaxWidth()
                         )
 
-                        Spacer(Modifier.height(12.dp))
+                        Spacer(Modifier.height(9.dp))
 
                         OutlinedButton(
                             onClick = { pickItemImageLauncher.launch("image/*") },
@@ -199,7 +193,8 @@ fun CreateEventTab(){
                 ) {
                     Text(
                         text = "CREAR",
-                        fontFamily = FontFamily(Font(R.font.saira_regular))
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontFamily = FontFamily(Font(R.font.saira_medium))
                     )
                 }
 

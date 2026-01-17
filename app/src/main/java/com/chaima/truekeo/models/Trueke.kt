@@ -7,7 +7,7 @@ data class Trueke(
     val name: String,
     val description: String? = null,
 
-    val hostUserId: String,
+    val hostUser: User,
     val hostItem: Item,
 
     val takerUserId: String? = null,

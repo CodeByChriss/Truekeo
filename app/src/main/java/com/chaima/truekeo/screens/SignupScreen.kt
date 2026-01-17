@@ -1,16 +1,13 @@
 package com.chaima.truekeo.screens
 
+import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -26,12 +23,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.Font
@@ -41,17 +39,22 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.getString
 import com.chaima.truekeo.R
+import com.chaima.truekeo.data.AuthManager
 import com.chaima.truekeo.ui.theme.TruekeoTheme
-import java.nio.file.WatchEvent
+import kotlinx.coroutines.launch
 
 @Composable
-fun SignupScreen(){
+fun SignupScreen(onSignUp: () -> Unit) {
+    val authManager = remember { AuthManager() }
+    val scope = rememberCoroutineScope()
     var email by remember { mutableStateOf("") }
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
     var showPassword by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     TruekeoTheme(dynamicColor = false) {
         Box(
@@ -64,13 +67,13 @@ fun SignupScreen(){
 
                 Image(
                     painter = painterResource(id = R.drawable.logo),
-                    contentDescription = "logo truekeo",
+                    contentDescription = getString(context,R.string.logo_truekeo),
                     modifier = Modifier.size(96.dp)
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
                 Text(
-                    text = "Crear cuenta",
+                    text = getString(context,R.string.crear_cuenta),
                     fontSize = 36.sp,
                     fontFamily = FontFamily(Font(R.font.saira_regular)),
                     color = MaterialTheme.colorScheme.primary
@@ -80,7 +83,7 @@ fun SignupScreen(){
                 OutlinedTextField(
                     value = email,
                     onValueChange = { email = it },
-                    label = { Text("Email") },
+                    label = { Text(getString(context,R.string.email)) },
                     shape = RoundedCornerShape(8.dp),
                     modifier = Modifier
                         .width(300.dp)
@@ -90,7 +93,7 @@ fun SignupScreen(){
                 OutlinedTextField(
                     value = username,
                     onValueChange = { username = it },
-                    label = { Text("Usuario") },
+                    label = { Text(getString(context,R.string.nombre_usuario)) },
                     shape = RoundedCornerShape(8.dp),
                     modifier = Modifier
                         .width(300.dp)
@@ -100,11 +103,21 @@ fun SignupScreen(){
                 OutlinedTextField(
                     value = password,
                     onValueChange = { password = it },
-                    label = { Text("Contraseña") },
+                    label = { Text(getString(context,R.string.contrasenia)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
                     trailingIcon = {
+                        val image = if (showPassword)
+                            ImageVector.vectorResource(id = R.drawable.ic_hide_password)
+                        else ImageVector.vectorResource(id = R.drawable.ic_show_password)
 
+                        IconButton(onClick = { showPassword = !showPassword }) {
+                            Icon(
+                                imageVector = image,
+                                contentDescription = getString(context,R.string.alternar_visibilidad_contrasenia),
+                                modifier = Modifier.width(24.dp)
+                            )
+                        }
                     },
                     shape = RoundedCornerShape(8.dp),
                     modifier = Modifier
@@ -115,11 +128,21 @@ fun SignupScreen(){
                 OutlinedTextField(
                     value = confirmPassword,
                     onValueChange = { confirmPassword = it },
-                    label = { Text("Repetir contraseña") },
+                    label = { Text(getString(context,R.string.repetir_contrasenia)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
                     trailingIcon = {
+                        val image = if (showPassword)
+                            ImageVector.vectorResource(id = R.drawable.ic_hide_password)
+                        else ImageVector.vectorResource(id = R.drawable.ic_show_password)
 
+                        IconButton(onClick = { showPassword = !showPassword }) {
+                            Icon(
+                                imageVector = image,
+                                contentDescription = getString(context,R.string.alternar_visibilidad_contrasenia),
+                                modifier = Modifier.width(24.dp)
+                            )
+                        }
                     },
                     shape = RoundedCornerShape(8.dp),
                     modifier = Modifier
@@ -128,7 +151,20 @@ fun SignupScreen(){
 
                 Spacer(modifier = Modifier.height(24.dp))
                 Button(
-                    onClick = {},
+                    onClick = {
+                        if (password == confirmPassword) {
+                            scope.launch {
+                                val result = authManager.signUp(email, username, password)
+                                if (result.isSuccess) {
+                                    Toast.makeText(context, getString(context,R.string.cuenta_creada), Toast.LENGTH_SHORT).show()
+                                    onSignUp()
+                                } else {
+                                    val errorMsg = result.exceptionOrNull()?.message ?: getString(context,R.string.error_desconocido)
+                                    Toast.makeText(context, errorMsg, Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        }
+                    },
                     modifier = Modifier
                         .width(300.dp)
                         .height(52.dp),
@@ -139,7 +175,7 @@ fun SignupScreen(){
                     )
                 ) {
                     Text(
-                        text = "REGISTRARSE",
+                        text = getString(context,R.string.registrarse),
                         fontFamily = FontFamily(Font(R.font.saira_regular)),
                     )
                 }
