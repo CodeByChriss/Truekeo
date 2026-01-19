@@ -15,7 +15,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
@@ -85,7 +87,7 @@ fun CreateEventTab(){
                 Spacer(Modifier.height(24.dp))
 
                 Text(
-                    text = "Crear trueke",
+                    text = stringResource(R.string.create_trueke),
                     fontSize = 32.sp,
                     fontFamily = FontFamily(Font(R.font.saira_medium)),
                     color = MaterialTheme.colorScheme.primary,
@@ -99,7 +101,7 @@ fun CreateEventTab(){
                 OutlinedTextField(
                     value = title,
                     onValueChange = { title = it },
-                    label = { Text("Título") },
+                    label = { Text(stringResource(R.string.title)) },
                     singleLine = true,
                     shape = RoundedCornerShape(8.dp),
                     modifier = Modifier.fillMaxWidth()
@@ -111,7 +113,7 @@ fun CreateEventTab(){
                 OutlinedTextField(
                     value = details,
                     onValueChange = { details = it },
-                    label = { Text("Detalles") },
+                    label = { Text(stringResource(R.string.details)) },
                     shape = RoundedCornerShape(8.dp),
                     modifier = Modifier
                         .fillMaxWidth()
@@ -130,7 +132,7 @@ fun CreateEventTab(){
                         locationCoordinates = locationData.coordinates
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    label = "Ubicación"
+                    label = stringResource(R.string.location)
                 )
                 FormErrorText(showError = showLocationError)
 
@@ -138,7 +140,7 @@ fun CreateEventTab(){
 
                 // Sección de información del producto del trueke
                 Text(
-                    text = "Producto a truekear",
+                    text = stringResource(R.string.product_to_trueke),
                     fontFamily = FontFamily(Font(R.font.saira_medium)),
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onBackground,
@@ -158,7 +160,7 @@ fun CreateEventTab(){
                         OutlinedTextField(
                             value = itemName,
                             onValueChange = { itemName = it },
-                            label = { Text("Nombre del producto") },
+                            label = { Text(stringResource(R.string.product_name)) },
                             singleLine = true,
                             shape = RoundedCornerShape(8.dp),
                             modifier = Modifier.fillMaxWidth()
@@ -170,7 +172,7 @@ fun CreateEventTab(){
                         OutlinedTextField(
                             value = itemDescription,
                             onValueChange = { itemDescription = it },
-                            label = { Text("Descripción del producto") },
+                            label = { Text(stringResource(R.string.product_description)) },
                             shape = RoundedCornerShape(8.dp),
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -240,6 +242,7 @@ private fun ItemConditionDropdown(
     onValueChange: (ItemCondition) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     var expanded by remember { mutableStateOf(false) }
 
     ExposedDropdownMenuBox(
@@ -248,10 +251,10 @@ private fun ItemConditionDropdown(
         modifier = modifier
     ) {
         OutlinedTextField(
-            value = value.displayName(),
+            value = value.displayName(context),
             onValueChange = {},
             readOnly = true,
-            label = { Text("Estado del producto") },
+            label = { Text(stringResource(R.string.product_state)) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
             shape = RoundedCornerShape(8.dp),
             modifier = Modifier
@@ -264,7 +267,7 @@ private fun ItemConditionDropdown(
         ) {
             ItemCondition.entries.forEach { condition ->
                 DropdownMenuItem(
-                    text = { Text(condition.displayName()) },
+                    text = { Text(condition.displayName(context)) },
                     onClick = {
                         onValueChange(condition)
                         expanded = false

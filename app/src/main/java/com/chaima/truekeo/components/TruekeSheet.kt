@@ -36,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.Dp
@@ -171,20 +172,22 @@ private fun TruekeInfoSection(trueke: Trueke) {
 // Sección que muestra el ítem ofrecido por el host del trueke
 @Composable
 private fun TruekeHostItemSection(item: Item) {
+    val context = LocalContext.current
+
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
-            text = "Producto ofrecido",
+            text = stringResource(R.string.product_offered),
             style = MaterialTheme.typography.titleMedium,
             fontFamily = FontFamily(Font(R.font.saira_medium)),
         )
 
         Column {
-            KeyValueRow(label = "Nombre", value = item.title)
+            KeyValueRow(label = stringResource(R.string.product_name_label), value = item.title)
             RowDivider(thickness = 0.5.dp, color = MaterialTheme.colorScheme.onSurfaceVariant)
 
             if (!item.details.isNullOrBlank()) {
                 KeyValueRow(
-                    label = "Detalles",
+                    label = stringResource(R.string.product_details_label),
                     value = item.details,
                     multiline = true
                 )
@@ -193,14 +196,14 @@ private fun TruekeHostItemSection(item: Item) {
 
             if (!item.brand.isNullOrBlank()) {
                 KeyValueRow(
-                    label = "Marca",
+                    label = stringResource(R.string.product_brand_label),
                     value = item.brand,
                     multiline = true
                 )
                 RowDivider(thickness = 0.5.dp, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
 
-            KeyValueRow(label = "Estado", value = item.condition.displayName())
+            KeyValueRow(label = stringResource(R.string.product_status_label), value = item.condition.displayName(context))
         }
     }
 
@@ -269,7 +272,7 @@ private fun UploadedByRow(hostUser: User) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "Subido por",
+            text = stringResource(R.string.uploaded_by),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontFamily = FontFamily(Font(R.font.saira_regular)),
