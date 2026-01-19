@@ -63,7 +63,6 @@ fun LocationSearchField(
             value = value,
             onValueChange = { newValue ->
                 onValueChange(newValue)
-
                 // Cancelar búsqueda anterior
                 searchJob?.cancel()
 

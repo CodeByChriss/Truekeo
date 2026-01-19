@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">Truekeo</string>
+    <string name="title_activity_splash_screen" translatable="false">SplashScreen</string>
+
+    <string name="default_web_client_id" translatable="false">1014848725574-kb2ucqs2hadqt47pou7qigsln5fljjj1.apps.googleusercontent.com</string>
+
+    <string name="truekeo_logo">Truekeo logo</string>
+
+    <string name="sign_in">Sign in</string>
+    <string name="username_or_email">Email or username</string>
+    <string name="toggle_password_visibility">Toggle password visibility</string>
+    <string name="login_button">Log in</string>
+    <string name="dont_have_account">Don’t have an account? Create one&#160;</string>
+    <string name="here">here</string>
+    <string name="or">Or</string>
+    <string name="continue_with_google">Continue with Google</string>
+
+    <string name="password">Password</string>
+
+    <string name="create_account">Create account</string>
+    <string name="repeat_password">Repeat password</string>
+    <string name="register">Sign up</string>
+    <string name="email">Email</string>
+    <string name="username">Username</string>
+    <string name="account_created_success">Account successfully created</string>
+
+    <string name="error_unknown">Unknown error</string>
+    <string name="error_invalid_credentials">Invalid credentials</string>
+    <string name="error_google_sign_in">Google Sign-In configuration error</string>
+    <string name="error_getting_credentials">Error getting credentials</string>
+    <string name="login_cancelled_by_user">Sign-in cancelled by user</string>
+    <string name="no_google_account">No Google accounts found. Add an account in Settings</string>
+</resources>

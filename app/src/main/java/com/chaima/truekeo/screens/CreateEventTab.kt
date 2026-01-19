@@ -43,7 +43,7 @@ fun CreateEventTab(){
     var locationCoordinates by remember { mutableStateOf<GeoPoint?>(null) }
 
     // Producto (Item)
-    var itemTitle by remember { mutableStateOf("") }
+    var itemName by remember { mutableStateOf("") }
     var itemDescription by remember { mutableStateOf("") }
     var itemCondition by remember { mutableStateOf(ItemCondition.GOOD) }
     var itemImageUri by remember { mutableStateOf<Uri?>(null) }
@@ -52,6 +52,21 @@ fun CreateEventTab(){
     ) { uri ->
         if (uri != null) itemImageUri = uri
     }
+
+    // Validación de formulario
+    var triedSubmit by remember { mutableStateOf(false) }
+
+    val titleOk = title.trim().isNotEmpty()
+    val locationOk = locationText.trim().isNotEmpty() && locationCoordinates != null
+    val itemNameOk = itemName.trim().isNotEmpty()
+    val imageOk = itemImageUri != null
+
+    val showTitleError = triedSubmit && !titleOk
+    val showLocationError = triedSubmit && !locationOk
+    val showItemNameError = triedSubmit && !itemNameOk
+    val showImageError = triedSubmit && !imageOk
+
+    val formOk = titleOk && locationOk && itemNameOk && imageOk
 
     TruekeoTheme(dynamicColor = false) {
         Box(
@@ -87,11 +102,11 @@ fun CreateEventTab(){
                     label = { Text("Título") },
                     singleLine = true,
                     shape = RoundedCornerShape(8.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth()
                 )
+                FormErrorText(showError = showTitleError)
 
-                Spacer(Modifier.height(7.dp))
+                Spacer(Modifier.height(1.dp))
 
                 OutlinedTextField(
                     value = details,
@@ -103,8 +118,9 @@ fun CreateEventTab(){
                         .height(140.dp),
                     maxLines = 5
                 )
+                FormErrorText(showError = false)
 
-                Spacer(Modifier.height(7.dp))
+                Spacer(Modifier.height(1.dp))
 
                 LocationSearchField(
                     value = locationText,
@@ -116,19 +132,20 @@ fun CreateEventTab(){
                     modifier = Modifier.fillMaxWidth(),
                     label = "Ubicación"
                 )
+                FormErrorText(showError = showLocationError)
 
-                Spacer(Modifier.height(18.dp))
+                Spacer(Modifier.height(9.dp))
 
                 // Sección de información del producto del trueke
                 Text(
                     text = "Producto a truekear",
                     fontFamily = FontFamily(Font(R.font.saira_medium)),
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Start
                 )
-                Spacer(Modifier.height(10.dp))
+                Spacer(Modifier.height(6.dp))
 
                 OutlinedCard(
                     modifier = Modifier.fillMaxWidth(),
@@ -139,15 +156,16 @@ fun CreateEventTab(){
                 ) {
                     Column(Modifier.padding(14.dp, 9.dp, 14.dp, 14.dp)) {
                         OutlinedTextField(
-                            value = itemTitle,
-                            onValueChange = { itemTitle = it },
+                            value = itemName,
+                            onValueChange = { itemName = it },
                             label = { Text("Nombre del producto") },
                             singleLine = true,
                             shape = RoundedCornerShape(8.dp),
                             modifier = Modifier.fillMaxWidth()
                         )
+                        FormErrorText(showError = showItemNameError)
 
-                        Spacer(Modifier.height(7.dp))
+                        Spacer(Modifier.height(1.dp))
 
                         OutlinedTextField(
                             value = itemDescription,
@@ -159,8 +177,9 @@ fun CreateEventTab(){
                                 .height(110.dp),
                             maxLines = 5
                         )
+                        FormErrorText(showError = false)
 
-                        Spacer(Modifier.height(9.dp))
+                        Spacer(Modifier.height(1.dp))
 
                         // Dropdown condición
                         ItemConditionDropdown(
@@ -187,7 +206,14 @@ fun CreateEventTab(){
                 Spacer(Modifier.height(22.dp))
 
                 Button(
-                    onClick = {},
+                    onClick = {
+                        triedSubmit = true
+                        focusManager.clearFocus()
+
+                        if (!formOk) return@Button
+
+                        // TODO: Aquí ya está todo OK -> crear trueke
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),
@@ -247,4 +273,23 @@ private fun ItemConditionDropdown(
             }
         }
     }
+}
+
+// Texto de error para campos de formulario
+@Composable
+fun FormErrorText(
+    showError: Boolean,
+    modifier: Modifier = Modifier
+) {
+    Text(
+        text = if (showError) "Este campo es obligatorio" else " ",
+        color = if (showError)
+            MaterialTheme.colorScheme.error
+        else
+            Color.Transparent,
+        style = MaterialTheme.typography.labelSmall,
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(top = 3.dp)
+    )
 }

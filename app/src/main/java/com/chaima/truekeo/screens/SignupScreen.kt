@@ -67,13 +67,13 @@ fun SignupScreen(onSignUp: () -> Unit) {
 
                 Image(
                     painter = painterResource(id = R.drawable.logo),
-                    contentDescription = getString(context,R.string.logo_truekeo),
+                    contentDescription = getString(context,R.string.truekeo_logo),
                     modifier = Modifier.size(96.dp)
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
                 Text(
-                    text = getString(context,R.string.crear_cuenta),
+                    text = getString(context,R.string.create_account),
                     fontSize = 36.sp,
                     fontFamily = FontFamily(Font(R.font.saira_regular)),
                     color = MaterialTheme.colorScheme.primary
@@ -93,7 +93,7 @@ fun SignupScreen(onSignUp: () -> Unit) {
                 OutlinedTextField(
                     value = username,
                     onValueChange = { username = it },
-                    label = { Text(getString(context,R.string.nombre_usuario)) },
+                    label = { Text(getString(context,R.string.username)) },
                     shape = RoundedCornerShape(8.dp),
                     modifier = Modifier
                         .width(300.dp)
@@ -103,7 +103,7 @@ fun SignupScreen(onSignUp: () -> Unit) {
                 OutlinedTextField(
                     value = password,
                     onValueChange = { password = it },
-                    label = { Text(getString(context,R.string.contrasenia)) },
+                    label = { Text(getString(context,R.string.password)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
                     trailingIcon = {
@@ -114,7 +114,7 @@ fun SignupScreen(onSignUp: () -> Unit) {
                         IconButton(onClick = { showPassword = !showPassword }) {
                             Icon(
                                 imageVector = image,
-                                contentDescription = getString(context,R.string.alternar_visibilidad_contrasenia),
+                                contentDescription = getString(context,R.string.toggle_password_visibility),
                                 modifier = Modifier.width(24.dp)
                             )
                         }
@@ -128,7 +128,7 @@ fun SignupScreen(onSignUp: () -> Unit) {
                 OutlinedTextField(
                     value = confirmPassword,
                     onValueChange = { confirmPassword = it },
-                    label = { Text(getString(context,R.string.repetir_contrasenia)) },
+                    label = { Text(getString(context,R.string.repeat_password)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
                     trailingIcon = {
@@ -139,7 +139,7 @@ fun SignupScreen(onSignUp: () -> Unit) {
                         IconButton(onClick = { showPassword = !showPassword }) {
                             Icon(
                                 imageVector = image,
-                                contentDescription = getString(context,R.string.alternar_visibilidad_contrasenia),
+                                contentDescription = getString(context,R.string.toggle_password_visibility),
                                 modifier = Modifier.width(24.dp)
                             )
                         }
@@ -156,10 +156,10 @@ fun SignupScreen(onSignUp: () -> Unit) {
                             scope.launch {
                                 val result = authManager.signUp(email, username, password)
                                 if (result.isSuccess) {
-                                    Toast.makeText(context, getString(context,R.string.cuenta_creada), Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, getString(context,R.string.account_created_success), Toast.LENGTH_SHORT).show()
                                     onSignUp()
                                 } else {
-                                    val errorMsg = result.exceptionOrNull()?.message ?: getString(context,R.string.error_desconocido)
+                                    val errorMsg = result.exceptionOrNull()?.message ?: getString(context,R.string.error_unknown)
                                     Toast.makeText(context, errorMsg, Toast.LENGTH_SHORT).show()
                                 }
                             }
@@ -175,7 +175,7 @@ fun SignupScreen(onSignUp: () -> Unit) {
                     )
                 ) {
                     Text(
-                        text = getString(context,R.string.registrarse),
+                        text = getString(context,R.string.register),
                         fontFamily = FontFamily(Font(R.font.saira_regular)),
                     )
                 }
