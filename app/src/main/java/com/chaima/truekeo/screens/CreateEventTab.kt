@@ -22,6 +22,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.chaima.truekeo.R
+import com.chaima.truekeo.components.LocationSearchField
+import com.chaima.truekeo.models.GeoPoint
 import com.chaima.truekeo.models.ItemCondition
 import com.chaima.truekeo.ui.theme.TruekeoTheme
 import java.time.LocalDate
@@ -38,9 +40,7 @@ fun CreateEventTab(){
     var title by remember { mutableStateOf("") }
     var details by remember { mutableStateOf("") }
     var locationText by remember { mutableStateOf("") }
-    var showDatePicker by remember { mutableStateOf(false) }
-    var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
-    val dateFormatter = remember { DateTimeFormatter.ofPattern("dd / MM / yyyy") }
+    var locationCoordinates by remember { mutableStateOf<GeoPoint?>(null) }
 
     // Producto (Item)
     var itemTitle by remember { mutableStateOf("") }
@@ -106,13 +106,15 @@ fun CreateEventTab(){
 
                 Spacer(Modifier.height(7.dp))
 
-                OutlinedTextField(
+                LocationSearchField(
                     value = locationText,
                     onValueChange = { locationText = it },
-                    label = { Text("Ubicación") },
-                    singleLine = true,
-                    shape = RoundedCornerShape(8.dp),
-                    modifier = Modifier.fillMaxWidth()
+                    onLocationSelected = { locationData ->
+                        locationText = locationData.name
+                        locationCoordinates = locationData.coordinates
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    label = "Ubicación"
                 )
 
                 Spacer(Modifier.height(18.dp))
