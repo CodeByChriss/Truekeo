@@ -14,7 +14,7 @@ private val DarkColorScheme = darkColorScheme(
     primary = PrimaryDark,
     secondary = Primary,
     tertiary = PrimaryLight,
-
+    error = Accent,
     onSurfaceVariant = Gray
 )
 
@@ -22,7 +22,7 @@ private val LightColorScheme = lightColorScheme(
     primary = PrimaryDark,
     secondary = Primary,
     tertiary = PrimaryLight,
-
+    error = Accent,
     onSurfaceVariant = Gray
 )
 

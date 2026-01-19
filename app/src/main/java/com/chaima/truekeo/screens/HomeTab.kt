@@ -18,8 +18,11 @@ import com.chaima.truekeo.models.Trueke
 import com.chaima.truekeo.components.TruekeSheetContent
 import com.chaima.truekeo.models.User
 import com.mapbox.geojson.Point
+import com.mapbox.maps.CameraBoundsOptions
 import com.mapbox.maps.CameraOptions
+import com.mapbox.maps.CoordinateBounds
 import com.mapbox.maps.MapboxExperimental
+import com.mapbox.maps.extension.compose.MapEffect
 import com.mapbox.maps.extension.compose.MapboxMap
 import com.mapbox.maps.extension.compose.annotation.Marker
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
@@ -126,10 +129,10 @@ fun HomeTab() {
                     .center(Point.fromLngLat(loc.lng, loc.lat))
                     .padding(
                         com.mapbox.maps.EdgeInsets(
-                            0.0,  // top
-                            0.0,  // left
-                            offsetPx.toDouble(),  // bottom - espacio para el sheet
-                            0.0   // right
+                            0.0,
+                            0.0,
+                            offsetPx.toDouble(),
+                            0.0
                         )
                     )
                     .zoom(14.0)
@@ -146,6 +149,22 @@ fun HomeTab() {
         modifier = Modifier.fillMaxSize(),
         mapViewportState = mapViewportState
     ) {
+        // Limitar la vista del mapa a España
+        MapEffect(Unit) { mapView ->
+            val spainBounds = CoordinateBounds(
+                Point.fromLngLat(-9.5, 35.8),
+                Point.fromLngLat(4.6, 43.9)
+            )
+
+            mapView.mapboxMap.setBounds(
+                CameraBoundsOptions.Builder()
+                    .bounds(spainBounds)
+                    .minZoom(4.5)
+                    .maxZoom(18.0)
+                    .build()
+            )
+        }
+
         truekes
             .filter { it.location != null }
             .forEach { trueke ->
