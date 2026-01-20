@@ -25,6 +25,7 @@ import com.mapbox.search.SearchSelectionCallback
 import com.mapbox.search.SearchOptions
 import com.chaima.truekeo.models.GeoPoint
 import com.mapbox.search.common.IsoCountryCode
+import com.mapbox.geojson.Point
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -42,7 +43,8 @@ fun LocationSearchField(
     onValueChange: (String) -> Unit,
     onLocationSelected: (LocationData) -> Unit,
     modifier: Modifier = Modifier,
-    label: String = "Ubicación"
+    label: String,
+    userLocation: Point? = null // Añadir ubicación del usuario para proximity
 ) {
     val scope = rememberCoroutineScope()
 
@@ -53,7 +55,7 @@ fun LocationSearchField(
 
     val searchEngine = remember {
         SearchEngine.createSearchEngineWithBuiltInDataProviders(
-            apiType = ApiType.GEOCODING,
+            apiType = ApiType.SEARCH_BOX,
             settings = SearchEngineSettings()
         )
     }
@@ -63,7 +65,6 @@ fun LocationSearchField(
             value = value,
             onValueChange = { newValue ->
                 onValueChange(newValue)
-                // Cancelar búsqueda anterior
                 searchJob?.cancel()
 
                 if (newValue.length >= 3) {
@@ -74,10 +75,9 @@ fun LocationSearchField(
                         val searchOptions = SearchOptions(
                             limit = 5,
                             countries = listOf(IsoCountryCode.SPAIN),
-                            // Usar proximidad si tienes la ubicación del usuario
+                            proximity = userLocation // Usar ubicación del usuario para resultados más relevantes
                         )
 
-                        // Usar la firma correcta con SearchSuggestionsCallback
                         searchEngine.search(
                             newValue,
                             searchOptions,
@@ -87,8 +87,15 @@ fun LocationSearchField(
                                     responseInfo: ResponseInfo
                                 ) {
                                     isLoading = false
-                                    suggestions = results.take(5)
-                                    showSuggestions = true
+                                    // Filtrar resultados para priorizar direcciones exactas
+                                    suggestions = results
+                                        .filter { suggestion ->
+                                            // Priorizar resultados que tienen street address
+                                            suggestion.address?.street != null ||
+                                                    suggestion.name.contains(newValue, ignoreCase = true)
+                                        }
+                                        .take(5)
+                                    showSuggestions = suggestions.isNotEmpty()
                                 }
 
                                 override fun onError(e: Exception) {
@@ -121,7 +128,6 @@ fun LocationSearchField(
             modifier = Modifier.fillMaxWidth()
         )
 
-        // Mostrar sugerencias
         if (showSuggestions && suggestions.isNotEmpty()) {
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -132,43 +138,18 @@ fun LocationSearchField(
                     suggestions.forEach { suggestion ->
                         ListItem(
                             headlineContent = {
-                                // Construir dirección completa para el título
-                                val fullAddressText = buildString {
-                                    val street = suggestion.address?.street
-                                    val houseNumber = suggestion.address?.houseNumber
-                                    val postcode = suggestion.address?.postcode
-                                    val city = suggestion.address?.place
-
-                                    // Calle y número
-                                    if (street != null) {
-                                        append(street)
-                                        if (houseNumber != null) {
-                                            append(" $houseNumber")
-                                        }
-                                    }
-
-                                    // Código postal
-                                    if (postcode != null) {
-                                        if (isNotEmpty()) append(", ")
-                                        append(postcode)
-                                    }
-
-                                    // Ciudad
-                                    if (city != null) {
-                                        if (isNotEmpty()) append(", ")
-                                        append(city)
-                                    }
-
-                                    // Si no hay datos específicos, usar name o descriptionText
-                                    if (isEmpty()) {
-                                        append(suggestion.name)
-                                    }
-                                }
+                                val fullAddressText = buildFullAddress(
+                                    suggestion.address?.street,
+                                    suggestion.address?.houseNumber,
+                                    suggestion.address?.postcode,
+                                    suggestion.address?.place,
+                                    suggestion.name
+                                )
 
                                 Text(
                                     text = fullAddressText,
                                     fontFamily = FontFamily(Font(R.font.saira_medium)),
-                                    maxLines = 1,
+                                    maxLines = 2,
                                     overflow = TextOverflow.Ellipsis
                                 )
                             },
@@ -183,12 +164,15 @@ fun LocationSearchField(
                                 containerColor = Color.White
                             ),
                             modifier = Modifier.clickable {
-                                // Usar SearchSelectionCallback con una sola sugerencia
+                                // Marcar que estamos seleccionando
+                                showSuggestions = false
+                                suggestions = emptyList()
+
                                 searchEngine.select(
                                     suggestion,
                                     object : SearchSelectionCallback {
                                         override fun onSuggestions(
-                                            suggestions: List<SearchSuggestion>,
+                                            suggestionsList: List<SearchSuggestion>,
                                             responseInfo: ResponseInfo
                                         ) {
                                             // Algunas sugerencias requieren más refinamiento
@@ -199,46 +183,15 @@ fun LocationSearchField(
                                             result: com.mapbox.search.result.SearchResult,
                                             responseInfo: ResponseInfo
                                         ) {
-                                            val fullAddress = buildString {
-                                                val street = result.address?.street
-                                                val houseNumber = result.address?.houseNumber
-                                                val postcode = result.address?.postcode
-                                                val city = result.address?.place
-
-                                                if (street != null) {
-                                                    append(street)
-                                                    if (houseNumber != null) {
-                                                        append(" $houseNumber")
-                                                    }
-                                                }
-
-                                                if (postcode != null) {
-                                                    if (isNotEmpty()) append(", ")
-                                                    append(postcode)
-                                                }
-
-                                                if (city != null) {
-                                                    if (isNotEmpty()) append(", ")
-                                                    append(city)
-                                                }
-
-                                                if (isEmpty()) {
-                                                    result.descriptionText?.let { append(it) }
-                                                }
-                                            }
-
-                                            val locationData = LocationData(
-                                                name = result.name,
-                                                address = fullAddress,
-                                                coordinates = GeoPoint(
-                                                    lng = result.coordinate.longitude(),
-                                                    lat = result.coordinate.latitude()
-                                                )
+                                            handleLocationSelection(
+                                                result,
+                                                onLocationSelected,
+                                                onValueChange
                                             )
-                                            onLocationSelected(locationData)
-                                            onValueChange(result.name)
-                                            suggestions = emptyList()
-                                            showSuggestions = false
+                                            // Resetear el flag después de un pequeño delay
+                                            scope.launch {
+                                                delay(100)
+                                            }
                                         }
 
                                         override fun onResults(
@@ -247,51 +200,15 @@ fun LocationSearchField(
                                             responseInfo: ResponseInfo
                                         ) {
                                             results.firstOrNull()?.let { result ->
-                                                // Construir dirección en formato: calle número, código postal, ciudad
-                                                val fullAddress = buildString {
-                                                    val street = result.address?.street
-                                                    val houseNumber = result.address?.houseNumber
-                                                    val postcode = result.address?.postcode
-                                                    val city = result.address?.place
-
-                                                    // Calle y número
-                                                    if (street != null) {
-                                                        append(street)
-                                                        if (houseNumber != null) {
-                                                            append(" $houseNumber")
-                                                        }
-                                                    }
-
-                                                    // Código postal
-                                                    if (postcode != null) {
-                                                        if (isNotEmpty()) append(", ")
-                                                        append(postcode)
-                                                    }
-
-                                                    // Ciudad
-                                                    if (city != null) {
-                                                        if (isNotEmpty()) append(", ")
-                                                        append(city)
-                                                    }
-
-                                                    // Si no hay datos, usar descriptionText
-                                                    if (isEmpty()) {
-                                                        result.descriptionText?.let { append(it) }
-                                                    }
-                                                }
-
-                                                val locationData = LocationData(
-                                                    name = result.name,
-                                                    address = fullAddress,
-                                                    coordinates = GeoPoint(
-                                                        lng = result.coordinate.longitude(),
-                                                        lat = result.coordinate.latitude()
-                                                    )
+                                                handleLocationSelection(
+                                                    result,
+                                                    onLocationSelected,
+                                                    onValueChange
                                                 )
-                                                onLocationSelected(locationData)
-                                                onValueChange(result.name)
-                                                suggestions = emptyList()
-                                                showSuggestions = false
+
+                                                scope.launch {
+                                                    delay(100)
+                                                }
                                             }
                                         }
 
@@ -316,4 +233,68 @@ fun LocationSearchField(
             )
         }
     }
+}
+
+// Función helper para construir la dirección completa
+private fun buildFullAddress(
+    street: String?,
+    houseNumber: String?,
+    postcode: String?,
+    city: String?,
+    fallbackName: String
+): String {
+    return buildString {
+        // Calle y número
+        if (street != null) {
+            append(street)
+            if (houseNumber != null) {
+                append(" $houseNumber")
+            }
+        }
+
+        // Código postal
+        if (postcode != null) {
+            if (isNotEmpty()) append(", ")
+            append(postcode)
+        }
+
+        // Ciudad
+        if (city != null) {
+            if (isNotEmpty()) append(", ")
+            append(city)
+        }
+
+        // Si no hay datos específicos, usar el nombre
+        if (isEmpty()) {
+            append(fallbackName)
+        }
+    }
+}
+
+// Función helper para manejar la selección de ubicación
+private fun handleLocationSelection(
+    result: com.mapbox.search.result.SearchResult,
+    onLocationSelected: (LocationData) -> Unit,
+    onValueChange: (String) -> Unit
+) {
+    val fullAddress = buildFullAddress(
+        result.address?.street,
+        result.address?.houseNumber,
+        result.address?.postcode,
+        result.address?.place,
+        result.descriptionText ?: result.name
+    )
+
+    onValueChange(fullAddress)
+
+    val locationData = LocationData(
+        name = result.name,
+        address = fullAddress,
+        coordinates = GeoPoint(
+            lng = result.coordinate.longitude(),
+            lat = result.coordinate.latitude()
+        )
+    )
+
+    onLocationSelected(locationData)
 }

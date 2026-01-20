@@ -1,5 +1,8 @@
 package com.chaima.truekeo.models
 
+import android.content.Context
+import com.chaima.truekeo.R
+
 data class Item(
     val id: String,
     val title: String,
@@ -10,14 +13,17 @@ data class Item(
 )
 
 enum class ItemCondition {
-     NEW, LIKE_NEW, GOOD, FAIR, POOR;
+    NEW, LIKE_NEW, GOOD, FAIR, POOR;
 
-    fun displayName(): String = when (this) {
-        NEW -> "Nuevo"
-        LIKE_NEW -> "Casi nuevo"
-        GOOD -> "Muy bueno"
-        FAIR -> "Bueno"
-        POOR -> "Satisfactorio"
+    fun getStringResource(): Int = when (this) {
+        NEW -> R.string.product_state_new
+        LIKE_NEW -> R.string.product_state_like_new
+        GOOD -> R.string.product_state_good
+        FAIR -> R.string.product_state_fair
+        POOR -> R.string.product_state_poor
     }
 
+    fun displayName(context: Context): String {
+        return context.getString(getStringResource())
+    }
 }
