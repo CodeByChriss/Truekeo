@@ -1,6 +1,7 @@
 package com.chaima.truekeo.screens
 
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,7 +47,7 @@ import com.chaima.truekeo.ui.theme.TruekeoTheme
 import kotlinx.coroutines.launch
 
 @Composable
-fun SignupScreen(onSignUp: () -> Unit) {
+fun SignupScreen(onSignUp: () -> Unit, onBackToLogin: () -> Unit) {
     val authManager = remember { AuthManager() }
     val scope = rememberCoroutineScope()
     var email by remember { mutableStateOf("") }
@@ -55,6 +56,10 @@ fun SignupScreen(onSignUp: () -> Unit) {
     var confirmPassword by remember { mutableStateOf("") }
     var showPassword by remember { mutableStateOf(false) }
     val context = LocalContext.current
+
+    BackHandler {
+        onBackToLogin() // Navegar de vuelta a la pantalla de login al presionar el botón de retroceso del dispositivo
+    }
 
     TruekeoTheme(dynamicColor = false) {
         Box(
@@ -72,6 +77,7 @@ fun SignupScreen(onSignUp: () -> Unit) {
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
+
                 Text(
                     text = getString(context,R.string.create_account),
                     fontSize = 36.sp,
@@ -80,30 +86,36 @@ fun SignupScreen(onSignUp: () -> Unit) {
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
+
                 OutlinedTextField(
                     value = email,
                     onValueChange = { email = it },
                     label = { Text(getString(context,R.string.email)) },
+                    singleLine = true,
                     shape = RoundedCornerShape(8.dp),
                     modifier = Modifier
                         .width(300.dp)
                 )
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(12.dp))
+
                 OutlinedTextField(
                     value = username,
                     onValueChange = { username = it },
                     label = { Text(getString(context,R.string.username)) },
+                    singleLine = true,
                     shape = RoundedCornerShape(8.dp),
                     modifier = Modifier
                         .width(300.dp)
                 )
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(12.dp))
+
                 OutlinedTextField(
                     value = password,
                     onValueChange = { password = it },
                     label = { Text(getString(context,R.string.password)) },
+                    singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
                     trailingIcon = {
@@ -124,11 +136,13 @@ fun SignupScreen(onSignUp: () -> Unit) {
                         .width(300.dp)
                 )
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(12.dp))
+
                 OutlinedTextField(
                     value = confirmPassword,
                     onValueChange = { confirmPassword = it },
                     label = { Text(getString(context,R.string.repeat_password)) },
+                    singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
                     trailingIcon = {
@@ -149,7 +163,8 @@ fun SignupScreen(onSignUp: () -> Unit) {
                         .width(300.dp)
                 )
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(28.dp))
+
                 Button(
                     onClick = {
                         if (password == confirmPassword) {

@@ -161,7 +161,7 @@ private fun TruekeInfoSection(trueke: Trueke) {
         }
 
         Text(
-            text = timeAgo(trueke.createdAt),
+            text = timeAgo(context, trueke.createdAt),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontFamily = FontFamily(Font(R.font.saira_regular)),

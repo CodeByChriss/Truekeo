@@ -93,27 +93,35 @@ fun LoginScreen(onSignUp: () -> Unit, onLogin: () -> Unit) {
                     contentDescription = getString(context,R.string.truekeo_logo),
                     modifier = Modifier.size(96.dp)
                 )
+
                 Spacer(modifier = Modifier.height(24.dp))
+
                 Text(
                     text = getString(context,R.string.sign_in),
                     fontSize = 36.sp,
                     fontFamily = FontFamily(Font(R.font.saira_regular)),
                     color = MaterialTheme.colorScheme.primary
                 )
+
                 Spacer(modifier = Modifier.height(24.dp))
+
                 OutlinedTextField(
                     value = emailOusuario,
                     onValueChange = { emailOusuario = it },
                     label = { Text(getString(context,R.string.username_or_email)) },
+                    singleLine = true,
                     shape = RoundedCornerShape(8.dp),
                     modifier = Modifier
                         .width(300.dp)
                 )
-                Spacer(modifier = Modifier.height(24.dp))
+
+                Spacer(modifier = Modifier.height(12.dp))
+
                 OutlinedTextField(
                     value = password,
                     onValueChange = { password = it },
                     label = { Text(getString(context,R.string.password)) },
+                    singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
                     trailingIcon = {
@@ -133,7 +141,9 @@ fun LoginScreen(onSignUp: () -> Unit, onLogin: () -> Unit) {
                     modifier = Modifier
                         .width(300.dp)
                 )
-                Spacer(modifier = Modifier.height(24.dp))
+
+                Spacer(modifier = Modifier.height(28.dp))
+
                 Button(
                     onClick = {
                         scope.launch {
@@ -160,7 +170,9 @@ fun LoginScreen(onSignUp: () -> Unit, onLogin: () -> Unit) {
                         fontFamily = FontFamily(Font(R.font.saira_regular)),
                     )
                 }
+
                 Spacer(modifier = Modifier.height(24.dp))
+
                 Row {
                     Text(
                         text = getString(context,R.string.dont_have_account),
@@ -177,7 +189,9 @@ fun LoginScreen(onSignUp: () -> Unit, onLogin: () -> Unit) {
                         }
                     )
                 }
+
                 Spacer(modifier = Modifier.height(24.dp))
+
                 Text(
                     text = getString(context,R.string.or),
                     fontSize = 16.sp,
@@ -185,7 +199,9 @@ fun LoginScreen(onSignUp: () -> Unit, onLogin: () -> Unit) {
                     color = Color.Black,
                     modifier = Modifier.alpha(0.5f)
                 )
+
                 Spacer(modifier = Modifier.height(24.dp))
+
                 Button(
                     onClick = {
                         scope.launch {

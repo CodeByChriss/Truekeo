@@ -13,7 +13,7 @@
     <string name="login_button">Log in</string>
     <string name="dont_have_account">Don’t have an account? Create one&#160;</string>
     <string name="here">here</string>
-    <string name="or">Or</string>
+    <string name="or">OR</string>
     <string name="continue_with_google">Continue with Google</string>
 
     <string name="password">Password</string>
@@ -53,4 +53,6 @@
     <string name="product_state_good">Good</string>
     <string name="product_state_fair">Fair</string>
     <string name="product_state_poor">Worn</string>
+
+    <string name="time_published_now">Published just now</string>
 </resources>
