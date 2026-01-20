@@ -1,5 +1,7 @@
 package com.chaima.truekeo.models
 
+import android.content.Context
+import com.chaima.truekeo.R
 import java.time.Instant
 
 data class Trueke(
@@ -19,4 +21,16 @@ data class Trueke(
     val createdAt: Instant = Instant.now()
 )
 
-enum class TruekeStatus { OPEN, RESERVED, COMPLETED, CANCELLED }
+enum class TruekeStatus {
+    OPEN, RESERVED, COMPLETED, CANCELLED;
+    fun getStringResource(): Int = when (this) {
+        OPEN -> R.string.trueke_state_open
+        RESERVED -> R.string.trueke_state_reserved
+        COMPLETED -> R.string.trueke_state_completed
+        CANCELLED -> R.string.trueke_state_cancelled
+    }
+
+    fun displayName(context: Context): String {
+        return context.getString(getStringResource())
+    }
+}

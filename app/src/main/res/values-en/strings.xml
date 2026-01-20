@@ -55,4 +55,9 @@
     <string name="product_state_poor">Worn</string>
 
     <string name="time_published_now">Published just now</string>
+
+    <string name="trueke_state_open">Pending</string>
+    <string name="trueke_state_reserved">Reserved</string>
+    <string name="trueke_state_completed">Completed</string>
+    <string name="trueke_state_cancelled">Cancelled</string>
 </resources>

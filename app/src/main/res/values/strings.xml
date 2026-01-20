@@ -56,4 +56,9 @@
     <string name="product_state_poor">Desgastado</string>
     <!-- utiles de tiempo -->
     <string name="time_published_now">Publicado ahora mismo</string>
+    <!-- estados del trueke -->
+    <string name="trueke_state_open">Pendiente</string>
+    <string name="trueke_state_reserved">Reservado</string>
+    <string name="trueke_state_completed">Completado</string>
+    <string name="trueke_state_cancelled">Cancelado</string>
 </resources>
