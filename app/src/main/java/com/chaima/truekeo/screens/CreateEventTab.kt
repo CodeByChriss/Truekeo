@@ -28,8 +28,6 @@ import com.chaima.truekeo.components.LocationSearchField
 import com.chaima.truekeo.models.GeoPoint
 import com.chaima.truekeo.models.ItemCondition
 import com.chaima.truekeo.ui.theme.TruekeoTheme
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -66,7 +64,6 @@ fun CreateEventTab(){
     val showTitleError = triedSubmit && !titleOk
     val showLocationError = triedSubmit && !locationOk
     val showItemNameError = triedSubmit && !itemNameOk
-    val showImageError = triedSubmit && !imageOk
 
     val formOk = titleOk && locationOk && itemNameOk && imageOk
 
@@ -113,7 +110,7 @@ fun CreateEventTab(){
                 OutlinedTextField(
                     value = details,
                     onValueChange = { details = it },
-                    label = { Text(stringResource(R.string.details)) },
+                    label = { Text(stringResource(R.string.product_details_label)) },
                     shape = RoundedCornerShape(8.dp),
                     modifier = Modifier
                         .fillMaxWidth()

@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name" translatable="false">Truekeo</string>
     <string name="title_activity_splash_screen" translatable="false">SplashScreen</string>
@@ -6,32 +5,28 @@
     <!-- para la autenticación con tu cuenta de Google -->
     <string name="default_web_client_id" translatable="false">1014848725574-kb2ucqs2hadqt47pou7qigsln5fljjj1.apps.googleusercontent.com</string>
 
-    <string name="truekeo_logo">Logo de Truekeo</string>
-    <!-- login -->
-    <string name="sign_in">Inicia sesión</string>
-    <string name="username_or_email">Email o nombre de usuario</string>
-    <string name="toggle_password_visibility">Alternar visibilidad de la contraseña</string>
-    <string name="login_button">Acceder</string>
-    <string name="dont_have_account">Si no tienes cuenta, crea una&#160;</string>
-    <string name="here">aquí</string>
-    <string name="or">O</string>
-    <string name="continue_with_google">Continuar con Google</string>
-    <!-- login y registro -->
-    <string name="password">Contraseña</string>
-    <!-- registro -->
-    <string name="create_account">Crear cuenta</string>
-    <string name="repeat_password">Repetir contraseña</string>
-    <string name="register">Registrarse</string>
-    <string name="email">Correo electrónico</string>
-    <string name="username">Nombre de usuario</string>
-    <string name="account_created_success">Cuenta creada con éxito</string>
-    <!-- errores -->
-    <string name="error_unknown">Error desconocido</string>
-    <string name="error_invalid_credentials">Error con las credenciales</string>
-    <string name="error_google_sign_in">Error de configuración de Google Sign-In</string>
-    <string name="error_getting_credentials">Error al obtener credenciales</string>
-    <string name="login_cancelled_by_user">Inicio de sesión cancelado por el usuario</string>
-    <string name="no_google_account">No hay cuentas de Google. Agrega una cuenta en Ajustes</string>
+    <string name="logo_truekeo" translatable="false">Truekeo Logo</string>
+    <string name="login_email_o_usuario">Correo o Nombre de Usuario</string>
+    <string name="contrasenia">Contraseña</string>
+    <string name="repetir_contrasenia">Repetir Contraseña</string>
+    <string name="alternar_visibilidad_contrasenia">Alternar visibilidad de la contraseña.</string>
+    <string name="error_desconocido">Error desconocido.</string>
+    <string name="acceder">Acceder</string>
+    <string name="si_no_tienes_cuenta">Si no tienes cuenta, crea una </string>
+    <string name="aqui">aquí.</string>
+    <string name="o">O</string>
+    <string name="error_credenciales">Error con las credenciales.</string>
+    <string name="login_cancelado_usuario">Inicio de sesión cancelado por el usuario.</string>
+    <string name="no_cuenta_google">No hay cuentas de Google. Agrega una cuenta en Ajustes.</string>
+    <string name="error_google_sign_in">Error de configuración de Google Sign-In.</string>
+    <string name="error_obtener_credenciales">Error al obtener credenciales.</string>
+    <string name="continuar_google">Continuar con Google</string>
+    <string name="iniciar_sesion">Iniciar Sesión</string>
+    <string name="crear_cuenta">Crear Cuenta</string>
+    <string name="email">Correo Electrónico</string>
+    <string name="nombre_usuario">Nombre de Usuario</string>
+    <string name="cuenta_creada">Cuenta creada con éxito.</string>
+    <string name="registrarse">Registrarse</string>
     <!-- ficha de producto del bottom sheet -->
     <string name="product_offered">Producto ofrecido</string>
     <string name="product_name_label">Nombre</string>
@@ -42,7 +37,6 @@
     <!-- pestaña de crear trueke -->
     <string name="create_trueke">Crear trueke</string>
     <string name="title">Título</string>
-    <string name="details">Detalles</string>
     <string name="location">Ubicación</string>
     <string name="product_to_trueke">Producto a truekear</string>
     <string name="product_name">Nombre del producto</string>
