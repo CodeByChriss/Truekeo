@@ -16,6 +16,7 @@ import com.chaima.truekeo.models.Item
 import com.chaima.truekeo.models.ItemCondition
 import com.chaima.truekeo.models.Trueke
 import com.chaima.truekeo.components.TruekeSheetContent
+import com.chaima.truekeo.data.MockData
 import com.chaima.truekeo.models.User
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraBoundsOptions
@@ -43,64 +44,7 @@ fun HomeTab() {
     }
     val scope = rememberCoroutineScope()
 
-    //usuario de prueba
-    val user = User(
-        id = "u1",
-        username = "Chaima",
-        avatarUrl = "https://img.freepik.com/foto-gratis/hombre-negro-posando_23-2148171639.jpg?semt=ais_hybrid&w=740&q=80",
-    )
-
-    //truekes de prueba
-    val truekes = remember {
-        listOf(
-            Trueke(
-                id = "t1",
-                name = "Cambio PS4 por bici",
-                description = "Quedamos por Sol",
-                hostUser = user,
-                hostItem = Item(
-                    id = "i1",
-                    title = "PS4 Slim",
-                    "hola estos son los detalles hola estos son los detalles hola estos son los detalles hola estos son los detalles hola estos son los detalles hola estos son los detalles",
-                    "https://cdn.wallapop.com/images/10420/k5/qk/__/c10420p1218961628/i6217265588.jpg?pictureSize=W320",
-                    brand = "Sony",
-                    ItemCondition.NEW
-                ),
-                location = GeoPoint(-3.7038, 40.4168),
-                createdAt = Instant.now().minus(13, ChronoUnit.MINUTES)
-            ),
-            Trueke(
-                id = "t2",
-                name = "Cambio monitor por teclado mecánico",
-                hostUser = user,
-                hostItem = Item(
-                    id = "i2",
-                    title = "Monitor 24''",
-                    null,
-                    "https://cdn.wallapop.com/images/10420/ee/jl/__/c10420p870955066/i3115083731.jpg?pictureSize=W640",
-                    null,
-                    ItemCondition.NEW
-                ),
-                location = GeoPoint(-3.7123, 40.4250),
-                createdAt = Instant.now().minus(2, ChronoUnit.HOURS)
-            ),
-            Trueke(
-                id = "t3",
-                name = "Cambio libros",
-                hostUser = user,
-                hostItem = Item(
-                    id = "i3",
-                    title = "Pack libros DAM",
-                    null,
-                    "https://cdn.wallapop.com/images/10420/k5/ti/__/c10420p1219098489/i6218005841.jpg?pictureSize=W320",
-                    "Anaya",
-                    ItemCondition.NEW
-                ),
-                location = GeoPoint(-3.6890, 40.4095),
-                createdAt = Instant.now().minus(45, ChronoUnit.DAYS)
-            )
-        )
-    }
+    val truekes = remember { MockData.sampleTruekes }
 
     var selectedTrueke by remember { mutableStateOf<Trueke?>(null) }
     var showSheet by remember { mutableStateOf(false) }
