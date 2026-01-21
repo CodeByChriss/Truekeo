@@ -6,13 +6,13 @@ import java.time.Instant
 
 data class Trueke(
     val id: String,
-    val name: String,
+    val title: String,
     val description: String? = null,
 
     val hostUser: User,
     val hostItem: Item,
 
-    val takerUserId: String? = null,
+    val takerUser: User? = null,
     val takerItem: Item? = null,
 
     val location: GeoPoint? = null,

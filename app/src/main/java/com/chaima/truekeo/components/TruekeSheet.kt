@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -124,9 +123,8 @@ private fun TruekeInfoSection(trueke: Trueke) {
     }
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-
         Text(
-            text = trueke.name,
+            text = trueke.title,
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.primary,
             fontFamily = FontFamily(Font(R.font.saira_medium)),
@@ -182,7 +180,7 @@ private fun TruekeHostItemSection(item: Item) {
         )
 
         Column {
-            KeyValueRow(label = stringResource(R.string.product_name_label), value = item.title)
+            KeyValueRow(label = stringResource(R.string.product_name_label), value = item.name)
             RowDivider(thickness = 0.5.dp, color = MaterialTheme.colorScheme.onSurfaceVariant)
 
             if (!item.details.isNullOrBlank()) {

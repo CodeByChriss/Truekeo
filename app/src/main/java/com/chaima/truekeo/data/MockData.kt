@@ -41,12 +41,12 @@ object MockData {
     val sampleTruekes = listOf(
         Trueke(
             id = "t1",
-            name = "Cambio PS4 por bici",
+            title = "Cambio PS4 por bici",
             description = "Quedamos por Sol",
             hostUser = chaimaUser,
             hostItem = Item(
                 id = "i1",
-                title = "PS4 Slim",
+                name = "PS4 Slim",
                 details = "Consola en perfecto estado, incluye un mando y cables. Apenas usada, como nueva.",
                 imageUrl = "https://cdn.wallapop.com/images/10420/k5/qk/__/c10420p1218961628/i6217265588.jpg?pictureSize=W320",
                 brand = "Sony",
@@ -57,12 +57,12 @@ object MockData {
         ),
         Trueke(
             id = "t2",
-            name = "Cambio monitor por teclado mecánico",
+            title = "Cambio monitor por teclado mecánico",
             description = "Monitor gaming 144Hz, busco teclado mecánico de calidad similar",
             hostUser = mariaUser,
             hostItem = Item(
                 id = "i2",
-                title = "Monitor 24'' Gaming",
+                name = "Monitor 24'' Gaming",
                 details = "Monitor gaming 144Hz, 1ms de respuesta, perfecto para juegos competitivos",
                 imageUrl = "https://cdn.wallapop.com/images/10420/ee/jl/__/c10420p870955066/i3115083731.jpg?pictureSize=W640",
                 brand = "ASUS",
@@ -73,12 +73,12 @@ object MockData {
         ),
         Trueke(
             id = "t3",
-            name = "Cambio libros DAM",
+            title = "Cambio libros DAM",
             description = "Pack completo de libros del ciclo DAM, busco libros de DAW",
             hostUser = chaimaUser,
             hostItem = Item(
                 id = "i3",
-                title = "Pack libros DAM",
+                name = "Pack libros DAM",
                 details = "Libros completos del ciclo de Desarrollo de Aplicaciones Multiplataforma. Buen estado.",
                 imageUrl = "https://cdn.wallapop.com/images/10420/k5/ti/__/c10420p1219098489/i6218005841.jpg?pictureSize=W320",
                 brand = "Anaya",
@@ -89,12 +89,12 @@ object MockData {
         ),
         Trueke(
             id = "t4",
-            name = "Cambio patinete eléctrico",
+            title = "Cambio patinete eléctrico",
             description = "Patinete eléctrico Xiaomi, busco bicicleta plegable",
             hostUser = carlosUser,
             hostItem = Item(
                 id = "i4",
-                title = "Patinete Xiaomi M365",
+                name = "Patinete Xiaomi M365",
                 details = "Patinete eléctrico con 500km, batería en buen estado, incluye candado",
                 imageUrl = "https://cdn.wallapop.com/images/10420/3h/n7/__/c10420p1095857944/i5586890123.jpg?pictureSize=W320",
                 brand = "Xiaomi",
@@ -106,12 +106,12 @@ object MockData {
         ),
         Trueke(
             id = "t5",
-            name = "Cámara réflex por portátil",
+            title = "Cámara réflex por portátil",
             description = "Cámara Canon EOS 700D con objetivo 18-55mm, busco portátil gaming",
             hostUser = luciaUser,
             hostItem = Item(
                 id = "i5",
-                title = "Canon EOS 700D",
+                name = "Canon EOS 700D",
                 details = "Cámara réflex con objetivo kit, tarjeta SD 32GB, bolsa y trípode incluidos",
                 imageUrl = "https://cdn.wallapop.com/images/10420/qr/lm/__/c10420p945623178/i4234567890.jpg?pictureSize=W320",
                 brand = "Canon",
@@ -123,12 +123,12 @@ object MockData {
         ),
         Trueke(
             id = "t6",
-            name = "Guitarra eléctrica por bajo",
+            title = "Guitarra eléctrica por bajo",
             description = "Guitarra Fender Stratocaster, busco bajo eléctrico",
             hostUser = mariaUser,
             hostItem = Item(
                 id = "i6",
-                title = "Fender Stratocaster",
+                name = "Fender Stratocaster",
                 details = "Guitarra eléctrica con amplificador pequeño, cable y funda acolchada",
                 imageUrl = "https://cdn.wallapop.com/images/10420/mt/pr/__/c10420p1156789234/i5123456789.jpg?pictureSize=W320",
                 brand = "Fender",
@@ -140,12 +140,12 @@ object MockData {
         ),
         Trueke(
             id = "t7",
-            name = "iPhone 12 por Android tope de gama",
+            title = "iPhone 12 por Android tope de gama",
             description = "iPhone 12 128GB, busco Samsung S21 o similar",
             hostUser = carlosUser,
             hostItem = Item(
                 id = "i7",
-                title = "iPhone 12 128GB",
+                name = "iPhone 12 128GB",
                 details = "iPhone en perfecto estado, batería al 89%, sin arañazos, con caja original",
                 imageUrl = "https://cdn.wallapop.com/images/10420/xy/zq/__/c10420p1234567890/i6789012345.jpg?pictureSize=W320",
                 brand = "Apple",
@@ -154,6 +154,139 @@ object MockData {
             location = GeoPoint(-3.7000, 40.4280), // Malasaña, Madrid
             status = TruekeStatus.COMPLETED,
             createdAt = Instant.now().minus(8, ChronoUnit.HOURS)
+        ),
+        Trueke(
+            id = "t8",
+            title = "Intercambio guitarra por teclado",
+            description = "Busco teclado mecánico gaming",
+            hostUser = mariaUser,
+            hostItem = Item(
+                id = "i8",
+                name = "Guitarra Acústica Yamaha",
+                details = "Guitarra en perfecto estado, sonido limpio",
+                imageUrl = "https://cdn.wallapop.com/images/10420/2e/f3/__/c10420p1111111111/i8888888888.jpg",
+                brand = "Yamaha",
+                condition = ItemCondition.LIKE_NEW
+            ),
+            takerUser = carlosUser,
+            takerItem = Item(
+                id = "i9",
+                name = "Teclado Mecánico Logitech",
+                details = "Switches GX Blue, RGB completo",
+                imageUrl = "https://cdn.wallapop.com/images/10420/aa/bb/__/c10420p2222222222/i9999999999.jpg",
+                brand = "Logitech",
+                condition = ItemCondition.GOOD
+            ),
+            location = GeoPoint(-3.7050, 40.4200),
+            status = TruekeStatus.RESERVED,
+            createdAt = Instant.now().minus(3, ChronoUnit.HOURS)
+        )
+    )
+
+    val sampleTruekesWithTaker = listOf(
+        Trueke(
+            id = "tx1",
+            title = "PS4 por bici plegable",
+            description = "Intercambio acordado en Sol",
+            hostUser = chaimaUser,
+            hostItem = Item(
+                id = "ix1_host",
+                name = "PS4 Slim 1TB",
+                details = "Incluye 1 mando y cables. Funciona perfecta.",
+                imageUrl = "https://cdn.wallapop.com/images/10420/k5/qk/__/c10420p1218961628/i6217265588.jpg?pictureSize=W640",
+                brand = "Sony",
+                condition = ItemCondition.GOOD
+            ),
+            takerUser = carlosUser,
+            takerItem = Item(
+                id = "ix1_taker",
+                name = "Bici plegable Decathlon",
+                details = "Plegable, ligera, ideal para ciudad.",
+                imageUrl = "https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=1200&q=80",
+                brand = "Decathlon",
+                condition = ItemCondition.LIKE_NEW
+            ),
+            location = GeoPoint(-3.7038, 40.4168),
+            status = TruekeStatus.RESERVED,
+            createdAt = Instant.now().minus(2, ChronoUnit.HOURS)
+        ),
+        Trueke(
+            id = "tx2",
+            title = "Cámara por portátil",
+            description = "Intercambio completado en Chamberí",
+            hostUser = luciaUser,
+            hostItem = Item(
+                id = "ix2_host",
+                name = "Canon EOS 700D",
+                details = "Con objetivo 18-55mm, bolsa incluida.",
+                imageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSx5m5HltyjHppJWmJMjV2Aeb1GlZ_NN6JMsA&s",
+                brand = "Canon",
+                condition = ItemCondition.LIKE_NEW
+            ),
+            takerUser = mariaUser,
+            takerItem = Item(
+                id = "ix2_taker",
+                name = "Portátil Lenovo i5",
+                details = "16GB RAM, SSD 512GB. Muy rápido.",
+                imageUrl = "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=1200&q=80",
+                brand = "Lenovo",
+                condition = ItemCondition.GOOD
+            ),
+            location = GeoPoint(-3.6950, 40.4300),
+            status = TruekeStatus.COMPLETED,
+            createdAt = Instant.now().minus(1, ChronoUnit.DAYS)
+        ),
+        Trueke(
+            id = "tx3",
+            title = "PS4 por bici plegable",
+            description = "Intercambio acordado en Sol",
+            hostUser = chaimaUser,
+            hostItem = Item(
+                id = "ix1_host",
+                name = "Casco moto",
+                details = "Incluye 1 mando y cables. Funciona perfecta.",
+                imageUrl = "https://cdn.wallapop.com/images/10420/j5/3o/__/c10420p1157427398/i5828379240.jpg?pictureSize=W800",
+                brand = "Sony",
+                condition = ItemCondition.GOOD
+            ),
+            takerUser = carlosUser,
+            takerItem = Item(
+                id = "ix1_taker",
+                name = "Moto de cross",
+                details = "Plegable, ligera, ideal para ciudad.",
+                imageUrl = "https://media.triumphmotorcycles.co.uk/image/upload/f_auto/q_auto:eco/sitecoremedialibrary/media-library/images/spain/offers-spain/hprs%20spain/esoffers-hpr_320x320/20220614_213942_img_8315_1x1.jpg",
+                brand = "Decathlon",
+                condition = ItemCondition.LIKE_NEW
+            ),
+            location = GeoPoint(-3.7038, 40.4168),
+            status = TruekeStatus.OPEN,
+            createdAt = Instant.now().minus(2, ChronoUnit.HOURS)
+        ),
+        Trueke(
+            id = "tx4",
+            title = "Cámara por portátil",
+            description = "Intercambio completado en Chamberí",
+            hostUser = luciaUser,
+            hostItem = Item(
+                id = "ix2_host",
+                name = "Canon EOS 700D",
+                details = "Con objetivo 18-55mm, bolsa incluida.",
+                imageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSx5m5HltyjHppJWmJMjV2Aeb1GlZ_NN6JMsA&s",
+                brand = "Canon",
+                condition = ItemCondition.LIKE_NEW
+            ),
+            takerUser = mariaUser,
+            takerItem = Item(
+                id = "ix2_taker",
+                name = "Portátil Lenovo i5",
+                details = "16GB RAM, SSD 512GB. Muy rápido.",
+                imageUrl = "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=1200&q=80",
+                brand = "Lenovo",
+                condition = ItemCondition.GOOD
+            ),
+            location = GeoPoint(-3.6950, 40.4300),
+            status = TruekeStatus.CANCELLED,
+            createdAt = Instant.now().minus(1, ChronoUnit.DAYS)
         )
     )
 }
