@@ -90,14 +90,14 @@ fun LoginScreen(onSignUp: () -> Unit, onLogin: () -> Unit) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Image(
                     painter = painterResource(id = R.drawable.logo),
-                    contentDescription = getString(context,R.string.truekeo_logo),
+                    contentDescription = getString(context,R.string.logo_truekeo),
                     modifier = Modifier.size(96.dp)
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Text(
-                    text = getString(context,R.string.sign_in),
+                    text = getString(context,R.string.registrarse),
                     fontSize = 36.sp,
                     fontFamily = FontFamily(Font(R.font.saira_regular)),
                     color = MaterialTheme.colorScheme.primary
@@ -108,7 +108,7 @@ fun LoginScreen(onSignUp: () -> Unit, onLogin: () -> Unit) {
                 OutlinedTextField(
                     value = emailOusuario,
                     onValueChange = { emailOusuario = it },
-                    label = { Text(getString(context,R.string.username_or_email)) },
+                    label = { Text(getString(context,R.string.login_email_o_usuario)) },
                     singleLine = true,
                     shape = RoundedCornerShape(8.dp),
                     modifier = Modifier
@@ -120,7 +120,7 @@ fun LoginScreen(onSignUp: () -> Unit, onLogin: () -> Unit) {
                 OutlinedTextField(
                     value = password,
                     onValueChange = { password = it },
-                    label = { Text(getString(context,R.string.password)) },
+                    label = { Text(getString(context,R.string.contrasenia)) },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
@@ -132,7 +132,7 @@ fun LoginScreen(onSignUp: () -> Unit, onLogin: () -> Unit) {
                         IconButton(onClick = { showPassword = !showPassword }) {
                             Icon(
                                 imageVector = image,
-                                    contentDescription = getString(context,R.string.toggle_password_visibility),
+                                    contentDescription = getString(context,R.string.alternar_visibilidad_contrasenia),
                                 modifier = Modifier.width(24.dp)
                             )
                         }
@@ -151,7 +151,7 @@ fun LoginScreen(onSignUp: () -> Unit, onLogin: () -> Unit) {
                             if (result.isSuccess) {
                                 onLogin()
                             } else {
-                                val errorMsg = result.exceptionOrNull()?.message ?: getString(context,R.string.error_unknown)
+                                val errorMsg = result.exceptionOrNull()?.message ?: getString(context,R.string.error_desconocido)
                                 Toast.makeText(context, errorMsg, Toast.LENGTH_SHORT).show()
                             }
                         }
@@ -166,7 +166,7 @@ fun LoginScreen(onSignUp: () -> Unit, onLogin: () -> Unit) {
                     )
                 ) {
                     Text(
-                        text = getString(context,R.string.login_button),
+                        text = getString(context,R.string.iniciar_sesion),
                         fontFamily = FontFamily(Font(R.font.saira_regular)),
                     )
                 }
@@ -175,12 +175,12 @@ fun LoginScreen(onSignUp: () -> Unit, onLogin: () -> Unit) {
 
                 Row {
                     Text(
-                        text = getString(context,R.string.dont_have_account),
+                        text = getString(context,R.string.si_no_tienes_cuenta),
                         fontSize = 12.sp,
                         fontFamily = FontFamily(Font(R.font.saira_regular))
                     )
                     Text(
-                        text = getString(context,R.string.here),
+                        text = getString(context,R.string.aqui),
                         fontSize = 12.sp,
                         fontFamily = FontFamily(Font(R.font.saira_medium)),
                         color = MaterialTheme.colorScheme.secondary,
@@ -193,7 +193,7 @@ fun LoginScreen(onSignUp: () -> Unit, onLogin: () -> Unit) {
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Text(
-                    text = getString(context,R.string.or),
+                    text = getString(context,R.string.o),
                     fontSize = 16.sp,
                     fontFamily = FontFamily(Font(R.font.saira_regular)),
                     color = Color.Black,
@@ -221,26 +221,26 @@ fun LoginScreen(onSignUp: () -> Unit, onLogin: () -> Unit) {
                                     authResult.onSuccess {
                                         onLogin()
                                     }.onFailure {
-                                        val errorMsg = it.message ?: getString(context,R.string.error_unknown)
+                                        val errorMsg = it.message ?: getString(context,R.string.error_desconocido)
                                         Toast.makeText(context, errorMsg, Toast.LENGTH_SHORT).show()
                                     }
                                 } else {
                                     Toast.makeText(
                                         context,
-                                        getString(context,R.string.error_invalid_credentials),
+                                        getString(context,R.string.error_credenciales),
                                         Toast.LENGTH_SHORT
                                     ).show()
                                 }
 
                             } catch (_: GetCredentialCancellationException) {
                                 // El usuario cerró el diálogo o presionó atrás
-                                Toast.makeText(context, getString(context,R.string.login_cancelled_by_user), Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, getString(context,R.string.login_cancelado_usuario), Toast.LENGTH_SHORT).show()
 
                             } catch (_: NoCredentialException) {
                                 // No hay cuentas Google en el dispositivo
                                 Toast.makeText(
                                     context,
-                                    getString(context,R.string.no_google_account),
+                                    getString(context,R.string.no_cuenta_google),
                                     Toast.LENGTH_LONG
                                 ).show()
 
@@ -256,14 +256,14 @@ fun LoginScreen(onSignUp: () -> Unit, onLogin: () -> Unit) {
                                 // Cualquier otro error de Credential Manager
                                 Toast.makeText(
                                     context,
-                                    getString(context,R.string.error_getting_credentials),
+                                    getString(context,R.string.error_obtener_credenciales),
                                     Toast.LENGTH_SHORT
                                 ).show()
                             } catch (_: Exception) {
                                 // Cualquier otro crash
                                 Toast.makeText(
                                     context,
-                                    getString(context,R.string.error_unknown),
+                                    getString(context,R.string.error_desconocido),
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }
@@ -290,7 +290,7 @@ fun LoginScreen(onSignUp: () -> Unit, onLogin: () -> Unit) {
                         )
                         Spacer(modifier = Modifier.width(12.dp))
                         Text(
-                            text = getString(context,R.string.continue_with_google),
+                            text = getString(context,R.string.continuar_google),
                             fontFamily = FontFamily(Font(R.font.saira_regular)),
                             color = Color.Black
                         )
