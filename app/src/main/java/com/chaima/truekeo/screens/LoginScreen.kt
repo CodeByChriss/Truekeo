@@ -59,7 +59,7 @@ import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import kotlinx.coroutines.launch
 
 @Composable
-fun LoginScreen(onSignUp: () -> Unit, onLogin: () -> Unit) {
+fun LoginScreen(onGoToSignup: () -> Unit, onLogin: () -> Unit) {
     val authManager = remember { AuthManager() }
     val scope = rememberCoroutineScope()
     var emailOusuario by remember { mutableStateOf("") }
@@ -185,7 +185,7 @@ fun LoginScreen(onSignUp: () -> Unit, onLogin: () -> Unit) {
                         fontFamily = FontFamily(Font(R.font.saira_medium)),
                         color = MaterialTheme.colorScheme.secondary,
                         modifier = Modifier.clickable {
-                            onSignUp()
+                            onGoToSignup()
                         }
                     )
                 }
