@@ -5,7 +5,7 @@ import com.chaima.truekeo.R
 
 data class Item(
     val id: String,
-    val title: String,
+    val name: String,
     val details: String? = null,
     val imageUrl: String,
     val brand: String? = null,

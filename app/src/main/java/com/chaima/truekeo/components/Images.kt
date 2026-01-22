@@ -22,7 +22,7 @@ import com.chaima.truekeo.models.User
 fun ProductImage(item: Item) {
     AsyncImage(
         model = item.imageUrl,
-        contentDescription = item.title,
+        contentDescription = item.name,
         contentScale = ContentScale.Crop,
         modifier = Modifier
             .fillMaxWidth()
