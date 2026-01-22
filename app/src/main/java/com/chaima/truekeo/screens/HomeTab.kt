@@ -9,15 +9,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
-import com.chaima.truekeo.models.GeoPoint
-import com.chaima.truekeo.models.Item
-import com.chaima.truekeo.models.ItemCondition
 import com.chaima.truekeo.models.Trueke
 import com.chaima.truekeo.components.TruekeSheetContent
 import com.chaima.truekeo.data.MockData
-import com.chaima.truekeo.models.User
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraBoundsOptions
 import com.mapbox.maps.CameraOptions
@@ -28,8 +23,6 @@ import com.mapbox.maps.extension.compose.MapboxMap
 import com.mapbox.maps.extension.compose.annotation.Marker
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
 import com.mapbox.maps.plugin.animation.MapAnimationOptions
-import java.time.Instant
-import java.time.temporal.ChronoUnit
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, MapboxExperimental::class)

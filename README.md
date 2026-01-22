@@ -52,9 +52,9 @@ En el segundo sprint se ha comenzado con el desarrollo técnico del proyecto y l
 
 ### Sprint 3 – Navegación, menús y adaptabilidad (3 semanas)
 
-***Objetivos alcanzados:***
-
 En el tercer sprint se amplía la funcionalidad de la aplicación desarrollando la navegación completa, optimizando la interfaz para diferentes dispositivos y añadiendo características de accesibilidad e internacionalización.
+
+***Objetivos alcanzados:***
 
 - [x] **Desarrollo de la interfaz principal**
     - Menús de navegación y fragments/tabs (no hacen falta más activities).
