@@ -64,4 +64,7 @@
     <string name="trueke_state_reserved">Reserved</string>
     <string name="trueke_state_completed">Completed</string>
     <string name="trueke_state_cancelled">Cancelled</string>
+    <string name="send">Send</string>
+    <string name="write_message_here">Write a message here...</string>
+    <string name="go_back">Go back</string>
 </resources>
