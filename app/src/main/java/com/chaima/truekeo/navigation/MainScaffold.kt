@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import com.chaima.truekeo.screens.HomeTab
 import com.chaima.truekeo.screens.CreateEventTab
 import com.chaima.truekeo.screens.MessagesTab
+import com.chaima.truekeo.screens.MyProductsTab
 import com.chaima.truekeo.screens.ProfileTab
 import com.chaima.truekeo.screens.MyTruekesTab
 
@@ -49,9 +50,20 @@ fun MainScaffold() {
                             launchSingleTop = true
                             restoreState = true
                         }
+                    },
+                    onMyProductsClick = { // <-- nuevo callback
+                        navController.navigate(NavBarRoutes.MyProducts.route) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
                     }
                 )
             }
+            composable(NavBarRoutes.MyProducts.route) { MyProductsTab() }
+
 
         }
     }

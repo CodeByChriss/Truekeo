@@ -37,6 +37,7 @@ import com.chaima.truekeo.R
 fun ProfileTab(
     onMyTruekesClick: () -> Unit,
     onMessagesClick: () -> Unit,
+    onMyProductsClick: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -114,7 +115,8 @@ fun ProfileTab(
 
         ProfileOption(
             iconRes = R.drawable.orden,
-            title = "Mis productos"
+            title = "Mis productos",
+            onClick = onMyProductsClick
         )
 
         HorizontalDivider()

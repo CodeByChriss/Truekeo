@@ -14,4 +14,7 @@ sealed class NavBarRoutes(val route: String) {
     object Create : NavBarRoutes("create")
     object Messages : NavBarRoutes("messages")
     object Profile : NavBarRoutes("profile")
+
+    object MyProducts : NavBarRoutes("myproducts")
+
 }
