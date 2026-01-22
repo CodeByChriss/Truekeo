@@ -48,7 +48,7 @@ object MockData {
                 id = "i1",
                 name = "PS4 Slim",
                 details = "Consola en perfecto estado, incluye un mando y cables. Apenas usada, como nueva.",
-                imageUrl = "https://cdn.wallapop.com/images/10420/k5/qk/__/c10420p1218961628/i6217265588.jpg?pictureSize=W320",
+                imageUrl = "https://cdn.wallapop.com/images/10420/fe/y1/__/c10420p932095462/i3461238421.jpg?pictureSize=W640",
                 brand = "Sony",
                 condition = ItemCondition.NEW
             ),
@@ -64,7 +64,7 @@ object MockData {
                 id = "i2",
                 name = "Monitor 24'' Gaming",
                 details = "Monitor gaming 144Hz, 1ms de respuesta, perfecto para juegos competitivos",
-                imageUrl = "https://cdn.wallapop.com/images/10420/ee/jl/__/c10420p870955066/i3115083731.jpg?pictureSize=W640",
+                imageUrl = "https://cdn.wallapop.com/images/10420/k7/bv/__/c10420p1221635498/i6233515930.jpg?pictureSize=W320",
                 brand = "ASUS",
                 condition = ItemCondition.NEW
             ),
@@ -130,7 +130,7 @@ object MockData {
                 id = "i6",
                 name = "Fender Stratocaster",
                 details = "Guitarra eléctrica con amplificador pequeño, cable y funda acolchada",
-                imageUrl = "https://cdn.wallapop.com/images/10420/mt/pr/__/c10420p1156789234/i5123456789.jpg?pictureSize=W320",
+                imageUrl = "https://cdn.wallapop.com/images/10420/k0/6s/__/c10420p1209641006/i6159174364.jpg?pictureSize=W640",
                 brand = "Fender",
                 condition = ItemCondition.LIKE_NEW
             ),
@@ -147,7 +147,7 @@ object MockData {
                 id = "i7",
                 name = "iPhone 12 128GB",
                 details = "iPhone en perfecto estado, batería al 89%, sin arañazos, con caja original",
-                imageUrl = "https://cdn.wallapop.com/images/10420/xy/zq/__/c10420p1234567890/i6789012345.jpg?pictureSize=W320",
+                imageUrl = "https://cdn.wallapop.com/images/10420/hr/i9/__/c10420p1074127078/i5266670003.jpg?pictureSize=W640",
                 brand = "Apple",
                 condition = ItemCondition.POOR
             ),
@@ -164,7 +164,7 @@ object MockData {
                 id = "i8",
                 name = "Guitarra Acústica Yamaha",
                 details = "Guitarra en perfecto estado, sonido limpio",
-                imageUrl = "https://cdn.wallapop.com/images/10420/2e/f3/__/c10420p1111111111/i8888888888.jpg",
+                imageUrl = "https://cdn.wallapop.com/images/10420/k7/e5/__/c10420p1221741690/i6234038252.jpg?pictureSize=W320",
                 brand = "Yamaha",
                 condition = ItemCondition.LIKE_NEW
             ),
