@@ -5,16 +5,24 @@ import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -23,7 +31,9 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.rememberAsyncImagePainter
 import com.chaima.truekeo.R
+import com.chaima.truekeo.components.ImageSelectorGrid
 import com.chaima.truekeo.components.LocationSearchField
 import com.chaima.truekeo.models.GeoPoint
 import com.chaima.truekeo.models.ItemCondition
@@ -46,11 +56,21 @@ fun CreateEventTab(){
     var itemName by remember { mutableStateOf("") }
     var itemDescription by remember { mutableStateOf("") }
     var itemCondition by remember { mutableStateOf(ItemCondition.GOOD) }
-    var itemImageUri by remember { mutableStateOf<Uri?>(null) }
+    var itemImageUris by remember { mutableStateOf<List<Uri>>(emptyList()) }
+    var currentImageSlot by remember { mutableStateOf(0) }
+
     val pickItemImageLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri ->
-        if (uri != null) itemImageUri = uri
+        if (uri != null) {
+            val updatedList = itemImageUris.toMutableList()
+            if (currentImageSlot < updatedList.size) {
+                updatedList[currentImageSlot] = uri
+            } else {
+                updatedList.add(uri)
+            }
+            itemImageUris = updatedList
+        }
     }
 
     // Validación de formulario
@@ -59,13 +79,12 @@ fun CreateEventTab(){
     val titleOk = title.trim().isNotEmpty()
     val locationOk = locationText.trim().isNotEmpty() && locationCoordinates != null
     val itemNameOk = itemName.trim().isNotEmpty()
-    val imageOk = itemImageUri != null
 
     val showTitleError = triedSubmit && !titleOk
     val showLocationError = triedSubmit && !locationOk
     val showItemNameError = triedSubmit && !itemNameOk
 
-    val formOk = titleOk && locationOk && itemNameOk && imageOk
+    val formOk = titleOk && locationOk && itemNameOk
 
     TruekeoTheme(dynamicColor = false) {
         Box(
@@ -187,18 +206,21 @@ fun CreateEventTab(){
                             modifier = Modifier.fillMaxWidth()
                         )
 
-                        Spacer(Modifier.height(9.dp))
+                        Spacer(Modifier.height(16.dp))
 
-                        OutlinedButton(
-                            onClick = { pickItemImageLauncher.launch("image/*") },
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(8.dp)
-                        ) {
-                            Text(
-                                text = if (itemImageUri == null) "Subir imagen del producto" else "Cambiar imagen del producto",
-                                fontFamily = FontFamily(Font(R.font.saira_medium))
-                            )
-                        }
+                        ImageSelectorGrid(
+                            images = itemImageUris,
+                            maxImages = 5,
+                            onAddImage = { slot ->
+                                currentImageSlot = slot
+                                pickItemImageLauncher.launch("image/*")
+                            },
+                            onRemoveImage = { index ->
+                                itemImageUris = itemImageUris.toMutableList().apply {
+                                    removeAt(index)
+                                }
+                            }
+                        )
                     }
                 }
 

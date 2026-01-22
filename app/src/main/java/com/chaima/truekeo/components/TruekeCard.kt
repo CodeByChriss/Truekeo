@@ -156,7 +156,7 @@ private fun ExchangeItemBlock(
                 .background(Color(0xFFF2F2F2))
         ) {
             AsyncImage(
-                model = item.imageUrl,
+                model = item.imageUrls.firstOrNull(),
                 contentDescription = item.name,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()

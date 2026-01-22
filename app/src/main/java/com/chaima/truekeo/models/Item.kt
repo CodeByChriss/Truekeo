@@ -7,7 +7,7 @@ data class Item(
     val id: String,
     val name: String,
     val details: String? = null,
-    val imageUrl: String,
+    val imageUrls: List<String> = emptyList(),
     val brand: String? = null,
     val condition: ItemCondition = ItemCondition.GOOD
 )

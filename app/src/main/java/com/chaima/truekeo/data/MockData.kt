@@ -48,7 +48,8 @@ object MockData {
                 id = "i1",
                 name = "PS4 Slim",
                 details = "Consola en perfecto estado, incluye un mando y cables. Apenas usada, como nueva.",
-                imageUrl = "https://cdn.wallapop.com/images/10420/fe/y1/__/c10420p932095462/i3461238421.jpg?pictureSize=W640",
+                imageUrls = listOf("https://cdn.wallapop.com/images/10420/fe/y1/__/c10420p932095462/i3461238421.jpg?pictureSize=W640",
+                    "https://cdn.wallapop.com/images/10420/k6/o7/__/c10420p1220530228/i6227088896.jpg?pictureSize=W320"),
                 brand = "Sony",
                 condition = ItemCondition.NEW
             ),
@@ -64,7 +65,7 @@ object MockData {
                 id = "i2",
                 name = "Monitor 24'' Gaming",
                 details = "Monitor gaming 144Hz, 1ms de respuesta, perfecto para juegos competitivos",
-                imageUrl = "https://cdn.wallapop.com/images/10420/k7/bv/__/c10420p1221635498/i6233515930.jpg?pictureSize=W320",
+                imageUrls = listOf("https://cdn.wallapop.com/images/10420/k7/bv/__/c10420p1221635498/i6233515930.jpg?pictureSize=W320"),
                 brand = "ASUS",
                 condition = ItemCondition.NEW
             ),
@@ -80,7 +81,7 @@ object MockData {
                 id = "i3",
                 name = "Pack libros DAM",
                 details = "Libros completos del ciclo de Desarrollo de Aplicaciones Multiplataforma. Buen estado.",
-                imageUrl = "https://cdn.wallapop.com/images/10420/k5/ti/__/c10420p1219098489/i6218005841.jpg?pictureSize=W320",
+                imageUrls = listOf("https://cdn.wallapop.com/images/10420/k5/ti/__/c10420p1219098489/i6218005841.jpg?pictureSize=W320"),
                 brand = "Anaya",
                 condition = ItemCondition.NEW
             ),
@@ -96,7 +97,7 @@ object MockData {
                 id = "i4",
                 name = "Patinete Xiaomi M365",
                 details = "Patinete eléctrico con 500km, batería en buen estado, incluye candado",
-                imageUrl = "https://cdn.wallapop.com/images/10420/3h/n7/__/c10420p1095857944/i5586890123.jpg?pictureSize=W320",
+                imageUrls = listOf("https://cdn.wallapop.com/images/10420/3h/n7/__/c10420p1095857944/i5586890123.jpg?pictureSize=W320"),
                 brand = "Xiaomi",
                 condition = ItemCondition.NEW
             ),
@@ -113,7 +114,7 @@ object MockData {
                 id = "i5",
                 name = "Canon EOS 700D",
                 details = "Cámara réflex con objetivo kit, tarjeta SD 32GB, bolsa y trípode incluidos",
-                imageUrl = "https://cdn.wallapop.com/images/10420/qr/lm/__/c10420p945623178/i4234567890.jpg?pictureSize=W320",
+                imageUrls = listOf("https://cdn.wallapop.com/images/10420/qr/lm/__/c10420p945623178/i4234567890.jpg?pictureSize=W320"),
                 brand = "Canon",
                 condition = ItemCondition.GOOD
             ),
@@ -130,7 +131,7 @@ object MockData {
                 id = "i6",
                 name = "Fender Stratocaster",
                 details = "Guitarra eléctrica con amplificador pequeño, cable y funda acolchada",
-                imageUrl = "https://cdn.wallapop.com/images/10420/k0/6s/__/c10420p1209641006/i6159174364.jpg?pictureSize=W640",
+                imageUrls = listOf("https://cdn.wallapop.com/images/10420/k0/6s/__/c10420p1209641006/i6159174364.jpg?pictureSize=W640"),
                 brand = "Fender",
                 condition = ItemCondition.LIKE_NEW
             ),
@@ -147,7 +148,7 @@ object MockData {
                 id = "i7",
                 name = "iPhone 12 128GB",
                 details = "iPhone en perfecto estado, batería al 89%, sin arañazos, con caja original",
-                imageUrl = "https://cdn.wallapop.com/images/10420/hr/i9/__/c10420p1074127078/i5266670003.jpg?pictureSize=W640",
+                imageUrls = listOf("https://cdn.wallapop.com/images/10420/hr/i9/__/c10420p1074127078/i5266670003.jpg?pictureSize=W640"),
                 brand = "Apple",
                 condition = ItemCondition.POOR
             ),
@@ -164,7 +165,7 @@ object MockData {
                 id = "i8",
                 name = "Guitarra Acústica Yamaha",
                 details = "Guitarra en perfecto estado, sonido limpio",
-                imageUrl = "https://cdn.wallapop.com/images/10420/k7/e5/__/c10420p1221741690/i6234038252.jpg?pictureSize=W320",
+                imageUrls = listOf("https://cdn.wallapop.com/images/10420/k7/e5/__/c10420p1221741690/i6234038252.jpg?pictureSize=W320"),
                 brand = "Yamaha",
                 condition = ItemCondition.LIKE_NEW
             ),
@@ -173,7 +174,7 @@ object MockData {
                 id = "i9",
                 name = "Teclado Mecánico Logitech",
                 details = "Switches GX Blue, RGB completo",
-                imageUrl = "https://cdn.wallapop.com/images/10420/aa/bb/__/c10420p2222222222/i9999999999.jpg",
+                imageUrls = listOf("https://cdn.wallapop.com/images/10420/aa/bb/__/c10420p2222222222/i9999999999.jpg"),
                 brand = "Logitech",
                 condition = ItemCondition.GOOD
             ),
@@ -193,7 +194,7 @@ object MockData {
                 id = "ix1_host",
                 name = "PS4 Slim 1TB",
                 details = "Incluye 1 mando y cables. Funciona perfecta.",
-                imageUrl = "https://cdn.wallapop.com/images/10420/k5/qk/__/c10420p1218961628/i6217265588.jpg?pictureSize=W640",
+                imageUrls = listOf("https://cdn.wallapop.com/images/10420/k5/qk/__/c10420p1218961628/i6217265588.jpg?pictureSize=W640"),
                 brand = "Sony",
                 condition = ItemCondition.GOOD
             ),
@@ -202,7 +203,7 @@ object MockData {
                 id = "ix1_taker",
                 name = "Bici plegable Decathlon",
                 details = "Plegable, ligera, ideal para ciudad.",
-                imageUrl = "https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=1200&q=80",
+                imageUrls = listOf("https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=1200&q=80"),
                 brand = "Decathlon",
                 condition = ItemCondition.LIKE_NEW
             ),
@@ -219,7 +220,7 @@ object MockData {
                 id = "ix2_host",
                 name = "Canon EOS 700D",
                 details = "Con objetivo 18-55mm, bolsa incluida.",
-                imageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSx5m5HltyjHppJWmJMjV2Aeb1GlZ_NN6JMsA&s",
+                imageUrls = listOf("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSx5m5HltyjHppJWmJMjV2Aeb1GlZ_NN6JMsA&s"),
                 brand = "Canon",
                 condition = ItemCondition.LIKE_NEW
             ),
@@ -228,7 +229,7 @@ object MockData {
                 id = "ix2_taker",
                 name = "Portátil Lenovo i5",
                 details = "16GB RAM, SSD 512GB. Muy rápido.",
-                imageUrl = "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=1200&q=80",
+                imageUrls = listOf("https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=1200&q=80"),
                 brand = "Lenovo",
                 condition = ItemCondition.GOOD
             ),
@@ -245,7 +246,7 @@ object MockData {
                 id = "ix1_host",
                 name = "Casco moto",
                 details = "Incluye 1 mando y cables. Funciona perfecta.",
-                imageUrl = "https://cdn.wallapop.com/images/10420/j5/3o/__/c10420p1157427398/i5828379240.jpg?pictureSize=W800",
+                imageUrls = listOf("https://cdn.wallapop.com/images/10420/j5/3o/__/c10420p1157427398/i5828379240.jpg?pictureSize=W800"),
                 brand = "Sony",
                 condition = ItemCondition.GOOD
             ),
@@ -254,7 +255,7 @@ object MockData {
                 id = "ix1_taker",
                 name = "Moto de cross",
                 details = "Plegable, ligera, ideal para ciudad.",
-                imageUrl = "https://media.triumphmotorcycles.co.uk/image/upload/f_auto/q_auto:eco/sitecoremedialibrary/media-library/images/spain/offers-spain/hprs%20spain/esoffers-hpr_320x320/20220614_213942_img_8315_1x1.jpg",
+                imageUrls = listOf("https://media.triumphmotorcycles.co.uk/image/upload/f_auto/q_auto:eco/sitecoremedialibrary/media-library/images/spain/offers-spain/hprs%20spain/esoffers-hpr_320x320/20220614_213942_img_8315_1x1.jpg"),
                 brand = "Decathlon",
                 condition = ItemCondition.LIKE_NEW
             ),
@@ -271,7 +272,7 @@ object MockData {
                 id = "ix2_host",
                 name = "Canon EOS 700D",
                 details = "Con objetivo 18-55mm, bolsa incluida.",
-                imageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSx5m5HltyjHppJWmJMjV2Aeb1GlZ_NN6JMsA&s",
+                imageUrls = listOf("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSx5m5HltyjHppJWmJMjV2Aeb1GlZ_NN6JMsA&s"),
                 brand = "Canon",
                 condition = ItemCondition.LIKE_NEW
             ),
@@ -280,7 +281,7 @@ object MockData {
                 id = "ix2_taker",
                 name = "Portátil Lenovo i5",
                 details = "16GB RAM, SSD 512GB. Muy rápido.",
-                imageUrl = "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=1200&q=80",
+                imageUrls = listOf("https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=1200&q=80"),
                 brand = "Lenovo",
                 condition = ItemCondition.GOOD
             ),
