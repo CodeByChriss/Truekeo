@@ -31,7 +31,8 @@
     <string name="error_google_sign_in">Error de configuración de Google Sign-In</string>
     <string name="error_getting_credentials">Error al obtener credenciales</string>
     <string name="login_cancelled_by_user">Inicio de sesión cancelado por el usuario</string>
-    <string name="no_google_account">No hay cuentas de Google. Agrega una cuenta en Ajustes</string>
+    <string name="no_google_account">No hay cuentas de Google. Agrega una cuenta en Ajustes.</string>
+    <string name="password_dont_match">Las contraseñas no son iguales.</string>
     <!-- ficha de producto del bottom sheet -->
     <string name="product_offered">Producto ofrecido</string>
     <string name="product_name_label">Nombre</string>

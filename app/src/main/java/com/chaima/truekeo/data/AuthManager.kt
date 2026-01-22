@@ -24,6 +24,7 @@ class AuthManager {
             }
 
             val result = auth.createUserWithEmailAndPassword(email, pass).await()
+            val user = result.user?: throw Exception("UID no encontrado")
             val uid = result.user?.uid ?: throw Exception("UID no encontrado")
 
             val newUser = User(
@@ -36,6 +37,8 @@ class AuthManager {
                 transaction.set(db.collection("users").document(uid), newUser)
                 transaction.set(usernameRef, mapOf("uid" to uid))
             }.await()
+
+            user.sendEmailVerification().await()
 
             Result.success(Unit)
         } catch (e: Exception) {
