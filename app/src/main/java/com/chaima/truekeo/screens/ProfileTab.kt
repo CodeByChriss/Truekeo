@@ -34,7 +34,10 @@ import androidx.compose.ui.unit.sp
 import com.chaima.truekeo.R
 
 @Composable
-fun ProfileTab(){
+fun ProfileTab(
+    onMyTruekesClick: () -> Unit,
+    onMessagesClick: () -> Unit,
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -103,26 +106,27 @@ fun ProfileTab(){
 
         ProfileOption(
             iconRes = R.drawable.intercambio,
-            title = "Mis trueques"
+            title = "Mis trueques",
+            onClick = onMyTruekesClick
         )
 
         HorizontalDivider()
 
         ProfileOption(
-            iconRes = R.drawable.logo,
-            title = "Mis puntos"
+            iconRes = R.drawable.orden,
+            title = "Mis productos"
         )
 
         HorizontalDivider()
 
         ProfileOption(
             iconRes = R.drawable.chat,
-            title = "Mis chats"
+            title = "Mis chats",
+            onClick = onMessagesClick
         )
 
     }
 }
-
     @Composable
     fun ProfileOption(
         iconRes: Int,

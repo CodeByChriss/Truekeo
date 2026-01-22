@@ -30,7 +30,29 @@ fun MainScaffold() {
             composable(NavBarRoutes.MyTruekes.route) { MyTruekesTab() }
             composable(NavBarRoutes.Create.route) { CreateEventTab() }
             composable(NavBarRoutes.Messages.route) { MessagesTab() }
-            composable(NavBarRoutes.Profile.route) { ProfileTab() }
+            composable(NavBarRoutes.Profile.route) {
+                ProfileTab(
+                    onMyTruekesClick = {
+                        navController.navigate(NavBarRoutes.MyTruekes.route) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
+                    onMessagesClick = {
+                        navController.navigate(NavBarRoutes.Messages.route) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
+                )
+            }
+
         }
     }
 }
