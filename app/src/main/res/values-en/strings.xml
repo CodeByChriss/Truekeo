@@ -59,6 +59,7 @@
 
     <string name="my_truekes">My truekes</string>
 
+    <string name="my_messages">My messages</string>
     <string name="trueke_state_open">Pending</string>
     <string name="trueke_state_reserved">Reserved</string>
     <string name="trueke_state_completed">Completed</string>
