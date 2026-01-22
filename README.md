@@ -93,3 +93,13 @@ Este apartado documenta las principales librerías utilizadas en el proyecto y c
 - Carga asíncrona de imágenes de productos y avatares de usuario con `AsyncImage`
 - Recorte de imágenes con formas personalizadas (circular para avatares, redondeada para productos)
 - Ajuste automático del contenido con `ContentScale.Crop`
+
+### 🧩 Material Icons Extended
+
+```gradle
+dependencies {
+    implementation("androidx.compose.material:material-icons-extended")
+}
+```
+
+**Propósito:** Incorporación de un conjunto ampliado de iconos Material para mejorar la experiencia visual y la claridad de la interfaz de usuario.
