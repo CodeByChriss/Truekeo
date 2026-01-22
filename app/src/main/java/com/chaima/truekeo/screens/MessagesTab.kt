@@ -1,5 +1,6 @@
 package com.chaima.truekeo.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -8,8 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -25,13 +24,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.chaima.truekeo.R
 import com.chaima.truekeo.components.MessageCard
-import com.chaima.truekeo.components.TruekeCard
 import com.chaima.truekeo.data.MessageMockData
-import com.chaima.truekeo.data.MockData
+import com.chaima.truekeo.models.Message
 import com.chaima.truekeo.ui.theme.TruekeoTheme
 
 @Composable
-fun MessagesTab(){
+fun MessagesTab(onMessageClick: (Message) -> Unit){
     val messages = remember { MessageMockData.sampleMessages.sortedBy { it.readed } }
 
     TruekeoTheme(dynamicColor = false) {
@@ -45,7 +43,7 @@ fun MessagesTab(){
                 Spacer(Modifier.height(24.dp))
 
                 Text(
-                    text = stringResource(R.string.my_truekes),
+                    text = stringResource(R.string.my_messages),
                     fontSize = 32.sp,
                     fontFamily = FontFamily(Font(R.font.saira_medium)),
                     color = MaterialTheme.colorScheme.primary,
@@ -70,7 +68,9 @@ fun MessagesTab(){
                     messages.forEach { message ->
                         MessageCard(
                             message = message,
-                            modifier = Modifier.padding(horizontal = 24.dp)
+                            modifier = Modifier.clickable {
+                                onMessageClick(message)
+                            }.padding(horizontal = 24.dp)
                         )
 
                         HorizontalDivider(
