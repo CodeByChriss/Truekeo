@@ -62,4 +62,7 @@
     <string name="trueke_state_reserved">Reserved</string>
     <string name="trueke_state_completed">Completed</string>
     <string name="trueke_state_cancelled">Cancelled</string>
+    <string name="create">Create</string>
+    <string name="required_field_error">This field is required</string>
+    <string name="at_least_one_image_required">Add at least one image</string>
 </resources>

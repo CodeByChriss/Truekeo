@@ -10,10 +10,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.chaima.truekeo.R
 import com.mapbox.search.ApiType
 import com.mapbox.search.ResponseInfo
@@ -43,8 +45,7 @@ fun LocationSearchField(
     onValueChange: (String) -> Unit,
     onLocationSelected: (LocationData) -> Unit,
     modifier: Modifier = Modifier,
-    label: String,
-    userLocation: Point? = null // Añadir ubicación del usuario para proximity
+    label: String
 ) {
     val scope = rememberCoroutineScope()
 
@@ -75,7 +76,7 @@ fun LocationSearchField(
                         val searchOptions = SearchOptions(
                             limit = 5,
                             countries = listOf(IsoCountryCode.SPAIN),
-                            proximity = userLocation // Usar ubicación del usuario para resultados más relevantes
+                            //proximity = userLocation // Usar ubicación del usuario para resultados más relevantes
                         )
 
                         searchEngine.search(

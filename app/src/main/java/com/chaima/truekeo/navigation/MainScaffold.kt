@@ -9,7 +9,7 @@ import androidx.navigation.compose.composable
 import com.chaima.truekeo.components.BottomNavBar
 import androidx.compose.foundation.layout.padding
 import com.chaima.truekeo.screens.HomeTab
-import com.chaima.truekeo.screens.CreateEventTab
+import com.chaima.truekeo.screens.CreateTruekeTab
 import com.chaima.truekeo.screens.MessagesTab
 import com.chaima.truekeo.screens.ProfileTab
 import com.chaima.truekeo.screens.MyTruekesTab
@@ -28,7 +28,7 @@ fun MainScaffold() {
         ) {
             composable(NavBarRoutes.Home.route) { HomeTab() }
             composable(NavBarRoutes.MyTruekes.route) { MyTruekesTab() }
-            composable(NavBarRoutes.Create.route) { CreateEventTab() }
+            composable(NavBarRoutes.Create.route) { CreateTruekeTab() }
             composable(NavBarRoutes.Messages.route) { MessagesTab() }
             composable(NavBarRoutes.Profile.route) { ProfileTab() }
         }

@@ -45,6 +45,7 @@ import com.chaima.truekeo.R
 import com.chaima.truekeo.data.AuthManager
 import com.chaima.truekeo.ui.theme.TruekeoTheme
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 @Composable
 fun SignupScreen(onSignUp: () -> Unit, onBackToLogin: () -> Unit) {
@@ -190,8 +191,9 @@ fun SignupScreen(onSignUp: () -> Unit, onBackToLogin: () -> Unit) {
                     )
                 ) {
                     Text(
-                        text = getString(context,R.string.register),
-                        fontFamily = FontFamily(Font(R.font.saira_regular)),
+                        text = getString(context,R.string.register).uppercase(Locale.getDefault()),
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontFamily = FontFamily(Font(R.font.saira_medium))
                     )
                 }
             }

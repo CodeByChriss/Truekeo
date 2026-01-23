@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import coil3.compose.AsyncImage
 
+// Componente principal que muestra una fila horizontal de 5 slots para seleccionar las imágenes de un producto
 @Composable
 fun ImageSelectorGrid(
     images: List<Uri>,

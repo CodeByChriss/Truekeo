@@ -19,8 +19,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Collections
 import androidx.compose.material.icons.outlined.Collections
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material3.Button
@@ -211,33 +209,7 @@ private fun TruekeHostItemSection(item: Item) {
         }
     }
 
-    Box(modifier = Modifier
-        .height(180.dp)
-        .clip(RoundedCornerShape(12.dp))
-    ) {
-        ProductImage(item)
-
-        // Indicador de múltiples imágenes si las hay
-        if (item.imageUrls.size > 1) {
-            Box(
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(6.dp)
-                    .zIndex(1f)
-                    .size(28.dp)
-                    .clip(RoundedCornerShape(6.dp))
-                    .background(Color.Black.copy(alpha = 0.6f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Collections,
-                    contentDescription = "Varias imágenes",
-                    tint = Color.White,
-                    modifier = Modifier.size(18.dp)
-                )
-            }
-        }
-    }
+    ItemImageBox(item)
 }
 
 @Composable
@@ -293,6 +265,47 @@ private fun RowDivider(
             .height(thickness)
             .background(color)
     )
+}
+
+@Composable
+private fun ItemImageBox(item: Item) {
+    var showImageViewer by remember { mutableStateOf(false) }
+
+    Box(modifier = Modifier
+        .height(180.dp)
+        .clip(RoundedCornerShape(12.dp))
+        .clickable { showImageViewer = true }
+    ) {
+        ProductImage(item)
+
+        // Indicador de múltiples imágenes si las hay
+        if (item.imageUrls.size > 1) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(6.dp)
+                    .zIndex(1f)
+                    .size(28.dp)
+                    .clip(RoundedCornerShape(6.dp))
+                    .background(Color.Black.copy(alpha = 0.20f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Collections,
+                    contentDescription = "Varias imágenes",
+                    tint = Color.White,
+                    modifier = Modifier.size(18.dp)
+                )
+            }
+        }
+    }
+
+    if (showImageViewer) {
+        FullScreenImageViewer(
+            imageUrls = item.imageUrls,
+            onDismiss = { showImageViewer = false }
+        )
+    }
 }
 
 @Composable

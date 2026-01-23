@@ -5,24 +5,16 @@ import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -31,18 +23,18 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil3.compose.rememberAsyncImagePainter
 import com.chaima.truekeo.R
 import com.chaima.truekeo.components.ImageSelectorGrid
 import com.chaima.truekeo.components.LocationSearchField
 import com.chaima.truekeo.models.GeoPoint
 import com.chaima.truekeo.models.ItemCondition
 import com.chaima.truekeo.ui.theme.TruekeoTheme
+import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateEventTab(){
+fun CreateTruekeTab(){
     val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState()
 
@@ -79,12 +71,14 @@ fun CreateEventTab(){
     val titleOk = title.trim().isNotEmpty()
     val locationOk = locationText.trim().isNotEmpty() && locationCoordinates != null
     val itemNameOk = itemName.trim().isNotEmpty()
+    val itemImagesOk = itemImageUris.isNotEmpty()
 
     val showTitleError = triedSubmit && !titleOk
     val showLocationError = triedSubmit && !locationOk
     val showItemNameError = triedSubmit && !itemNameOk
+    val showItemImagesError = triedSubmit && !itemImagesOk
 
-    val formOk = titleOk && locationOk && itemNameOk
+    val formOk = titleOk && locationOk && itemNameOk && itemImagesOk
 
     TruekeoTheme(dynamicColor = false) {
         Box(
@@ -122,9 +116,9 @@ fun CreateEventTab(){
                     shape = RoundedCornerShape(8.dp),
                     modifier = Modifier.fillMaxWidth()
                 )
-                FormErrorText(showError = showTitleError)
+                FormErrorText(showError = showTitleError, message = stringResource(R.string.required_field_error))
 
-                Spacer(Modifier.height(1.dp))
+                Spacer(Modifier.height(7.dp))
 
                 OutlinedTextField(
                     value = details,
@@ -136,9 +130,8 @@ fun CreateEventTab(){
                         .height(140.dp),
                     maxLines = 5
                 )
-                FormErrorText(showError = false)
 
-                Spacer(Modifier.height(1.dp))
+                Spacer(Modifier.height(7.dp))
 
                 LocationSearchField(
                     value = locationText,
@@ -150,9 +143,9 @@ fun CreateEventTab(){
                     modifier = Modifier.fillMaxWidth(),
                     label = stringResource(R.string.location)
                 )
-                FormErrorText(showError = showLocationError)
+                FormErrorText(showError = showLocationError, message = stringResource(R.string.required_field_error))
 
-                Spacer(Modifier.height(9.dp))
+                Spacer(Modifier.height(12.dp))
 
                 // Sección de información del producto del trueke
                 Text(
@@ -181,9 +174,9 @@ fun CreateEventTab(){
                             shape = RoundedCornerShape(8.dp),
                             modifier = Modifier.fillMaxWidth()
                         )
-                        FormErrorText(showError = showItemNameError)
+                        FormErrorText(showError = showItemNameError, message = stringResource(R.string.required_field_error))
 
-                        Spacer(Modifier.height(1.dp))
+                        Spacer(Modifier.height(7.dp))
 
                         OutlinedTextField(
                             value = itemDescription,
@@ -195,9 +188,8 @@ fun CreateEventTab(){
                                 .height(110.dp),
                             maxLines = 5
                         )
-                        FormErrorText(showError = false)
 
-                        Spacer(Modifier.height(1.dp))
+                        Spacer(Modifier.height(7.dp))
 
                         // Dropdown condición
                         ItemConditionDropdown(
@@ -206,7 +198,7 @@ fun CreateEventTab(){
                             modifier = Modifier.fillMaxWidth()
                         )
 
-                        Spacer(Modifier.height(16.dp))
+                        Spacer(Modifier.height(14.dp))
 
                         ImageSelectorGrid(
                             images = itemImageUris,
@@ -221,6 +213,7 @@ fun CreateEventTab(){
                                 }
                             }
                         )
+                        FormErrorText(showError = showItemImagesError, message = stringResource(R.string.at_least_one_image_required))
                     }
                 }
 
@@ -241,7 +234,7 @@ fun CreateEventTab(){
                     shape = RoundedCornerShape(12.dp)
                 ) {
                     Text(
-                        text = "CREAR",
+                        text = stringResource(R.string.create).uppercase(Locale.getDefault()),
                         style = MaterialTheme.typography.bodyLarge,
                         fontFamily = FontFamily(Font(R.font.saira_medium))
                     )
@@ -299,17 +292,18 @@ private fun ItemConditionDropdown(
 
 // Texto de error para campos de formulario
 @Composable
-fun FormErrorText(
+private fun FormErrorText(
     showError: Boolean,
+    message: String,
     modifier: Modifier = Modifier
 ) {
+    if (!showError) return
+
     Text(
-        text = if (showError) "Este campo es obligatorio" else " ",
-        color = if (showError)
-            MaterialTheme.colorScheme.error
-        else
-            Color.Transparent,
+        text = message,
         style = MaterialTheme.typography.labelSmall,
+        fontFamily = FontFamily(Font(R.font.saira_regular)),
+        color = MaterialTheme.colorScheme.error,
         modifier = modifier
             .fillMaxWidth()
             .padding(top = 3.dp)
