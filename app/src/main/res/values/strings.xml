@@ -69,6 +69,8 @@
     <string name="edit_profile">Editar perfil</string>
     <string name="change_picture">Cambia tu foto de perfil</string>
     <string name="save">Guardar</string>
+    <!-- MisProductos-->
+    <string name="search_product">Busca un producto…</string>
 
 
 

@@ -50,7 +50,6 @@ fun EditProfileTab(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // FOTO DE PERFIL
         Image(
             painter = painterResource(id = R.drawable.profile),
             contentDescription = "Foto de perfil",
@@ -71,7 +70,6 @@ fun EditProfileTab(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // CAMPOS
         OutlinedTextField(
             value = name,
             onValueChange = { name = it },
@@ -118,7 +116,6 @@ fun EditProfileTab(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // BOTÓN GUARDAR
         Button(
             onClick = onSaveClick,
             modifier = Modifier

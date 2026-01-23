@@ -65,4 +65,5 @@
     <string name="my_trueks">My truekes</string>
     <string name="my_products">My products</string>
     <string name="my_chats">My chats</string>
+    <string name="search_product">Search a product...</string>
 </resources>
