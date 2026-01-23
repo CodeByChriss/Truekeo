@@ -25,10 +25,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import coil3.compose.AsyncImage
+import com.chaima.truekeo.R
 import kotlinx.coroutines.launch
 
 @Composable
@@ -57,7 +59,7 @@ fun FullScreenImageViewer(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.85f))
+                .background(Color.Black.copy(alpha = 0.50f))
         ) {
             HorizontalPager(
                 state = pagerState,
@@ -84,7 +86,7 @@ fun FullScreenImageViewer(
             ) {
                 Icon(
                     imageVector = Icons.Default.Close,
-                    contentDescription = "Cerrar",
+                    contentDescription = stringResource(R.string.close),
                     tint = Color.White
                 )
             }
@@ -120,7 +122,7 @@ fun FullScreenImageViewer(
                     ) {
                         Icon(
                             imageVector = Icons.Default.ChevronLeft,
-                            contentDescription = "Anterior",
+                            contentDescription = stringResource(R.string.previous),
                             tint = Color.White
                         )
                     }
@@ -137,7 +139,7 @@ fun FullScreenImageViewer(
                     ) {
                         Icon(
                             imageVector = Icons.Default.ChevronRight,
-                            contentDescription = "Siguiente",
+                            contentDescription = stringResource(R.string.next),
                             tint = Color.White
                         )
                     }

@@ -66,4 +66,12 @@
     <string name="create">Crear</string>
     <string name="required_field_error">Este campo es obligatorio</string>
     <string name="at_least_one_image_required">Añade al menos una imagen</string>
+    <string name="product_image">Imagen del producto</string>
+    <string name="add_image">Añadir imagen</string>
+    <string name="main_product_image">Foto principal</string>
+    <string name="remove_image">Eliminar imagen</string>
+    <string name="next">Siguiente</string>
+    <string name="previous">Anterior</string>
+    <string name="close">Cerrar</string>
+    <string name="back_to_login">Volver al login</string>
 </resources>

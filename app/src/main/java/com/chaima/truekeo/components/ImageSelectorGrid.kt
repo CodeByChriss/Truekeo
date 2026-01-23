@@ -26,9 +26,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import coil3.compose.AsyncImage
+import com.chaima.truekeo.R
 
 // Componente principal que muestra una fila horizontal de 5 slots para seleccionar las imágenes de un producto
 @Composable
@@ -93,7 +95,7 @@ private fun ImageSlot(
     ) {
         AsyncImage(
             model = imageUri,
-            contentDescription = "Imagen del producto",
+            contentDescription = stringResource(R.string.product_image),
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
         )
@@ -111,7 +113,7 @@ private fun ImageSlot(
         ) {
             Icon(
                 imageVector = Icons.Default.Close,
-                contentDescription = "Eliminar imagen",
+                contentDescription = stringResource(R.string.remove_image),
                 tint = Color.White,
                 modifier = Modifier.size(16.dp)
             )
@@ -140,7 +142,7 @@ private fun EmptyImageSlot(
     ) {
         Icon(
             imageVector = Icons.Outlined.Image,
-            contentDescription = "Añadir imagen",
+            contentDescription = stringResource(R.string.add_image),
             tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
             modifier = Modifier.size(32.dp)
         )
@@ -160,7 +162,7 @@ private fun PrimaryPhotoBadge(
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = "Foto principal",
+            text = stringResource(R.string.main_product_image),
             color = Color.White,
             style = MaterialTheme.typography.bodySmall
         )

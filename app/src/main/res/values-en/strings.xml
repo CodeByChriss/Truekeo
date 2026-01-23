@@ -65,4 +65,12 @@
     <string name="create">Create</string>
     <string name="required_field_error">This field is required</string>
     <string name="at_least_one_image_required">Add at least one image</string>
+    <string name="product_image">Product Image</string>
+    <string name="add_image">Add image</string>
+    <string name="main_product_image">Main photo</string>
+    <string name="remove_image">Delete image</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+    <string name="close">Close</string>
+    <string name="back_to_login">Back to login</string>
 </resources>

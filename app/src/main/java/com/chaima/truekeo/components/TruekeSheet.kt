@@ -208,7 +208,7 @@ private fun TruekeHostItemSection(item: Item) {
             KeyValueRow(label = stringResource(R.string.product_status_label), value = item.condition.displayName(context))
         }
     }
-
+    // Imagen del ítem
     ItemImageBox(item)
 }
 
@@ -267,6 +267,7 @@ private fun RowDivider(
     )
 }
 
+// Contenedor de la imagen del ítem con funcionalidad para ver en pantalla completa
 @Composable
 private fun ItemImageBox(item: Item) {
     var showImageViewer by remember { mutableStateOf(false) }
