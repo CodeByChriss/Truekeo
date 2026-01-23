@@ -21,6 +21,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -28,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -38,6 +40,7 @@ fun ProfileTab(
     onMyTruekesClick: () -> Unit,
     onMessagesClick: () -> Unit,
     onMyProductsClick: () -> Unit,
+    onEditProfileClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -83,17 +86,17 @@ fun ProfileTab(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Button(
-                    onClick = { /* editar perfil */ },
+                    onClick = onEditProfileClick,
                     modifier = Modifier
                         .fillMaxWidth(0.7f)
                         . height(52.dp),
                     shape = RoundedCornerShape(14.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF5EC1A9)
+                        containerColor = MaterialTheme.colorScheme.secondary
                     )
                 ) {
                     Text(
-                        "Editar perfil",
+                        text = stringResource(R.string.edit_profile),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -107,7 +110,7 @@ fun ProfileTab(
 
         ProfileOption(
             iconRes = R.drawable.intercambio,
-            title = "Mis trueques",
+            title = stringResource(R.string.my_trueks),
             onClick = onMyTruekesClick
         )
 
@@ -115,7 +118,7 @@ fun ProfileTab(
 
         ProfileOption(
             iconRes = R.drawable.orden,
-            title = "Mis productos",
+            title = stringResource(R.string.my_products),
             onClick = onMyProductsClick
         )
 
@@ -123,7 +126,7 @@ fun ProfileTab(
 
         ProfileOption(
             iconRes = R.drawable.chat,
-            title = "Mis chats",
+            title = stringResource(R.string.my_chats),
             onClick = onMessagesClick
         )
 
@@ -167,19 +170,6 @@ fun ProfileTab(
                 tint = Color.Gray
             )
         }
-    }
-
-
-    @Composable
-    fun HorizontalDivider() {
-        Spacer(modifier = Modifier.height(5.dp))
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(1.dp)
-                .background(Color(0xFFE0E0E0))
-        )
-        Spacer(modifier = Modifier.height(4.dp))
     }
 
 
