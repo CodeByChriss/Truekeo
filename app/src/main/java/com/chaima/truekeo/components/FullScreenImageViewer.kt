@@ -79,10 +79,6 @@ fun FullScreenImageViewer(
                     .align(Alignment.TopEnd)
                     .padding(16.dp)
                     .size(36.dp)
-                    .background(
-                        Color.Black.copy(alpha = 0.5f),
-                        shape = CircleShape
-                    )
             ) {
                 Icon(
                     imageVector = Icons.Default.Close,
@@ -96,9 +92,8 @@ fun FullScreenImageViewer(
                 Box(
                     modifier = Modifier
                         .align(Alignment.TopStart)
-                        .padding(16.dp)
+                        .padding(20.dp)
                         .clip(RoundedCornerShape(999.dp))
-                        .background(Color.Black.copy(alpha = 0.5f))
                         .padding(horizontal = 10.dp, vertical = 6.dp)
                 ) {
                     Text(

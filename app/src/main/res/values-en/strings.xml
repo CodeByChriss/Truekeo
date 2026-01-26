@@ -73,4 +73,5 @@
     <string name="previous">Previous</string>
     <string name="close">Close</string>
     <string name="back_to_login">Back to login</string>
+    <string name="create_product">Create product</string>
 </resources>
