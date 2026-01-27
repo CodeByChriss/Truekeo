@@ -25,12 +25,12 @@ import androidx.compose.ui.unit.sp
 import com.chaima.truekeo.R
 import com.chaima.truekeo.components.MessageCard
 import com.chaima.truekeo.data.MessageMockData
-import com.chaima.truekeo.models.Message
+import com.chaima.truekeo.models.Conversation
 import com.chaima.truekeo.ui.theme.TruekeoTheme
 
 @Composable
-fun MessagesTab(onMessageClick: (Message) -> Unit){
-    val messages = remember { MessageMockData.sampleMessages.sortedBy { it.readed } }
+fun MessagesTab(onMessageClick: (Conversation) -> Unit){
+    val conversations = remember { MessageMockData.sampleConversations.sortedByDescending { it.lastTimestamp } }
 
     TruekeoTheme(dynamicColor = false) {
         Box(modifier = Modifier.fillMaxSize()) {
@@ -65,11 +65,11 @@ fun MessagesTab(onMessageClick: (Message) -> Unit){
                         color = MaterialTheme.colorScheme.outlineVariant,
                     )
 
-                    messages.forEach { message ->
+                    conversations.forEach { conversation ->
                         MessageCard(
-                            message = message,
+                            conversation = conversation,
                             modifier = Modifier.clickable {
-                                onMessageClick(message)
+                                onMessageClick(conversation)
                             }.padding(horizontal = 24.dp)
                         )
 

@@ -12,7 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import com.chaima.truekeo.models.Message
+import com.chaima.truekeo.models.Conversation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,7 +30,7 @@ import com.chaima.truekeo.R
 
 @Composable
 fun MessageCard(
-    message: Message,
+    conversation: Conversation,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -44,8 +44,8 @@ fun MessageCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             AsyncImage(
-                model = message.profile_photo,
-                contentDescription = message.profile_name,
+                model = conversation.profile_photo,
+                contentDescription = conversation.profile_name,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(64.dp)
@@ -58,16 +58,16 @@ fun MessageCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = message.profile_name,
+                        text = conversation.profile_name,
                         fontSize = 24.sp,
                         color = MaterialTheme.colorScheme.onSurface,
-                        fontFamily = FontFamily(Font(if(message.readed) R.font.saira_medium else R.font.saira_semibold)),
+                        fontFamily = FontFamily(Font(if(conversation.readed) R.font.saira_medium else R.font.saira_semibold)),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
 
                     // Solo se muestra si el último mensaje no ha sido leido ya
-                    if(!message.readed){
+                    if(!conversation.readed){
                         Spacer(modifier = Modifier.width(12.dp))
 
                         Box(
@@ -78,7 +78,7 @@ fun MessageCard(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = message.new_messages_count.toString(),
+                                text = conversation.new_messages_count.toString(),
                                 color = MaterialTheme.colorScheme.onPrimary,
                                 fontSize = 12.sp,
                                 fontFamily = FontFamily(Font(R.font.saira_medium)),
@@ -88,9 +88,9 @@ fun MessageCard(
                     }
                 }
                 Text(
-                    text = message.last_message,
+                    text = conversation.lastMessage,
                     color = MaterialTheme.colorScheme.onSurface,
-                    fontFamily = FontFamily(Font(if(message.readed) R.font.saira_medium else R.font.saira_semibold)),
+                    fontFamily = FontFamily(Font(if(conversation.readed) R.font.saira_medium else R.font.saira_semibold)),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )

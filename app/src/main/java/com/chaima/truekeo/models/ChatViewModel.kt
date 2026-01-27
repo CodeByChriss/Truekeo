@@ -6,10 +6,10 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 
 class ChatViewModel: ViewModel() {
-    var selectedMessage by mutableStateOf<Message?>(null)
+    var selectedMessage by mutableStateOf<Conversation?>(null)
         private set
 
-    fun onMessageSelected(message: Message) {
-        selectedMessage = message
+    fun onMessageSelected(conversation: Conversation) {
+        selectedMessage = conversation
     }
 }

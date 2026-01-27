@@ -1,5 +1,7 @@
 package com.chaima.truekeo.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.material3.Scaffold
 import androidx.navigation.compose.rememberNavController
@@ -19,6 +21,7 @@ import com.chaima.truekeo.screens.MessagesTab
 import com.chaima.truekeo.screens.ProfileTab
 import com.chaima.truekeo.screens.MyTruekesTab
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MainScaffold() {
     val navController = rememberNavController()
@@ -53,7 +56,7 @@ fun MainScaffold() {
 
             composable(NavBarRoutes.Message.route) {
                 MessageTab(
-                    message = chatViewModel.selectedMessage,
+                    conversation = chatViewModel.selectedMessage,
                     onBack = { navController.popBackStack() }
                 )
             }
