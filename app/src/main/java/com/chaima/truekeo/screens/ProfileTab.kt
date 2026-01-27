@@ -3,7 +3,6 @@ package com.chaima.truekeo.screens
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -42,25 +42,18 @@ fun ProfileTab(
     onMyProductsClick: () -> Unit,
     onEditProfileClick: () -> Unit
 ) {
-    Column(
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
     ) {
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp)
-        ) {
-
+        item {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 24.dp),
+                    .padding(top = 40.dp, bottom = 32.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
                 Image(
                     painter = painterResource(id = R.drawable.profile),
                     contentDescription = "Foto de perfil",
@@ -89,7 +82,7 @@ fun ProfileTab(
                     onClick = onEditProfileClick,
                     modifier = Modifier
                         .fillMaxWidth(0.7f)
-                        . height(52.dp),
+                        .height(52.dp),
                     shape = RoundedCornerShape(14.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.secondary
@@ -104,32 +97,37 @@ fun ProfileTab(
             }
         }
 
-        Spacer(modifier = Modifier.height(32.dp))
+        item { HorizontalDivider() }
 
-        HorizontalDivider()
+        item {
+            ProfileOption(
+                iconRes = R.drawable.intercambio,
+                title = stringResource(R.string.my_trueks),
+                onClick = onMyTruekesClick
+            )
+        }
 
-        ProfileOption(
-            iconRes = R.drawable.intercambio,
-            title = stringResource(R.string.my_trueks),
-            onClick = onMyTruekesClick
-        )
+        item { HorizontalDivider() }
 
-        HorizontalDivider()
+        item {
+            ProfileOption(
+                iconRes = R.drawable.orden,
+                title = stringResource(R.string.my_products),
+                onClick = onMyProductsClick
+            )
+        }
 
-        ProfileOption(
-            iconRes = R.drawable.orden,
-            title = stringResource(R.string.my_products),
-            onClick = onMyProductsClick
-        )
+        item { HorizontalDivider() }
 
-        HorizontalDivider()
+        item {
+            ProfileOption(
+                iconRes = R.drawable.chat,
+                title = stringResource(R.string.my_messages),
+                onClick = onMessagesClick
+            )
+        }
 
-        ProfileOption(
-            iconRes = R.drawable.chat,
-            title = stringResource(R.string.my_chats),
-            onClick = onMessagesClick
-        )
-
+        item { Spacer(modifier = Modifier.height(24.dp)) }
     }
 }
     @Composable

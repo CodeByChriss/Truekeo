@@ -132,7 +132,7 @@ private fun TruekeInfoSection(trueke: Trueke) {
 
         if (!trueke.description.isNullOrBlank()) {
             Text(
-                text = trueke.description!!,
+                text = trueke.description,
                 style = MaterialTheme.typography.bodyMedium,
                 fontFamily = FontFamily(Font(R.font.saira_regular)),
             )

@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="false">Truekeo</string>
-    <string name="title_activity_splash_screen" translatable="false">SplashScreen</string>
-
-    <string name="default_web_client_id" translatable="false">1014848725574-kb2ucqs2hadqt47pou7qigsln5fljjj1.apps.googleusercontent.com</string>
 
     <string name="truekeo_logo">Truekeo Logo</string>
 
@@ -65,7 +61,6 @@
     <string name="save">Save changes</string>
     <string name="my_trueks">My truekes</string>
     <string name="my_products">My products</string>
-    <string name="my_chats">My chats</string>
     <string name="search_product">Search a product...</string>
 
     <string name="my_truekes">My truekes</string>
