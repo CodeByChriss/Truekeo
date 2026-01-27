@@ -73,10 +73,6 @@
     <!-- MisProductos-->
     <string name="search_product">Busca un producto…</string>
 
-
-
-
-</resources>
     <!-- pestaña de mis truekes -->
     <string name="my_truekes">Mis truekes</string>
     <!-- estados del trueke -->
@@ -84,4 +80,5 @@
     <string name="trueke_state_reserved">Reservado</string>
     <string name="trueke_state_completed">Completado</string>
     <string name="trueke_state_cancelled">Cancelado</string>
+
 </resources>
