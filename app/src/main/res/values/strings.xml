@@ -57,6 +57,26 @@
     <string name="product_state_poor">Desgastado</string>
     <!-- utiles de tiempo -->
     <string name="time_published_now">Publicado ahora mismo</string>
+    <!-- Profile-->
+    <string name="my_trueks">Mis trueques</string>
+    <string name="my_products">Mis productos</string>
+    <string name="my_chats">Mis chats</string>
+    <!-- Editar perfil y Profile-->
+    <string name="name">Nombre y apellido</string>
+    <string name="user">Usuario</string>
+    <!-- Editar perfil-->
+    <string name="city">Ciudad</string>
+    <string name="bio">Escribe algo sobre ti…</string>
+    <string name="edit_profile">Editar perfil</string>
+    <string name="change_picture">Cambia tu foto de perfil</string>
+    <string name="save">Guardar</string>
+    <!-- MisProductos-->
+    <string name="search_product">Busca un producto…</string>
+
+
+
+
+</resources>
     <!-- pestaña de mis truekes -->
     <string name="my_truekes">Mis truekes</string>
     <!-- estados del trueke -->
