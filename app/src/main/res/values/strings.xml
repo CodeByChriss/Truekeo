@@ -73,10 +73,6 @@
     <!-- MisProductos-->
     <string name="search_product">Busca un producto…</string>
 
-
-
-
-</resources>
     <!-- pestaña de mis truekes -->
     <string name="my_truekes">Mis truekes</string>
     <!-- pestaña de mensajes -->
@@ -88,6 +84,6 @@
     <string name="trueke_state_cancelled">Cancelado</string>
     <!-- mensajes -->
     <string name="send">Enviar</string>
-    <string name="write_message_here">Escribe un mensaje aquí...</string>
+    <string name="write_message_here">Escribe un mensaje aquí…</string>
     <string name="go_back">Atrás</string>
 </resources>
