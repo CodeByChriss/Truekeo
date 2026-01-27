@@ -1,5 +1,8 @@
 package com.chaima.truekeo.screens
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -8,6 +11,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,13 +27,18 @@ import com.chaima.truekeo.R
 
 @Composable
 fun EditProfileTab(
-    onSaveClick: () -> Unit = {},
-    onChangePhotoClick: () -> Unit = {}
+    onSaveClick: () -> Unit = {}
 ) {
     var name by remember { mutableStateOf("") }
     var username by remember { mutableStateOf("") }
     var location by remember { mutableStateOf("") }
     var bio by remember { mutableStateOf("") }
+    var itemImageUri by remember { mutableStateOf<Uri?>(null) }
+    val pickItemImageLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri ->
+        if (uri != null) itemImageUri = uri
+    }
 
     Column(
         modifier = Modifier
@@ -56,7 +65,9 @@ fun EditProfileTab(
             modifier = Modifier
                 .size(140.dp)
                 .clip(CircleShape)
-                .clickable { onChangePhotoClick() }
+                .clickable {
+                    pickItemImageLauncher.launch("image/*")
+                }
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -65,9 +76,10 @@ fun EditProfileTab(
             text = stringResource(R.string.change_picture),
             fontSize = 16.sp,
             color = Color(0xFF5EC1A9),
-            modifier = Modifier.clickable { onChangePhotoClick() }
+            modifier = Modifier.clickable {
+                pickItemImageLauncher.launch("image/*")
+            }
         )
-
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
