@@ -60,7 +60,6 @@
     <!-- Profile-->
     <string name="my_trueks">Mis trueques</string>
     <string name="my_products">Mis productos</string>
-    <string name="my_chats">Mis chats</string>
     <!-- Editar perfil y Profile-->
     <string name="name">Nombre y apellido</string>
     <string name="user">Usuario</string>
@@ -83,7 +82,6 @@
     <string name="trueke_state_completed">Completado</string>
     <string name="trueke_state_cancelled">Cancelado</string>
 
-</resources>
     <!-- mensajes -->
     <string name="send">Enviar</string>
     <string name="write_message_here">Escribe un mensaje aquí…</string>
