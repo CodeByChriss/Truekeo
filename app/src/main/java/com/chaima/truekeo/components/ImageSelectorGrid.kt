@@ -42,7 +42,7 @@ fun ImageSelectorGrid(
     modifier: Modifier = Modifier
 ) {
     val listState = rememberLazyListState()
-    val slotSize = 110.dp
+    val slotSize = 130.dp
 
     LazyRow(
         state = listState,
@@ -164,7 +164,7 @@ private fun PrimaryPhotoBadge(
         Text(
             text = stringResource(R.string.main_product_image),
             color = Color.White,
-            style = MaterialTheme.typography.bodySmall
+            style = MaterialTheme.typography.bodyMedium
         )
     }
 }

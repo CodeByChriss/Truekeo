@@ -2,6 +2,7 @@ package com.chaima.truekeo.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -45,52 +46,63 @@ import com.chaima.truekeo.models.User
 @Composable
 fun TruekeCard(
     trueke: Trueke,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
 ) {
     val context = LocalContext.current
 
     val (chipBg, chipFg) = statusColors(trueke.status)
 
+    // area interactiva completa sin márgenes
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(bottom = 10.dp)
+            .clickable{ onClick() }
     ) {
+        // area con los margenes visuales de la tarjeta
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 36.dp) // Espacio para la pestaña superior
-                .clip(RoundedCornerShape(8.dp))
-                .background(Color.White)
+                .padding(24.dp, 0.dp, 24.dp, 10.dp)
         ) {
-            ExchangeLayout(
-                leftItem = trueke.hostItem,
-                leftUser = trueke.hostUser,
-                rightItem = trueke.takerItem!!,
-                rightUser = trueke.takerUser!!
-            )
-        }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 36.dp) // Espacio para la pestaña superior
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(Color.White)
+            ) {
+                ExchangeLayout(
+                    leftItem = trueke.hostItem,
+                    leftUser = trueke.hostUser,
+                    rightItem = trueke.takerItem!!,
+                    rightUser = trueke.takerUser!!
+                )
+            }
 
-        // Pestaña que cuelga del borde superior
-        Box(
-            modifier = Modifier
-                .align(Alignment.TopStart)
-                .clip(RoundedCornerShape(
-                    topStart = 0.dp,
-                    topEnd = 0.dp,
-                    bottomStart = 8.dp,
-                    bottomEnd = 8.dp
-                ))
-                .background(chipBg)
-                .padding(horizontal = 16.dp, vertical = 2.dp)
+            // Pestaña que cuelga del borde superior
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .clip(
+                        RoundedCornerShape(
+                            topStart = 0.dp,
+                            topEnd = 0.dp,
+                            bottomStart = 8.dp,
+                            bottomEnd = 8.dp
+                        )
+                    )
+                    .background(chipBg)
+                    .padding(horizontal = 16.dp, vertical = 2.dp)
 
-        ) {
-            Text(
-                text = trueke.status.displayName(context),
-                color = chipFg,
-                fontSize = 14.sp,
-                fontFamily = FontFamily(Font(R.font.saira_bold))
-            )
+            ) {
+                Text(
+                    text = trueke.status.displayName(context),
+                    color = chipFg,
+                    fontSize = 14.sp,
+                    fontFamily = FontFamily(Font(R.font.saira_bold))
+                )
+            }
         }
     }
 }

@@ -25,10 +25,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.chaima.truekeo.R
 import com.chaima.truekeo.components.ImageSelectorGrid
+import com.chaima.truekeo.components.ItemSelectorCard
 import com.chaima.truekeo.components.LocationSearchField
+import com.chaima.truekeo.data.MockData.items
 import com.chaima.truekeo.models.GeoPoint
+import com.chaima.truekeo.models.Item
 import com.chaima.truekeo.models.ItemCondition
 import com.chaima.truekeo.ui.theme.TruekeoTheme
+import com.chaima.truekeo.utils.FormErrorText
 import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -38,47 +42,23 @@ fun CreateTruekeTab(){
     val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState()
 
-    // Info del trueke a crear
     var title by remember { mutableStateOf("") }
     var details by remember { mutableStateOf("") }
     var locationText by remember { mutableStateOf("") }
     var locationCoordinates by remember { mutableStateOf<GeoPoint?>(null) }
 
-    // Producto (Item)
-    var itemName by remember { mutableStateOf("") }
-    var itemDescription by remember { mutableStateOf("") }
-    var itemCondition by remember { mutableStateOf(ItemCondition.GOOD) }
-    var itemImageUris by remember { mutableStateOf<List<Uri>>(emptyList()) }
-    var currentImageSlot by remember { mutableStateOf(0) }
-
-    val pickItemImageLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
-    ) { uri ->
-        if (uri != null) {
-            val updatedList = itemImageUris.toMutableList()
-            if (currentImageSlot < updatedList.size) {
-                updatedList[currentImageSlot] = uri
-            } else {
-                updatedList.add(uri)
-            }
-            itemImageUris = updatedList
-        }
-    }
+    var selectedItem by remember { mutableStateOf<Item?>(null) }
 
     // Validación de formulario
     var triedSubmit by remember { mutableStateOf(false) }
 
     val titleOk = title.trim().isNotEmpty()
     val locationOk = locationText.trim().isNotEmpty() && locationCoordinates != null
-    val itemNameOk = itemName.trim().isNotEmpty()
-    val itemImagesOk = itemImageUris.isNotEmpty()
 
     val showTitleError = triedSubmit && !titleOk
     val showLocationError = triedSubmit && !locationOk
-    val showItemNameError = triedSubmit && !itemNameOk
-    val showItemImagesError = triedSubmit && !itemImagesOk
 
-    val formOk = titleOk && locationOk && itemNameOk && itemImagesOk
+    val formOk = titleOk && locationOk
 
     TruekeoTheme(dynamicColor = false) {
         Box(
@@ -107,114 +87,69 @@ fun CreateTruekeTab(){
 
                 Spacer(Modifier.height(12.dp))
 
-                // Sección de información del trueke
-                OutlinedTextField(
-                    value = title,
-                    onValueChange = { title = it },
-                    label = { Text(stringResource(R.string.title)) },
-                    singleLine = true,
-                    shape = RoundedCornerShape(8.dp),
-                    modifier = Modifier.fillMaxWidth()
-                )
-                FormErrorText(showError = showTitleError, message = stringResource(R.string.required_field_error))
-
-                Spacer(Modifier.height(7.dp))
-
-                OutlinedTextField(
-                    value = details,
-                    onValueChange = { details = it },
-                    label = { Text(stringResource(R.string.product_details_label)) },
-                    shape = RoundedCornerShape(8.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(140.dp),
-                    maxLines = 5
-                )
-
-                Spacer(Modifier.height(7.dp))
-
-                LocationSearchField(
-                    value = locationText,
-                    onValueChange = { locationText = it },
-                    onLocationSelected = { locationData ->
-                        locationText = locationData.name
-                        locationCoordinates = locationData.coordinates
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    label = stringResource(R.string.location)
-                )
-                FormErrorText(showError = showLocationError, message = stringResource(R.string.required_field_error))
-
-                Spacer(Modifier.height(12.dp))
-
-                // Sección de información del producto del trueke
-                Text(
-                    text = stringResource(R.string.product_to_trueke),
-                    fontFamily = FontFamily(Font(R.font.saira_medium)),
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Start
-                )
-                Spacer(Modifier.height(6.dp))
-
-                OutlinedCard(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(10.dp),
-                    colors = CardDefaults.outlinedCardColors(
-                        containerColor = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.35f)
+                Column(modifier = Modifier.fillMaxSize()) {
+                    OutlinedTextField(
+                        value = title,
+                        onValueChange = { title = it },
+                        label = { Text(stringResource(R.string.title)) },
+                        singleLine = true,
+                        shape = RoundedCornerShape(8.dp),
+                        modifier = Modifier.fillMaxWidth().padding(top = 0.dp)
                     )
-                ) {
-                    Column(Modifier.padding(14.dp, 9.dp, 14.dp, 14.dp)) {
-                        OutlinedTextField(
-                            value = itemName,
-                            onValueChange = { itemName = it },
-                            label = { Text(stringResource(R.string.product_name)) },
-                            singleLine = true,
-                            shape = RoundedCornerShape(8.dp),
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                        FormErrorText(showError = showItemNameError, message = stringResource(R.string.required_field_error))
+                    FormErrorText(
+                        showError = showTitleError,
+                        message = stringResource(R.string.required_field_error)
+                    )
 
-                        Spacer(Modifier.height(7.dp))
+                    Spacer(Modifier.height(7.dp))
 
-                        OutlinedTextField(
-                            value = itemDescription,
-                            onValueChange = { itemDescription = it },
-                            label = { Text(stringResource(R.string.product_description)) },
-                            shape = RoundedCornerShape(8.dp),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(110.dp),
-                            maxLines = 5
-                        )
+                    OutlinedTextField(
+                        value = details,
+                        onValueChange = { details = it },
+                        label = { Text(stringResource(R.string.product_details_label)) },
+                        shape = RoundedCornerShape(8.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(140.dp),
+                        maxLines = 5
+                    )
 
-                        Spacer(Modifier.height(7.dp))
+                    Spacer(Modifier.height(7.dp))
 
-                        // Dropdown condición
-                        ItemConditionDropdown(
-                            value = itemCondition,
-                            onValueChange = { itemCondition = it },
-                            modifier = Modifier.fillMaxWidth()
-                        )
+                    LocationSearchField(
+                        value = locationText,
+                        onValueChange = { locationText = it },
+                        onLocationSelected = { locationData ->
+                            locationText = locationData.name
+                            locationCoordinates = locationData.coordinates
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        label = stringResource(R.string.location)
+                    )
+                    FormErrorText(
+                        showError = showLocationError,
+                        message = stringResource(R.string.required_field_error)
+                    )
 
-                        Spacer(Modifier.height(14.dp))
+                    Spacer(Modifier.height(12.dp))
 
-                        ImageSelectorGrid(
-                            images = itemImageUris,
-                            maxImages = 5,
-                            onAddImage = { slot ->
-                                currentImageSlot = slot
-                                pickItemImageLauncher.launch("image/*")
-                            },
-                            onRemoveImage = { index ->
-                                itemImageUris = itemImageUris.toMutableList().apply {
-                                    removeAt(index)
-                                }
-                            }
-                        )
-                        FormErrorText(showError = showItemImagesError, message = stringResource(R.string.at_least_one_image_required))
-                    }
+                    // Sección del producto del trueke
+                    Text(
+                        text = stringResource(R.string.product_to_trueke),
+                        fontFamily = FontFamily(Font(R.font.saira_medium)),
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Start
+                    )
+                    Spacer(Modifier.height(6.dp))
+
+                    ItemSelectorCard(
+                        items = items,
+                        selectedItem = selectedItem,
+                        onItemSelected = { selectedItem = it },
+                        showError = triedSubmit && selectedItem == null
+                    )
                 }
 
                 Spacer(Modifier.height(22.dp))
@@ -244,68 +179,4 @@ fun CreateTruekeTab(){
             }
         }
     }
-}
-
-// Dropdown para seleccionar la condición del producto del trueke
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun ItemConditionDropdown(
-    value: ItemCondition,
-    onValueChange: (ItemCondition) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val context = LocalContext.current
-    var expanded by remember { mutableStateOf(false) }
-
-    ExposedDropdownMenuBox(
-        expanded = expanded,
-        onExpandedChange = { expanded = !expanded },
-        modifier = modifier
-    ) {
-        OutlinedTextField(
-            value = value.displayName(context),
-            onValueChange = {},
-            readOnly = true,
-            label = { Text(stringResource(R.string.product_state)) },
-            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
-            shape = RoundedCornerShape(8.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .menuAnchor()
-        )
-        ExposedDropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false }
-        ) {
-            ItemCondition.entries.forEach { condition ->
-                DropdownMenuItem(
-                    text = { Text(condition.displayName(context)) },
-                    onClick = {
-                        onValueChange(condition)
-                        expanded = false
-                    }
-                )
-            }
-        }
-    }
-}
-
-// Texto de error para campos de formulario
-@Composable
-private fun FormErrorText(
-    showError: Boolean,
-    message: String,
-    modifier: Modifier = Modifier
-) {
-    if (!showError) return
-
-    Text(
-        text = message,
-        style = MaterialTheme.typography.labelSmall,
-        fontFamily = FontFamily(Font(R.font.saira_regular)),
-        color = MaterialTheme.colorScheme.error,
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(top = 3.dp)
-    )
 }

@@ -25,13 +25,15 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.chaima.truekeo.R
 import com.chaima.truekeo.components.TruekeCard
 import com.chaima.truekeo.data.MockData
+import com.chaima.truekeo.navigation.Routes
 import com.chaima.truekeo.ui.theme.TruekeoTheme
 
 @Composable
-fun MyTruekesTab(){
+fun MyTruekesTab(navController: NavController) {
     val truekes = remember { MockData.sampleTruekesWithTaker }
 
     TruekeoTheme(dynamicColor = false) {
@@ -74,7 +76,9 @@ fun MyTruekesTab(){
                     truekes.forEachIndexed { index, trueke ->
                         TruekeCard(
                             trueke = trueke,
-                            modifier = Modifier.padding(horizontal = 24.dp)
+                            onClick = {
+                                navController.navigate(Routes.TruekeDetails.create(trueke.id))
+                            }
                         )
 
                         if (index < truekes.lastIndex) {

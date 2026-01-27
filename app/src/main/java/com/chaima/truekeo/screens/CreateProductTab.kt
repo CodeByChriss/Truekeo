@@ -13,8 +13,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
@@ -32,13 +40,47 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.chaima.truekeo.R
+import com.chaima.truekeo.components.ImageSelectorGrid
 import com.chaima.truekeo.models.GeoPoint
 import com.chaima.truekeo.models.ItemCondition
 import com.chaima.truekeo.ui.theme.TruekeoTheme
+import com.chaima.truekeo.utils.FormErrorText
+import java.util.Locale
 
 @Composable
 fun CreateProductTab() {
+    val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState()
+
+    var name by remember { mutableStateOf("") }
+    var description by remember { mutableStateOf("") }
+    var condition by remember { mutableStateOf(ItemCondition.GOOD) }
+    var imageUris by remember { mutableStateOf<List<Uri>>(emptyList()) }
+    var currentImageSlot by remember { mutableStateOf(0) }
+
+    val pickImageLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri ->
+        if (uri != null) {
+            val updatedList = imageUris.toMutableList()
+            if (currentImageSlot < updatedList.size) {
+                updatedList[currentImageSlot] = uri
+            } else {
+                updatedList.add(uri)
+            }
+            imageUris = updatedList
+        }
+    }
+
+    var triedSubmit by remember { mutableStateOf(false) }
+
+    val nameOk = name.trim().isNotEmpty()
+    val imagesOk = imageUris.isNotEmpty()
+
+    val showNameError = triedSubmit && !nameOk
+    val showImagesError = triedSubmit && !imagesOk
+
+    val formOk = nameOk && imagesOk
 
     TruekeoTheme(dynamicColor = false) {
         Box(
@@ -63,6 +105,126 @@ fun CreateProductTab() {
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Start
+                )
+
+                Spacer(Modifier.height(12.dp))
+
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    ImageSelectorGrid(
+                        images = imageUris,
+                        maxImages = 5,
+                        onAddImage = { slot ->
+                            currentImageSlot = slot
+                            pickImageLauncher.launch("image/*")
+                        },
+                        onRemoveImage = { index ->
+                            imageUris = imageUris.toMutableList().apply {
+                                removeAt(index)
+                            }
+                        }
+                    )
+                    FormErrorText(showError = showImagesError, message = stringResource(R.string.at_least_one_image_required))
+
+                    Spacer(Modifier.height(7.dp))
+
+                    OutlinedTextField(
+                        value = name,
+                        onValueChange = { name = it },
+                        label = { Text(stringResource(R.string.product_name)) },
+                        singleLine = true,
+                        shape = RoundedCornerShape(8.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    FormErrorText(showError = showNameError, message = stringResource(R.string.required_field_error))
+
+                    Spacer(Modifier.height(7.dp))
+
+                    OutlinedTextField(
+                        value = description,
+                        onValueChange = { description = it },
+                        label = { Text(stringResource(R.string.product_description)) },
+                        shape = RoundedCornerShape(8.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(110.dp),
+                        maxLines = 5
+                    )
+
+                    Spacer(Modifier.height(7.dp))
+
+                    // Dropdown condición
+                    ItemConditionDropdown(
+                        value = condition,
+                        onValueChange = { condition = it },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+
+                Spacer(Modifier.height(22.dp))
+
+                Button(
+                    onClick = {
+                        triedSubmit = true
+                        focusManager.clearFocus()
+
+                        if (!formOk) return@Button
+
+                        // TODO: Aquí ya está todo OK -> crear trueke
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.create).uppercase(Locale.getDefault()),
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontFamily = FontFamily(Font(R.font.saira_medium))
+                    )
+                }
+            }
+        }
+    }
+}
+
+// Dropdown para seleccionar la condición del producto del trueke
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ItemConditionDropdown(
+    value: ItemCondition,
+    onValueChange: (ItemCondition) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
+    var expanded by remember { mutableStateOf(false) }
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded },
+        modifier = modifier
+    ) {
+        OutlinedTextField(
+            value = value.displayName(context),
+            onValueChange = {},
+            readOnly = true,
+            label = { Text(stringResource(R.string.product_state)) },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
+            shape = RoundedCornerShape(8.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor()
+        )
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            ItemCondition.entries.forEach { condition ->
+                DropdownMenuItem(
+                    text = { Text(condition.displayName(context)) },
+                    onClick = {
+                        onValueChange(condition)
+                        expanded = false
+                    }
                 )
             }
         }

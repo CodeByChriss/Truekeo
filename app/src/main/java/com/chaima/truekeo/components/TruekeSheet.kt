@@ -1,7 +1,6 @@
 package com.chaima.truekeo.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,7 +18,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Collections
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
@@ -35,7 +33,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -43,7 +40,6 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import com.chaima.truekeo.R
 import com.chaima.truekeo.utils.resolvePlaceName
 import com.chaima.truekeo.models.Item
@@ -209,7 +205,7 @@ private fun TruekeHostItemSection(item: Item) {
         }
     }
     // Imagen del ítem
-    ItemImageBox(item)
+    ItemImageBox(item, 180.dp)
 }
 
 @Composable
@@ -265,48 +261,6 @@ private fun RowDivider(
             .height(thickness)
             .background(color)
     )
-}
-
-// Contenedor de la imagen del ítem con funcionalidad para ver en pantalla completa
-@Composable
-private fun ItemImageBox(item: Item) {
-    var showImageViewer by remember { mutableStateOf(false) }
-
-    Box(modifier = Modifier
-        .height(180.dp)
-        .clip(RoundedCornerShape(12.dp))
-        .clickable { showImageViewer = true }
-    ) {
-        ProductImage(item)
-
-        // Indicador de múltiples imágenes si las hay
-        if (item.imageUrls.size > 1) {
-            Box(
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(6.dp)
-                    .zIndex(1f)
-                    .size(28.dp)
-                    .clip(RoundedCornerShape(6.dp))
-                    .background(Color.Black.copy(alpha = 0.20f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Collections,
-                    contentDescription = "Varias imágenes",
-                    tint = Color.White,
-                    modifier = Modifier.size(18.dp)
-                )
-            }
-        }
-    }
-
-    if (showImageViewer) {
-        FullScreenImageViewer(
-            imageUrls = item.imageUrls,
-            onDismiss = { showImageViewer = false }
-        )
-    }
 }
 
 @Composable

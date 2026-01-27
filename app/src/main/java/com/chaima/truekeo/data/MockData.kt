@@ -290,4 +290,57 @@ object MockData {
             createdAt = Instant.now().minus(1, ChronoUnit.DAYS)
         )
     )
+
+    val items = listOf(
+        Item(
+            id = "item_1",
+            name = "iPhone 12",
+            details = "64GB · Color negro · En buen estado",
+            imageUrls = listOf(
+                "https://picsum.photos/400/400?random=1"
+            ),
+            brand = "Apple",
+            condition = ItemCondition.GOOD
+        ),
+        Item(
+            id = "item_2",
+            name = "Bicicleta de montaña",
+            details = "Ruedas 27.5 · Poco uso",
+            imageUrls = listOf(
+                "https://picsum.photos/400/400?random=2"
+            ),
+            brand = "Rockrider",
+            condition = ItemCondition.LIKE_NEW
+        ),
+        Item(
+            id = "item_3",
+            name = "PlayStation 4",
+            details = "Incluye mando y cables",
+            imageUrls = listOf(
+                "https://picsum.photos/400/400?random=3"
+            ),
+            brand = "Sony",
+            condition = ItemCondition.GOOD
+        ),
+        Item(
+            id = "item_4",
+            name = "Auriculares Bluetooth",
+            details = "Cancelación de ruido",
+            imageUrls = listOf(
+                "https://picsum.photos/400/400?random=4"
+            ),
+            brand = "Sony",
+            condition = ItemCondition.LIKE_NEW
+        ),
+        Item(
+            id = "item_5",
+            name = "Cámara réflex Canon",
+            details = "18–55mm · Muy cuidada",
+            imageUrls = listOf(
+                "https://picsum.photos/400/400?random=5"
+            ),
+            brand = "Canon",
+            condition = ItemCondition.GOOD
+        )
+    )
 }

@@ -16,8 +16,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.chaima.truekeo.navigation.NavBarRoutes
+import com.chaima.truekeo.navigation.Routes
 
 private data class BottomItem(
     val route: String,
@@ -26,9 +28,16 @@ private data class BottomItem(
 )
 
 @Composable
-fun BottomNavBar(navController: NavController) {
+fun BottomNavBar(
+    navController: NavController,
+    fabExpanded: Boolean,
+    onFabToggle: () -> Unit,
+    onFabClose: () -> Unit
+) {
     val backStackEntry = navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry.value?.destination?.route
+
+    val isInTruekeDetails = currentRoute?.startsWith("trueke_details") == true
 
     val leftItems = listOf(
         BottomItem(
@@ -72,6 +81,21 @@ fun BottomNavBar(navController: NavController) {
         )
     )
 
+    fun goToTab(route: String) {
+        onFabClose()
+
+        navController.popBackStack(Routes.CreateTrueke.route, inclusive = true)
+        navController.popBackStack(Routes.CreateProduct.route, inclusive = true)
+
+        navController.navigate(route) {
+            launchSingleTop = true
+            restoreState = true
+            popUpTo(navController.graph.findStartDestination().id) {
+                saveState = true
+            }
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -85,18 +109,24 @@ fun BottomNavBar(navController: NavController) {
         ) {
             // Items de la izquierda
             leftItems.forEach { item ->
-                val selected = currentRoute == item.route
+                val selected = when {
+                    isInTruekeDetails && item.route == NavBarRoutes.MyTruekes.route -> true
+                    else -> currentRoute == item.route
+                }
+
                 NavigationBarItem(
                     selected = selected,
                     onClick = {
+                        // Caso especial para que desde detaille de un trueke, al pulsar el tab de mis truekes vuelve al padre
+                        if (isInTruekeDetails && item.route == NavBarRoutes.MyTruekes.route) {
+                            onFabClose()
+                            val popped = navController.popBackStack(NavBarRoutes.MyTruekes.route, inclusive = false)
+                            if (!popped) goToTab(NavBarRoutes.MyTruekes.route)
+                            return@NavigationBarItem
+                        }
+
                         if (currentRoute != item.route) {
-                            navController.navigate(item.route) {
-                                launchSingleTop = true
-                                restoreState = true
-                                popUpTo(navController.graph.startDestinationId) {
-                                    saveState = true
-                                }
-                            }
+                            goToTab(item.route)
                         }
                     },
                     icon = item.icon,
@@ -123,13 +153,7 @@ fun BottomNavBar(navController: NavController) {
                     selected = selected,
                     onClick = {
                         if (currentRoute != item.route) {
-                            navController.navigate(item.route) {
-                                launchSingleTop = true
-                                restoreState = true
-                                popUpTo(navController.graph.startDestinationId) {
-                                    saveState = true
-                                }
-                            }
+                            goToTab(item.route)
                         }
                     },
                     icon = item.icon,
@@ -144,17 +168,7 @@ fun BottomNavBar(navController: NavController) {
 
         // Botón central integrado
         FloatingActionButton(
-            onClick = {
-                if (currentRoute != NavBarRoutes.Create.route) {
-                    navController.navigate(NavBarRoutes.Create.route) {
-                        launchSingleTop = true
-                        restoreState = true
-                        popUpTo(navController.graph.startDestinationId) {
-                            saveState = true
-                        }
-                    }
-                }
-            },
+            onClick = onFabToggle,
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .offset(y = (-16).dp)
