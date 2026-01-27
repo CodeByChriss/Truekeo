@@ -56,6 +56,17 @@
     <string name="product_state_poor">Worn</string>
 
     <string name="time_published_now">Published just now</string>
+    <string name="name">First and last name</string>
+    <string name="user">User</string>
+    <string name="city">City</string>
+    <string name="bio">Write something about yourself…</string>
+    <string name="edit_profile">Edit profile</string>
+    <string name="change_picture">Change your profile picture</string>
+    <string name="save">Save changes</string>
+    <string name="my_trueks">My truekes</string>
+    <string name="my_products">My products</string>
+    <string name="my_chats">My chats</string>
+    <string name="search_product">Search a product...</string>
 
     <string name="my_truekes">My truekes</string>
 

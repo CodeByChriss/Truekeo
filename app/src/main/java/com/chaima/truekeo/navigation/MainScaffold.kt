@@ -17,7 +17,9 @@ import com.chaima.truekeo.models.ChatViewModel
 import com.chaima.truekeo.screens.HomeTab
 import com.chaima.truekeo.screens.CreateEventTab
 import com.chaima.truekeo.screens.MessageTab
+import com.chaima.truekeo.screens.EditProfileTab
 import com.chaima.truekeo.screens.MessagesTab
+import com.chaima.truekeo.screens.MyProductsTab
 import com.chaima.truekeo.screens.ProfileTab
 import com.chaima.truekeo.screens.MyTruekesTab
 
@@ -44,7 +46,7 @@ fun MainScaffold() {
             composable(NavBarRoutes.Home.route) { HomeTab() }
             composable(NavBarRoutes.MyTruekes.route) { MyTruekesTab() }
             composable(NavBarRoutes.Create.route) { CreateEventTab() }
-
+            
             composable(NavBarRoutes.Messages.route) {
                 MessagesTab(
                     onMessageClick = { message ->
@@ -60,8 +62,56 @@ fun MainScaffold() {
                     onBack = { navController.popBackStack() }
                 )
             }
+            
+            composable(NavBarRoutes.Profile.route) {
+                ProfileTab(
+                    onMyTruekesClick = {
+                        navController.navigate(NavBarRoutes.MyTruekes.route) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
+                    onMessagesClick = {
+                        navController.navigate(NavBarRoutes.Messages.route) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
+                    onMyProductsClick = {
+                        navController.navigate(NavBarRoutes.MyProducts.route) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
+                    onEditProfileClick = {
+                        navController.navigate(NavBarRoutes.EditProfile.route) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
+                )
+            }
+            composable(NavBarRoutes.MyProducts.route) { MyProductsTab() }
 
-            composable(NavBarRoutes.Profile.route) { ProfileTab() }
+            composable(NavBarRoutes.EditProfile.route) {
+                EditProfileTab(
+                    onSaveClick = {
+                        navController.popBackStack()
+                    }
+                )
+            }
         }
     }
 }
