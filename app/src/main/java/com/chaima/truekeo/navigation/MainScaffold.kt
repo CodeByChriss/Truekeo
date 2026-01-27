@@ -1,5 +1,7 @@
 package com.chaima.truekeo.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.material3.Scaffold
 import androidx.navigation.compose.rememberNavController
@@ -8,20 +10,33 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.chaima.truekeo.components.BottomNavBar
 import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.currentBackStackEntryAsState
+import com.chaima.truekeo.models.ChatViewModel
 import com.chaima.truekeo.screens.HomeTab
 import com.chaima.truekeo.screens.CreateEventTab
+import com.chaima.truekeo.screens.MessageTab
 import com.chaima.truekeo.screens.EditProfileTab
 import com.chaima.truekeo.screens.MessagesTab
 import com.chaima.truekeo.screens.MyProductsTab
 import com.chaima.truekeo.screens.ProfileTab
 import com.chaima.truekeo.screens.MyTruekesTab
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MainScaffold() {
     val navController = rememberNavController()
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+    val chatViewModel: ChatViewModel = viewModel()
 
     Scaffold(
-        bottomBar = { BottomNavBar(navController) }
+        bottomBar = {
+            if (currentRoute != NavBarRoutes.Message.route) {
+                BottomNavBar(navController)
+            }
+        }
     ) { padding ->
         NavHost(
             navController = navController,
@@ -31,7 +46,23 @@ fun MainScaffold() {
             composable(NavBarRoutes.Home.route) { HomeTab() }
             composable(NavBarRoutes.MyTruekes.route) { MyTruekesTab() }
             composable(NavBarRoutes.Create.route) { CreateEventTab() }
-            composable(NavBarRoutes.Messages.route) { MessagesTab() }
+            
+            composable(NavBarRoutes.Messages.route) {
+                MessagesTab(
+                    onMessageClick = { message ->
+                        chatViewModel.onMessageSelected(message)
+                        navController.navigate(NavBarRoutes.Message.route)
+                    }
+                )
+            }
+
+            composable(NavBarRoutes.Message.route) {
+                MessageTab(
+                    conversation = chatViewModel.selectedMessage,
+                    onBack = { navController.popBackStack() }
+                )
+            }
+            
             composable(NavBarRoutes.Profile.route) {
                 ProfileTab(
                     onMyTruekesClick = {
@@ -52,7 +83,7 @@ fun MainScaffold() {
                             restoreState = true
                         }
                     },
-                    onMyProductsClick = { // <-- nuevo callback
+                    onMyProductsClick = {
                         navController.navigate(NavBarRoutes.MyProducts.route) {
                             popUpTo(navController.graph.startDestinationId) {
                                 saveState = true
@@ -61,7 +92,7 @@ fun MainScaffold() {
                             restoreState = true
                         }
                     },
-                    onEditProfileClick = { // <-- nuevo callback
+                    onEditProfileClick = {
                         navController.navigate(NavBarRoutes.EditProfile.route) {
                             popUpTo(navController.graph.startDestinationId) {
                                 saveState = true
@@ -81,8 +112,6 @@ fun MainScaffold() {
                     }
                 )
             }
-
-
         }
     }
 }
