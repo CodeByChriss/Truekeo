@@ -5,7 +5,7 @@
 
     <string name="default_web_client_id" translatable="false">1014848725574-kb2ucqs2hadqt47pou7qigsln5fljjj1.apps.googleusercontent.com</string>
 
-    <string name="truekeo_logo">Truekeo logo</string>
+    <string name="truekeo_logo">Truekeo Logo</string>
 
     <string name="sign_in">Sign in</string>
     <string name="username_or_email">Email or username</string>
@@ -32,6 +32,7 @@
     <string name="login_cancelled_by_user">Sign-in cancelled by user</string>
     <string name="no_google_account">No Google accounts found. Add an account in Settings</string>
 
+    <string name="password_dont_match">Passwords are not the same.</string>
     <string name="product_offered">Offered product</string>
     <string name="product_name_label">Name</string>
     <string name="product_details_label">Details</string>
@@ -66,4 +67,11 @@
     <string name="my_products">My products</string>
     <string name="my_chats">My chats</string>
     <string name="search_product">Search a product...</string>
+
+    <string name="my_truekes">My truekes</string>
+
+    <string name="trueke_state_open">Pending</string>
+    <string name="trueke_state_reserved">Reserved</string>
+    <string name="trueke_state_completed">Completed</string>
+    <string name="trueke_state_cancelled">Cancelled</string>
 </resources>

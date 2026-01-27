@@ -97,7 +97,7 @@ fun LoginScreen(onSignUp: () -> Unit, onLogin: () -> Unit) {
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Text(
-                    text = getString(context,R.string.sign_in),
+                    text = getString(context,R.string.register),
                     fontSize = 36.sp,
                     fontFamily = FontFamily(Font(R.font.saira_regular)),
                     color = MaterialTheme.colorScheme.primary
@@ -227,7 +227,7 @@ fun LoginScreen(onSignUp: () -> Unit, onLogin: () -> Unit) {
                                 } else {
                                     Toast.makeText(
                                         context,
-                                        getString(context,R.string.error_invalid_credentials),
+                                        getString(context,R.string.error_getting_credentials),
                                         Toast.LENGTH_SHORT
                                     ).show()
                                 }
