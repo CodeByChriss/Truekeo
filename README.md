@@ -14,6 +14,7 @@ Impulsamos una economía circular basada en el intercambio responsable, donde ca
 ![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-4285F4?style=for-the-badge&logo=Jetpack%20Compose&logoColor=white)
 ![Mapbox](https://img.shields.io/badge/Mapbox-007afc.svg?style=for-the-badge&logo=Mapbox&logoColor=white)
 ![Firebase](https://img.shields.io/badge/firebase-ffca28?style=for-the-badge&logo=firebase&logoColor=black)
+![Supabase](https://img.shields.io/badge/Supabase-3FCF8E.svg?style=for-the-badge&logo=Supabase&logoColor=white)
 
 ## Prototipo (Figma)
 
