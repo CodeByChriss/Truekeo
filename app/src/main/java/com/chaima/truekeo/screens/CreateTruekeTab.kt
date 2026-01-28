@@ -147,8 +147,7 @@ fun CreateTruekeTab(){
                     ItemSelectorCard(
                         items = items,
                         selectedItem = selectedItem,
-                        onItemSelected = { selectedItem = it },
-                        showError = triedSubmit && selectedItem == null
+                        onItemSelected = { selectedItem = it }
                     )
                 }
 
