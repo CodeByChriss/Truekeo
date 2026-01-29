@@ -6,6 +6,13 @@ sealed class Routes(val route: String) {
     object Login : Routes("login")
     object Signup : Routes("signup")
     object Main : Routes("main")
+
+    data object CreateTrueke : Routes("create_trueke")
+    data object CreateProduct : Routes("create_product")
+
+    data object TruekeDetails : Routes("trueke_details/{truekeId}") {
+        fun create(truekeId: String) = "trueke_details/$truekeId"
+    }
 }
 
 sealed class NavBarRoutes(val route: String) {
