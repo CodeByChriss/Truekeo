@@ -55,7 +55,9 @@
     <string name="product_state_fair">Aceptable</string>
     <string name="product_state_poor">Desgastado</string>
     <!-- utiles de tiempo -->
-    <string name="time_published_now">Publicado ahora mismo</string>
+    <string name="time_prefix_published">Publicado</string>
+    <string name="time_prefix_updated">Actualizado</string>
+    <string name="time_now">ahora mismo</string>
     <!-- pestaña de mis truekes -->
     <string name="my_truekes">Mis truekes</string>
     <!-- estados del trueke -->

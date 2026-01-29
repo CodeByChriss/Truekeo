@@ -19,7 +19,7 @@ data class Trueke(
 
     val status: TruekeStatus = TruekeStatus.OPEN,
     val createdAt: Instant = Instant.now(),
-    val editedAt: Instant? = null
+    val updatedAt: Instant? = null
 )
 
 enum class TruekeStatus {

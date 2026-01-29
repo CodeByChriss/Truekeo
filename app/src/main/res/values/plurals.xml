@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <plurals name="time_published_minutes">
-        <item quantity="one">Publicado hace %d minuto</item>
-        <item quantity="other">Publicado hace %d minutos</item>
+    <plurals name="time_minutes_ago">
+        <item quantity="one">hace %d minuto</item>
+        <item quantity="other">hace %d minutos</item>
     </plurals>
 
-    <plurals name="time_published_hours">
-        <item quantity="one">Publicado hace %d hora</item>
-        <item quantity="other">Publicado hace %d horas</item>
+    <plurals name="time_hours_ago">
+        <item quantity="one">hace %d hora</item>
+        <item quantity="other">hace %d horas</item>
     </plurals>
 
-    <plurals name="time_published_days">
-        <item quantity="one">Publicado hace %d día</item>
-        <item quantity="other">Publicado hace %d días</item>
+    <plurals name="time_days_ago">
+        <item quantity="one">hace %d día</item>
+        <item quantity="other">hace %d días</item>
     </plurals>
 
-    <plurals name="time_published_months">
-        <item quantity="one">Publicado hace %d mes</item>
-        <item quantity="other">Publicado hace %d meses</item>
+    <plurals name="time_months_ago">
+        <item quantity="one">hace %d mes</item>
+        <item quantity="other">hace %d meses</item>
     </plurals>
 </resources>

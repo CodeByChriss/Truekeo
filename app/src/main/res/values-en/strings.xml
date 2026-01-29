@@ -54,7 +54,9 @@
     <string name="product_state_fair">Fair</string>
     <string name="product_state_poor">Worn</string>
 
-    <string name="time_published_now">Published just now</string>
+    <string name="time_prefix_published">Published</string>
+    <string name="time_prefix_updated">Updated</string>
+    <string name="time_now">just now</string>
 
     <string name="my_truekes">My truekes</string>
 

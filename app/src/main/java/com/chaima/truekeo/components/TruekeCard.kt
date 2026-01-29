@@ -52,6 +52,8 @@ import com.chaima.truekeo.models.Item
 import com.chaima.truekeo.models.Trueke
 import com.chaima.truekeo.models.TruekeStatus
 import com.chaima.truekeo.models.User
+import com.chaima.truekeo.utils.TimePrefix
+import com.chaima.truekeo.utils.prefixedTimeAgo
 import com.chaima.truekeo.utils.resolvePlaceName
 
 @Composable
@@ -110,6 +112,22 @@ private fun PendingTruekeLayout(
 ) {
     val context = LocalContext.current
 
+    val timeText = remember(trueke.createdAt, trueke.updatedAt) {
+        if (trueke.updatedAt != null && trueke.updatedAt.isAfter(trueke.createdAt)) {
+            prefixedTimeAgo(
+                context = context,
+                from = trueke.updatedAt,
+                prefix = TimePrefix.UPDATED
+            )
+        } else {
+            prefixedTimeAgo(
+                context = context,
+                from = trueke.createdAt,
+                prefix = TimePrefix.PUBLISHED
+            )
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -126,7 +144,7 @@ private fun PendingTruekeLayout(
         Spacer(Modifier.height(2.dp))
 
         Text(
-            text = trueke.title,
+            text = timeText,
             style = MaterialTheme.typography.bodyMedium,
             fontFamily = FontFamily(Font(R.font.saira_regular))
         )

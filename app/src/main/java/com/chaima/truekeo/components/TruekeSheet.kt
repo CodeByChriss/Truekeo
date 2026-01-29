@@ -46,6 +46,8 @@ import com.chaima.truekeo.models.Item
 import com.chaima.truekeo.models.Trueke
 import com.chaima.truekeo.models.TruekeStatus
 import com.chaima.truekeo.models.User
+import com.chaima.truekeo.utils.TimePrefix
+import com.chaima.truekeo.utils.prefixedTimeAgo
 import com.chaima.truekeo.utils.timeAgo
 
 // Contenido del bottom sheet que muestra los detalles del trueke seleccionado
@@ -163,7 +165,11 @@ private fun TruekeInfoSection(trueke: Trueke) {
 
 
         Text(
-            text = timeAgo(context, trueke.createdAt),
+            text = prefixedTimeAgo(
+                context = context,
+                from = trueke.createdAt,
+                prefix = TimePrefix.PUBLISHED
+            ),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontFamily = FontFamily(Font(R.font.saira_regular)),
