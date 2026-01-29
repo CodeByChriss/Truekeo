@@ -20,5 +20,10 @@ sealed class NavBarRoutes(val route: String) {
     object Home : NavBarRoutes("home")
     object MyTruekes : NavBarRoutes("mytruekes")
     object Messages : NavBarRoutes("messages")
+    object Message : NavBarRoutes("message")
     object Profile : NavBarRoutes("profile")
+    object MyProducts : NavBarRoutes("myproducts")
+    object EditProfile : NavBarRoutes("edit_profile")
+
+
 }

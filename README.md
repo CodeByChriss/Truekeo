@@ -14,6 +14,7 @@ Impulsamos una economía circular basada en el intercambio responsable, donde ca
 ![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-4285F4?style=for-the-badge&logo=Jetpack%20Compose&logoColor=white)
 ![Mapbox](https://img.shields.io/badge/Mapbox-007afc.svg?style=for-the-badge&logo=Mapbox&logoColor=white)
 ![Firebase](https://img.shields.io/badge/firebase-ffca28?style=for-the-badge&logo=firebase&logoColor=black)
+![Supabase](https://img.shields.io/badge/Supabase-3FCF8E.svg?style=for-the-badge&logo=Supabase&logoColor=white)
 
 ## Prototipo (Figma)
 
@@ -52,9 +53,9 @@ En el segundo sprint se ha comenzado con el desarrollo técnico del proyecto y l
 
 ### Sprint 3 – Navegación, menús y adaptabilidad (3 semanas)
 
-***Objetivos alcanzados:***
-
 En el tercer sprint se amplía la funcionalidad de la aplicación desarrollando la navegación completa, optimizando la interfaz para diferentes dispositivos y añadiendo características de accesibilidad e internacionalización.
+
+***Objetivos alcanzados:***
 
 - [x] **Desarrollo de la interfaz principal**
     - Menús de navegación y fragments/tabs (no hacen falta más activities).
@@ -93,3 +94,13 @@ Este apartado documenta las principales librerías utilizadas en el proyecto y c
 - Carga asíncrona de imágenes de productos y avatares de usuario con `AsyncImage`
 - Recorte de imágenes con formas personalizadas (circular para avatares, redondeada para productos)
 - Ajuste automático del contenido con `ContentScale.Crop`
+
+### 🧩 Material Icons Extended
+
+```gradle
+dependencies {
+    implementation("androidx.compose.material:material-icons-extended")
+}
+```
+
+**Propósito:** Incorporación de un conjunto ampliado de iconos Material para mejorar la experiencia visual y la claridad de la interfaz de usuario.

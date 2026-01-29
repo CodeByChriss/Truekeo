@@ -198,6 +198,8 @@ fun SignupScreen(onSignUp: () -> Unit, onBackToLogin: () -> Unit) {
                                     Toast.makeText(context, errorMsg, Toast.LENGTH_SHORT).show()
                                 }
                             }
+                        }else{
+                            Toast.makeText(context, getString(context,R.string.password_dont_match), Toast.LENGTH_SHORT).show()
                         }
                     },
                     modifier = Modifier

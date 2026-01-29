@@ -4,9 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.Chat
+import androidx.compose.material.icons.automirrored.rounded.EventNote
 import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.rounded.Chat
-import androidx.compose.material.icons.rounded.EventNote
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material3.*
@@ -43,20 +43,24 @@ fun BottomNavBar(
         BottomItem(
             route = NavBarRoutes.Home.route,
             label = "Home",
-            icon = { Icon(
-                Icons.Rounded.Home,
-                contentDescription = "Home",
-                modifier = Modifier.size(26.dp)
-            ) }
+            icon = {
+                Icon(
+                    Icons.Rounded.Home,
+                    contentDescription = "Home",
+                    modifier = Modifier.size(26.dp)
+                )
+            }
         ),
         BottomItem(
             route = NavBarRoutes.MyTruekes.route,
             label = "My Truekes",
-            icon = { Icon(
-                Icons.Rounded.EventNote,
-                contentDescription = "My Truekes",
-                modifier = Modifier.size(26.dp)
-            ) }
+            icon = {
+                Icon(
+                    Icons.AutoMirrored.Rounded.EventNote,
+                    contentDescription = "My Truekes",
+                    modifier = Modifier.size(26.dp)
+                )
+            }
         )
     )
 
@@ -64,20 +68,24 @@ fun BottomNavBar(
         BottomItem(
             route = NavBarRoutes.Messages.route,
             label = "Messages",
-            icon = { Icon(
-                Icons.Rounded.Chat,
-                contentDescription = "Messages",
-                modifier = Modifier.size(26.dp)
-            ) }
+            icon = {
+                Icon(
+                    Icons.AutoMirrored.Rounded.Chat,
+                    contentDescription = "Messages",
+                    modifier = Modifier.size(26.dp)
+                )
+            }
         ),
         BottomItem(
             route = NavBarRoutes.Profile.route,
             label = "Profile",
-            icon = { Icon(
-                Icons.Rounded.Person,
-                contentDescription = "Profile",
-                modifier = Modifier.size(26.dp)
-            ) }
+            icon = {
+                Icon(
+                    Icons.Rounded.Person,
+                    contentDescription = "Profile",
+                    modifier = Modifier.size(26.dp)
+                )
+            }
         )
     )
 

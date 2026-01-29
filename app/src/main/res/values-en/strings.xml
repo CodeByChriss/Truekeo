@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="false">Truekeo</string>
-    <string name="title_activity_splash_screen" translatable="false">SplashScreen</string>
 
-    <string name="default_web_client_id" translatable="false">1014848725574-kb2ucqs2hadqt47pou7qigsln5fljjj1.apps.googleusercontent.com</string>
-
-    <string name="truekeo_logo">Truekeo logo</string>
+    <string name="truekeo_logo">Truekeo Logo</string>
 
     <string name="sign_in">Sign in</string>
     <string name="username_or_email">Email or username</string>
@@ -32,6 +28,7 @@
     <string name="login_cancelled_by_user">Sign-in cancelled by user</string>
     <string name="no_google_account">No Google accounts found. Add an account in Settings</string>
 
+    <string name="password_dont_match">Passwords are not the same.</string>
     <string name="product_offered">Offered product</string>
     <string name="product_name_label">Name</string>
     <string name="product_details_label">Details</string>
@@ -57,9 +54,21 @@
     <string name="time_prefix_published">Published</string>
     <string name="time_prefix_updated">Updated</string>
     <string name="time_now">just now</string>
+    <string name="time_published_now">Published just now</string>
+    <string name="name">First and last name</string>
+    <string name="user">User</string>
+    <string name="city">City</string>
+    <string name="bio">Write something about yourself…</string>
+    <string name="edit_profile">Edit profile</string>
+    <string name="change_picture">Change your profile picture</string>
+    <string name="save">Save changes</string>
+    <string name="my_trueks">My truekes</string>
+    <string name="my_products">My products</string>
+    <string name="search_product">Search a product...</string>
 
     <string name="my_truekes">My truekes</string>
 
+    <string name="my_messages">My messages</string>
     <string name="trueke_state_open">Pending</string>
     <string name="trueke_state_reserved">Reserved</string>
     <string name="trueke_state_completed">Completed</string>
@@ -81,4 +90,7 @@
     <string name="empty_open_truekes">You have no pending trades</string>
     <string name="empty_reserved_truekes">You have no reserved trades</string>
     <string name="empty_completed_truekes">You have no completed trades</string>
+    <string name="send">Send</string>
+    <string name="write_message_here">Write a message here...</string>
+    <string name="go_back">Go back</string>
 </resources>
