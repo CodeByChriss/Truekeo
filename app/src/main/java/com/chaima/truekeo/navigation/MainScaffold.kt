@@ -22,6 +22,7 @@ import com.chaima.truekeo.screens.MessagesTab
 import com.chaima.truekeo.screens.MyProductsTab
 import com.chaima.truekeo.screens.ProfileTab
 import com.chaima.truekeo.screens.MyTruekesTab
+import com.chaima.truekeo.ui.theme.TruekeoTheme
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -31,86 +32,88 @@ fun MainScaffold() {
     val currentRoute = navBackStackEntry?.destination?.route
     val chatViewModel: ChatViewModel = viewModel()
 
-    Scaffold(
-        bottomBar = {
-            if (currentRoute != NavBarRoutes.Message.route) {
-                BottomNavBar(navController)
+    TruekeoTheme {
+        Scaffold(
+            bottomBar = {
+                if (currentRoute != NavBarRoutes.Message.route) {
+                    BottomNavBar(navController)
+                }
             }
-        }
-    ) { padding ->
-        NavHost(
-            navController = navController,
-            startDestination = NavBarRoutes.Home.route,
-            modifier = Modifier.padding(padding)
-        ) {
-            composable(NavBarRoutes.Home.route) { HomeTab() }
-            composable(NavBarRoutes.MyTruekes.route) { MyTruekesTab() }
-            composable(NavBarRoutes.Create.route) { CreateEventTab() }
-            
-            composable(NavBarRoutes.Messages.route) {
-                MessagesTab(
-                    onMessageClick = { message ->
-                        chatViewModel.onMessageSelected(message)
-                        navController.navigate(NavBarRoutes.Message.route)
-                    }
-                )
-            }
+        ) { padding ->
+            NavHost(
+                navController = navController,
+                startDestination = NavBarRoutes.Home.route,
+                modifier = Modifier.padding(padding)
+            ) {
+                composable(NavBarRoutes.Home.route) { HomeTab() }
+                composable(NavBarRoutes.MyTruekes.route) { MyTruekesTab() }
+                composable(NavBarRoutes.Create.route) { CreateEventTab() }
 
-            composable(NavBarRoutes.Message.route) {
-                MessageTab(
-                    conversation = chatViewModel.selectedMessage,
-                    onBack = { navController.popBackStack() }
-                )
-            }
-            
-            composable(NavBarRoutes.Profile.route) {
-                ProfileTab(
-                    onMyTruekesClick = {
-                        navController.navigate(NavBarRoutes.MyTruekes.route) {
-                            popUpTo(navController.graph.startDestinationId) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
+                composable(NavBarRoutes.Messages.route) {
+                    MessagesTab(
+                        onMessageClick = { message ->
+                            chatViewModel.onMessageSelected(message)
+                            navController.navigate(NavBarRoutes.Message.route)
                         }
-                    },
-                    onMessagesClick = {
-                        navController.navigate(NavBarRoutes.Messages.route) {
-                            popUpTo(navController.graph.startDestinationId) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    },
-                    onMyProductsClick = {
-                        navController.navigate(NavBarRoutes.MyProducts.route) {
-                            popUpTo(navController.graph.startDestinationId) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    },
-                    onEditProfileClick = {
-                        navController.navigate(NavBarRoutes.EditProfile.route) {
-                            popUpTo(navController.graph.startDestinationId) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    }
-                )
-            }
-            composable(NavBarRoutes.MyProducts.route) { MyProductsTab() }
+                    )
+                }
 
-            composable(NavBarRoutes.EditProfile.route) {
-                EditProfileTab(
-                    onSaveClick = {
-                        navController.popBackStack()
-                    }
-                )
+                composable(NavBarRoutes.Message.route) {
+                    MessageTab(
+                        conversation = chatViewModel.selectedMessage,
+                        onBack = { navController.popBackStack() }
+                    )
+                }
+
+                composable(NavBarRoutes.Profile.route) {
+                    ProfileTab(
+                        onMyTruekesClick = {
+                            navController.navigate(NavBarRoutes.MyTruekes.route) {
+                                popUpTo(navController.graph.startDestinationId) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        },
+                        onMessagesClick = {
+                            navController.navigate(NavBarRoutes.Messages.route) {
+                                popUpTo(navController.graph.startDestinationId) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        },
+                        onMyProductsClick = {
+                            navController.navigate(NavBarRoutes.MyProducts.route) {
+                                popUpTo(navController.graph.startDestinationId) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        },
+                        onEditProfileClick = {
+                            navController.navigate(NavBarRoutes.EditProfile.route) {
+                                popUpTo(navController.graph.startDestinationId) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        }
+                    )
+                }
+                composable(NavBarRoutes.MyProducts.route) { MyProductsTab() }
+
+                composable(NavBarRoutes.EditProfile.route) {
+                    EditProfileTab(
+                        onSaveClick = {
+                            navController.popBackStack()
+                        }
+                    )
+                }
             }
         }
     }

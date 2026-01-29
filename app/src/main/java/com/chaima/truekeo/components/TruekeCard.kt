@@ -17,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -38,6 +39,7 @@ import com.chaima.truekeo.models.Item
 import com.chaima.truekeo.models.Trueke
 import com.chaima.truekeo.models.TruekeStatus
 import com.chaima.truekeo.models.User
+import com.chaima.truekeo.ui.theme.TruekeoTheme
 
 @Composable
 fun TruekeCard(
@@ -58,7 +60,7 @@ fun TruekeCard(
                 .fillMaxWidth()
                 .padding(top = 36.dp) // Espacio para la pestaña superior
                 .clip(RoundedCornerShape(8.dp))
-                .background(Color.White)
+                .background(MaterialTheme.colorScheme.surface)
         ) {
             ExchangeLayout(
                 leftItem = trueke.hostItem,
@@ -72,12 +74,14 @@ fun TruekeCard(
         Box(
             modifier = Modifier
                 .align(Alignment.TopStart)
-                .clip(RoundedCornerShape(
-                    topStart = 0.dp,
-                    topEnd = 0.dp,
-                    bottomStart = 8.dp,
-                    bottomEnd = 8.dp
-                ))
+                .clip(
+                    RoundedCornerShape(
+                        topStart = 0.dp,
+                        topEnd = 0.dp,
+                        bottomStart = 8.dp,
+                        bottomEnd = 8.dp
+                    )
+                )
                 .background(chipBg)
                 .padding(horizontal = 16.dp, vertical = 2.dp)
 
@@ -141,59 +145,61 @@ private fun ExchangeItemBlock(
 ) {
     val shape = RoundedCornerShape(12.dp)
 
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(1.35f)
-                .clip(shape)
-                .background(Color(0xFFF2F2F2))
+    TruekeoTheme {
+        Column(
+            modifier = modifier,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            AsyncImage(
-                model = item.imageUrl,
-                contentDescription = item.name,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
-            )
-        }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1.35f)
+                    .clip(shape)
+                    .background(MaterialTheme.colorScheme.surface)
+            ) {
+                AsyncImage(
+                    model = item.imageUrl,
+                    contentDescription = item.name,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
 
-        Spacer(Modifier.height(8.dp))
-
-        Text(
-            text = item.name,
-            fontSize = 14.sp,
-            lineHeight = 10.sp,
-            color = MaterialTheme.colorScheme.onSurface,
-            fontFamily = FontFamily(Font(R.font.saira_medium)),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Row (
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = stringResource(R.string.uploaded_by) + " ",
-                fontSize = 9.sp,
-                color = MaterialTheme.colorScheme.onSurface,
-                fontFamily = FontFamily(Font(R.font.saira_regular)),
-                maxLines = 1
-            )
+            Spacer(Modifier.height(8.dp))
 
             Text(
-                text = "@${user.username}",
-                fontSize = 9.sp,
+                text = item.name,
+                fontSize = 14.sp,
+                lineHeight = 10.sp,
                 color = MaterialTheme.colorScheme.onSurface,
                 fontFamily = FontFamily(Font(R.font.saira_medium)),
-                maxLines = 1
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
             )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = stringResource(R.string.uploaded_by) + " ",
+                    fontSize = 9.sp,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontFamily = FontFamily(Font(R.font.saira_regular)),
+                    maxLines = 1
+                )
+
+                Text(
+                    text = "@${user.username}",
+                    fontSize = 9.sp,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontFamily = FontFamily(Font(R.font.saira_medium)),
+                    maxLines = 1
+                )
+            }
         }
     }
 }

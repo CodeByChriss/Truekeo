@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.chaima.truekeo.navigation.NavBarRoutes
+import com.chaima.truekeo.ui.theme.TruekeoTheme
 
 private data class BottomItem(
     val route: String,
@@ -80,103 +81,105 @@ fun BottomNavBar(navController: NavController) {
         )
     )
 
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.White),
-    ) {
-        NavigationBar(
-            containerColor = Color.White,
+    TruekeoTheme {
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 12.dp)
+                .background(MaterialTheme.colorScheme.surface),
         ) {
-            // Items de la izquierda
-            leftItems.forEach { item ->
-                val selected = currentRoute == item.route
-                NavigationBarItem(
-                    selected = selected,
-                    onClick = {
-                        if (currentRoute != item.route) {
-                            navController.navigate(item.route) {
-                                launchSingleTop = true
-                                restoreState = true
-                                popUpTo(navController.graph.startDestinationId) {
-                                    saveState = true
-                                }
-                            }
-                        }
-                    },
-                    icon = item.icon,
-                    colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = Color.Black,
-                        unselectedIconColor = Color.Gray,
-                        indicatorColor = Color.Transparent
-                    )
-                )
-            }
-
-            // Espacio para el botón central (sin peso)
-            Box(
-                modifier = Modifier.width(72.dp),
-                contentAlignment = Alignment.Center
+            NavigationBar(
+                containerColor = Color.Transparent,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp)
             ) {
-                // Espacio vacío para el botón
-            }
-
-            // Items de la derecha
-            rightItems.forEach { item ->
-                val selected = currentRoute == item.route
-                NavigationBarItem(
-                    selected = selected,
-                    onClick = {
-                        if (currentRoute != item.route) {
-                            navController.navigate(item.route) {
-                                launchSingleTop = true
-                                restoreState = true
-                                popUpTo(navController.graph.startDestinationId) {
-                                    saveState = true
+                // Items de la izquierda
+                leftItems.forEach { item ->
+                    val selected = currentRoute == item.route
+                    NavigationBarItem(
+                        selected = selected,
+                        onClick = {
+                            if (currentRoute != item.route) {
+                                navController.navigate(item.route) {
+                                    launchSingleTop = true
+                                    restoreState = true
+                                    popUpTo(navController.graph.startDestinationId) {
+                                        saveState = true
+                                    }
                                 }
                             }
-                        }
-                    },
-                    icon = item.icon,
-                    colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = Color.Black,
-                        unselectedIconColor = Color.Gray,
-                        indicatorColor = Color.Transparent
+                        },
+                        icon = item.icon,
+                        colors = NavigationBarItemDefaults.colors(
+                            selectedIconColor = Color.Black,
+                            unselectedIconColor = Color.Gray,
+                            indicatorColor = Color.Transparent
+                        )
                     )
-                )
-            }
-        }
+                }
 
-        // Botón central integrado
-        FloatingActionButton(
-            onClick = {
-                if (currentRoute != NavBarRoutes.Create.route) {
-                    navController.navigate(NavBarRoutes.Create.route) {
-                        launchSingleTop = true
-                        restoreState = true
-                        popUpTo(navController.graph.startDestinationId) {
-                            saveState = true
+                // Espacio para el botón central (sin peso)
+                Box(
+                    modifier = Modifier.width(72.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    // Espacio vacío para el botón
+                }
+
+                // Items de la derecha
+                rightItems.forEach { item ->
+                    val selected = currentRoute == item.route
+                    NavigationBarItem(
+                        selected = selected,
+                        onClick = {
+                            if (currentRoute != item.route) {
+                                navController.navigate(item.route) {
+                                    launchSingleTop = true
+                                    restoreState = true
+                                    popUpTo(navController.graph.startDestinationId) {
+                                        saveState = true
+                                    }
+                                }
+                            }
+                        },
+                        icon = item.icon,
+                        colors = NavigationBarItemDefaults.colors(
+                            selectedIconColor = Color.Black,
+                            unselectedIconColor = Color.Gray,
+                            indicatorColor = Color.Transparent
+                        )
+                    )
+                }
+            }
+
+            // Botón central integrado
+            FloatingActionButton(
+                onClick = {
+                    if (currentRoute != NavBarRoutes.Create.route) {
+                        navController.navigate(NavBarRoutes.Create.route) {
+                            launchSingleTop = true
+                            restoreState = true
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
                         }
                     }
-                }
-            },
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .offset(y = (-16).dp)
-                .size(60.dp),
-            containerColor = MaterialTheme.colorScheme.secondary,
-            shape = RoundedCornerShape(16.dp),
-            elevation = FloatingActionButtonDefaults.elevation(0.dp)
-        ) {
-            Icon(
-                Icons.Rounded.Add,
-                contentDescription = "Create",
-                tint = Color.White,
-                modifier = Modifier.size(32.dp)
-            )
+                },
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .offset(y = (-16).dp)
+                    .size(60.dp),
+                containerColor = MaterialTheme.colorScheme.secondary,
+                shape = RoundedCornerShape(16.dp),
+                elevation = FloatingActionButtonDefaults.elevation(0.dp)
+            ) {
+                Icon(
+                    Icons.Rounded.Add,
+                    contentDescription = "Create",
+                    tint = Color.White,
+                    modifier = Modifier.size(32.dp)
+                )
+            }
         }
     }
 }

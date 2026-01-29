@@ -73,4 +73,6 @@
     <string name="send">Send</string>
     <string name="write_message_here">Write a message here...</string>
     <string name="go_back">Go back</string>
+    <string name="upload_image">Upload product image</string>
+    <string name="change_product_image">Change product image</string>
 </resources>

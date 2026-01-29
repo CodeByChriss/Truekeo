@@ -23,16 +23,20 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.getString
 import com.chaima.truekeo.R
 import com.chaima.truekeo.components.LocationSearchField
 import com.chaima.truekeo.models.GeoPoint
 import com.chaima.truekeo.models.ItemCondition
 import com.chaima.truekeo.ui.theme.TruekeoTheme
+import com.mapbox.maps.extension.style.expressions.dsl.generated.color
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateEventTab(){
+    val context = LocalContext.current
+
     val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState()
 
@@ -71,7 +75,7 @@ fun CreateEventTab(){
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.White)
+                .background(MaterialTheme.colorScheme.surface)
                 .padding(horizontal = 24.dp)
         ) {
             Column(
@@ -157,7 +161,7 @@ fun CreateEventTab(){
                         OutlinedTextField(
                             value = itemName,
                             onValueChange = { itemName = it },
-                            label = { Text(stringResource(R.string.product_name)) },
+                            label = { Text(stringResource(R.string.product_name), color = MaterialTheme.colorScheme.tertiary) },
                             singleLine = true,
                             shape = RoundedCornerShape(8.dp),
                             modifier = Modifier.fillMaxWidth()
@@ -169,7 +173,7 @@ fun CreateEventTab(){
                         OutlinedTextField(
                             value = itemDescription,
                             onValueChange = { itemDescription = it },
-                            label = { Text(stringResource(R.string.product_description)) },
+                            label = { Text(stringResource(R.string.product_description), color = MaterialTheme.colorScheme.tertiary) },
                             shape = RoundedCornerShape(8.dp),
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -195,7 +199,7 @@ fun CreateEventTab(){
                             shape = RoundedCornerShape(8.dp)
                         ) {
                             Text(
-                                text = if (itemImageUri == null) "Subir imagen del producto" else "Cambiar imagen del producto",
+                                text = if (itemImageUri == null) getString(context, R.string.upload_image) else getString(context, R.string.change_product_image),
                                 fontFamily = FontFamily(Font(R.font.saira_medium))
                             )
                         }

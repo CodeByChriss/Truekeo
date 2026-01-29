@@ -86,4 +86,7 @@
     <string name="send">Enviar</string>
     <string name="write_message_here">Escribe un mensaje aquí…</string>
     <string name="go_back">Atrás</string>
+
+    <string name="upload_image">Subir imagen del producto</string>
+    <string name="change_product_image">Cambiar imagen del producto</string>
 </resources>
