@@ -46,6 +46,8 @@ import com.chaima.truekeo.models.Item
 import com.chaima.truekeo.models.Trueke
 import com.chaima.truekeo.models.TruekeStatus
 import com.chaima.truekeo.models.User
+import com.chaima.truekeo.utils.TimePrefix
+import com.chaima.truekeo.utils.prefixedTimeAgo
 import com.chaima.truekeo.utils.timeAgo
 
 // Contenido del bottom sheet que muestra los detalles del trueke seleccionado
@@ -110,16 +112,18 @@ fun TruekeSheetContent(trueke: Trueke, modifier: Modifier = Modifier) {
 @Composable
 private fun TruekeInfoSection(trueke: Trueke) {
     val context = LocalContext.current
-    val location = trueke.location
+    val loc = trueke.location
 
-    var placeName by remember(trueke.id) { mutableStateOf<String?>(null) }
+    var placeText by remember(trueke.id) {
+        mutableStateOf("${loc.lat}, ${loc.lng}")
+    }
 
     LaunchedEffect(trueke.id) {
-        location?.let {
-            placeName = runCatching {
-                resolvePlaceName(context, it.lng, it.lat)
-            }.getOrNull()
-        }
+        placeText = runCatching {
+            resolvePlaceName(context, loc.lng, loc.lat)
+        }.getOrNull()
+            ?.takeIf { it.isNotBlank() }
+            ?: "${loc.lat}, ${loc.lng}"
     }
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -138,28 +142,34 @@ private fun TruekeInfoSection(trueke: Trueke) {
             )
         }
 
-        location?.let { loc ->
-            Row {
-                Icon(
-                    imageVector = Icons.Outlined.LocationOn,
-                    contentDescription = "Ubicación",
-                    tint = MaterialTheme.colorScheme.secondary,
-                    modifier = Modifier
-                        .size(20.dp)
-                        .offset(x = (-3).dp)
-                )
 
-                Text(
-                    text = placeName ?: "${loc.lat}, ${loc.lng}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.secondary,
-                    fontFamily = FontFamily(Font(R.font.saira_regular)),
-                )
-            }
+        Row (
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.LocationOn,
+                contentDescription = "Ubicación",
+                tint = MaterialTheme.colorScheme.secondary,
+                modifier = Modifier
+                    .size(20.dp)
+                    .offset(x = (-3).dp)
+            )
+
+            Text(
+                text = placeText,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.secondary,
+                fontFamily = FontFamily(Font(R.font.saira_regular)),
+            )
         }
 
+
         Text(
-            text = timeAgo(context, trueke.createdAt),
+            text = prefixedTimeAgo(
+                context = context,
+                from = trueke.createdAt,
+                prefix = TimePrefix.PUBLISHED
+            ),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontFamily = FontFamily(Font(R.font.saira_regular)),
@@ -204,8 +214,8 @@ private fun TruekeHostItemSection(item: Item) {
             KeyValueRow(label = stringResource(R.string.product_status_label), value = item.condition.displayName(context))
         }
     }
-
-    ProductImage(item)
+    // Imagen del ítem
+    ItemImageBox(item, 180.dp)
 }
 
 @Composable

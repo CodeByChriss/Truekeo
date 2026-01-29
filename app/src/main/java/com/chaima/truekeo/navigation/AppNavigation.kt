@@ -3,6 +3,7 @@ package com.chaima.truekeo.navigation
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.chaima.truekeo.screens.SplashScreen
 import com.chaima.truekeo.screens.LoginScreen
@@ -16,45 +17,53 @@ fun AppNavigation(){
         navController = navController,
         startDestination = Routes.Main.route
     ) {
-        // Pantalla 1: Splash
+        // Pantalla de Splash
         composable(Routes.Splash.route) {
             SplashScreen(onNextScreen = {
-                navController.navigate(Routes.Login.route) {
+                navController.navigate(Routes.AuthGraph.route) {
                     popUpTo(Routes.Splash.route) { inclusive = true }
+                    launchSingleTop = true
                 }
             })
         }
 
-        // Pantalla 2: Login
-        composable(Routes.Login.route) {
-            LoginScreen(
-                onSignUp = {
-                    navController.navigate(Routes.Signup.route) {
-                        popUpTo(Routes.Login.route) { inclusive = false }
-                    }
-                },
-                onLogin = {
-                    navController.navigate(Routes.Main.route){
-                        popUpTo(Routes.Splash.route) { inclusive = true }
-                    }
-                }
-            )
-        }
+        // Navegación entre pantallas de autenticación
+        navigation(
+            route = Routes.AuthGraph.route,
+            startDestination = Routes.Login.route
+        ) {
 
-        // Pantalla 3: Signup
-        composable(Routes.Signup.route) {
-            SignupScreen(
-                onSignUp = {
-                    navController.navigate(Routes.Login.route) {
-                        popUpTo(Routes.Signup.route) { inclusive = true }
+            // Pantalla de Login
+            composable(Routes.Login.route) {
+                LoginScreen(
+                    onGoToSignup = {
+                        navController.navigate(Routes.Signup.route) {
+                            launchSingleTop = true
+                        }
+                    },
+                    onLogin = {
+                        navController.navigate(Routes.Main.route) {
+                            popUpTo(Routes.AuthGraph.route) { inclusive = true }
+                            launchSingleTop = true
+                        }
                     }
-                },
-                onBackToLogin = {
-                    navController.navigate(Routes.Login.route) {
-                        popUpTo(Routes.Signup.route) { inclusive = true }
+                )
+            }
+
+            // Pantalla de SignUp
+            composable(Routes.Signup.route) {
+                SignupScreen(
+                    onSignUp = {
+                        navController.navigate(Routes.Main.route) {
+                            popUpTo(Routes.AuthGraph.route) { inclusive = true }
+                            launchSingleTop = true
+                        }
+                    },
+                    onBackToLogin = {
+                        navController.popBackStack() // vuelve al Login
                     }
-                }
-            )
+                )
+            }
         }
 
         // Navegación entre pantallas una vez autenticado

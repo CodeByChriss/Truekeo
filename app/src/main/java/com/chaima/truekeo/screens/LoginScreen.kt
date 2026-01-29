@@ -57,9 +57,10 @@ import com.chaima.truekeo.ui.theme.TruekeoTheme
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 @Composable
-fun LoginScreen(onSignUp: () -> Unit, onLogin: () -> Unit) {
+fun LoginScreen(onGoToSignup: () -> Unit, onLogin: () -> Unit) {
     val authManager = remember { AuthManager() }
     val scope = rememberCoroutineScope()
     var emailOusuario by remember { mutableStateOf("") }
@@ -166,8 +167,9 @@ fun LoginScreen(onSignUp: () -> Unit, onLogin: () -> Unit) {
                     )
                 ) {
                     Text(
-                        text = getString(context,R.string.login_button),
-                        fontFamily = FontFamily(Font(R.font.saira_regular)),
+                        text = getString(context,R.string.login_button).uppercase(Locale.getDefault()),
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontFamily = FontFamily(Font(R.font.saira_medium))
                     )
                 }
 
@@ -185,7 +187,7 @@ fun LoginScreen(onSignUp: () -> Unit, onLogin: () -> Unit) {
                         fontFamily = FontFamily(Font(R.font.saira_medium)),
                         color = MaterialTheme.colorScheme.secondary,
                         modifier = Modifier.clickable {
-                            onSignUp()
+                            onGoToSignup()
                         }
                     )
                 }

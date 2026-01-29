@@ -12,10 +12,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -32,6 +35,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -45,6 +49,7 @@ import com.chaima.truekeo.R
 import com.chaima.truekeo.data.AuthManager
 import com.chaima.truekeo.ui.theme.TruekeoTheme
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 @Composable
 fun SignupScreen(onSignUp: () -> Unit, onBackToLogin: () -> Unit) {
@@ -65,11 +70,26 @@ fun SignupScreen(onSignUp: () -> Unit, onBackToLogin: () -> Unit) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.White),
-            contentAlignment = Alignment.Center
+                .background(Color.White)
         ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            IconButton(
+                onClick = { onBackToLogin() },
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(16.dp, 32.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = stringResource(R.string.back_to_login),
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(28.dp)
+                )
+            }
 
+            Column(
+                modifier = Modifier.align(Alignment.Center),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 Image(
                     painter = painterResource(id = R.drawable.logo),
                     contentDescription = getString(context,R.string.truekeo_logo),
@@ -192,8 +212,9 @@ fun SignupScreen(onSignUp: () -> Unit, onBackToLogin: () -> Unit) {
                     )
                 ) {
                     Text(
-                        text = getString(context,R.string.register),
-                        fontFamily = FontFamily(Font(R.font.saira_regular)),
+                        text = getString(context,R.string.register).uppercase(Locale.getDefault()),
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontFamily = FontFamily(Font(R.font.saira_medium))
                     )
                 }
             }
