@@ -6,6 +6,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
@@ -15,8 +16,8 @@ import com.chaima.truekeo.R
 @Composable
 fun FormErrorText(
     showError: Boolean,
-    message: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    message: String = stringResource(R.string.required_field_error)
 ) {
     if (!showError) return
 

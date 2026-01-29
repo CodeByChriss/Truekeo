@@ -74,4 +74,9 @@
     <string name="close">Close</string>
     <string name="back_to_login">Back to login</string>
     <string name="create_product">Create product</string>
+    <string name="required_item_error">You must select a product</string>
+
+    <string name="empty_open_truekes">You have no pending trades</string>
+    <string name="empty_reserved_truekes">You have no reserved trades</string>
+    <string name="empty_completed_truekes">You have no completed trades</string>
 </resources>

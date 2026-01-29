@@ -212,6 +212,136 @@ object MockData {
             createdAt = Instant.now().minus(2, ChronoUnit.HOURS)
         ),
         Trueke(
+            id = "tx1",
+            title = "PS4 por bici plegable",
+            description = "Intercambio acordado en Sol",
+            hostUser = chaimaUser,
+            hostItem = Item(
+                id = "ix1_host",
+                name = "PS4 Slim 1TB",
+                details = "Incluye 1 mando y cables. Funciona perfecta.",
+                imageUrls = listOf("https://cdn.wallapop.com/images/10420/k5/qk/__/c10420p1218961628/i6217265588.jpg?pictureSize=W640"),
+                brand = "Sony",
+                condition = ItemCondition.GOOD
+            ),
+            takerUser = carlosUser,
+            takerItem = Item(
+                id = "ix1_taker",
+                name = "Bici plegable Decathlon",
+                details = "Plegable, ligera, ideal para ciudad.",
+                imageUrls = listOf("https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=1200&q=80"),
+                brand = "Decathlon",
+                condition = ItemCondition.LIKE_NEW
+            ),
+            location = GeoPoint(-3.7038, 40.4168),
+            status = TruekeStatus.RESERVED,
+            createdAt = Instant.now().minus(2, ChronoUnit.HOURS)
+        ),
+        Trueke(
+            id = "tx1",
+            title = "PS4 por bici plegable",
+            description = "Intercambio acordado en Sol",
+            hostUser = chaimaUser,
+            hostItem = Item(
+                id = "ix1_host",
+                name = "PS4 Slim 1TB",
+                details = "Incluye 1 mando y cables. Funciona perfecta.",
+                imageUrls = listOf("https://cdn.wallapop.com/images/10420/k5/qk/__/c10420p1218961628/i6217265588.jpg?pictureSize=W640"),
+                brand = "Sony",
+                condition = ItemCondition.GOOD
+            ),
+            takerUser = carlosUser,
+            takerItem = Item(
+                id = "ix1_taker",
+                name = "Bici plegable Decathlon",
+                details = "Plegable, ligera, ideal para ciudad.",
+                imageUrls = listOf("https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=1200&q=80"),
+                brand = "Decathlon",
+                condition = ItemCondition.LIKE_NEW
+            ),
+            location = GeoPoint(-3.7038, 40.4168),
+            status = TruekeStatus.RESERVED,
+            createdAt = Instant.now().minus(2, ChronoUnit.HOURS)
+        ),
+        Trueke(
+            id = "tx1",
+            title = "PS4 por bici plegable",
+            description = "Intercambio acordado en Sol",
+            hostUser = chaimaUser,
+            hostItem = Item(
+                id = "ix1_host",
+                name = "PS4 Slim 1TB",
+                details = "Incluye 1 mando y cables. Funciona perfecta.",
+                imageUrls = listOf("https://cdn.wallapop.com/images/10420/k5/qk/__/c10420p1218961628/i6217265588.jpg?pictureSize=W640"),
+                brand = "Sony",
+                condition = ItemCondition.GOOD
+            ),
+            takerUser = carlosUser,
+            takerItem = Item(
+                id = "ix1_taker",
+                name = "Bici plegable Decathlon",
+                details = "Plegable, ligera, ideal para ciudad.",
+                imageUrls = listOf("https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=1200&q=80"),
+                brand = "Decathlon",
+                condition = ItemCondition.LIKE_NEW
+            ),
+            location = GeoPoint(-3.7038, 40.4168),
+            status = TruekeStatus.RESERVED,
+            createdAt = Instant.now().minus(2, ChronoUnit.HOURS)
+        ),
+        Trueke(
+            id = "tx1",
+            title = "PS4 por bici plegable",
+            description = "Intercambio acordado en Sol",
+            hostUser = chaimaUser,
+            hostItem = Item(
+                id = "ix1_host",
+                name = "PS4 Slim 1TB",
+                details = "Incluye 1 mando y cables. Funciona perfecta.",
+                imageUrls = listOf("https://cdn.wallapop.com/images/10420/k5/qk/__/c10420p1218961628/i6217265588.jpg?pictureSize=W640"),
+                brand = "Sony",
+                condition = ItemCondition.GOOD
+            ),
+            takerUser = carlosUser,
+            takerItem = Item(
+                id = "ix1_taker",
+                name = "Bici plegable Decathlon",
+                details = "Plegable, ligera, ideal para ciudad.",
+                imageUrls = listOf("https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=1200&q=80"),
+                brand = "Decathlon",
+                condition = ItemCondition.LIKE_NEW
+            ),
+            location = GeoPoint(-3.7038, 40.4168),
+            status = TruekeStatus.RESERVED,
+            createdAt = Instant.now().minus(2, ChronoUnit.HOURS)
+        ),
+        Trueke(
+            id = "tx1",
+            title = "PS4 por bici plegable",
+            description = "Intercambio acordado en Sol",
+            hostUser = chaimaUser,
+            hostItem = Item(
+                id = "ix1_host",
+                name = "PS4 Slim 1TB",
+                details = "Incluye 1 mando y cables. Funciona perfecta.",
+                imageUrls = listOf("https://cdn.wallapop.com/images/10420/k5/qk/__/c10420p1218961628/i6217265588.jpg?pictureSize=W640"),
+                brand = "Sony",
+                condition = ItemCondition.GOOD
+            ),
+            takerUser = carlosUser,
+            takerItem = Item(
+                id = "ix1_taker",
+                name = "Bici plegable Decathlon",
+                details = "Plegable, ligera, ideal para ciudad.",
+                imageUrls = listOf("https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=1200&q=80"),
+                brand = "Decathlon",
+                condition = ItemCondition.LIKE_NEW
+            ),
+            location = GeoPoint(-3.7038, 40.4168),
+            status = TruekeStatus.RESERVED,
+            createdAt = Instant.now().minus(2, ChronoUnit.HOURS)
+        ),
+        Trueke(
             id = "tx2",
             title = "Cámara por portátil",
             description = "Intercambio completado en Chamberí",
@@ -264,30 +394,56 @@ object MockData {
             createdAt = Instant.now().minus(2, ChronoUnit.HOURS)
         ),
         Trueke(
-            id = "tx4",
-            title = "Cámara por portátil",
-            description = "Intercambio completado en Chamberí",
-            hostUser = luciaUser,
+            id = "tx3",
+            title = "PS4 por bici plegable",
+            description = "Intercambio acordado en Sol",
+            hostUser = chaimaUser,
             hostItem = Item(
-                id = "ix2_host",
-                name = "Canon EOS 700D",
-                details = "Con objetivo 18-55mm, bolsa incluida.",
-                imageUrls = listOf("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSx5m5HltyjHppJWmJMjV2Aeb1GlZ_NN6JMsA&s"),
-                brand = "Canon",
-                condition = ItemCondition.LIKE_NEW
-            ),
-            takerUser = mariaUser,
-            takerItem = Item(
-                id = "ix2_taker",
-                name = "Portátil Lenovo i5",
-                details = "16GB RAM, SSD 512GB. Muy rápido.",
-                imageUrls = listOf("https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=1200&q=80"),
-                brand = "Lenovo",
+                id = "ix1_host",
+                name = "Casco moto",
+                details = "Incluye 1 mando y cables. Funciona perfecta.",
+                imageUrls = listOf("https://cdn.wallapop.com/images/10420/j5/3o/__/c10420p1157427398/i5828379240.jpg?pictureSize=W800"),
+                brand = "Sony",
                 condition = ItemCondition.GOOD
             ),
-            location = GeoPoint(-3.6950, 40.4300),
-            status = TruekeStatus.CANCELLED,
-            createdAt = Instant.now().minus(1, ChronoUnit.DAYS)
+            takerUser = carlosUser,
+            takerItem = Item(
+                id = "ix1_taker",
+                name = "Moto de cross",
+                details = "Plegable, ligera, ideal para ciudad.",
+                imageUrls = listOf("https://media.triumphmotorcycles.co.uk/image/upload/f_auto/q_auto:eco/sitecoremedialibrary/media-library/images/spain/offers-spain/hprs%20spain/esoffers-hpr_320x320/20220614_213942_img_8315_1x1.jpg"),
+                brand = "Decathlon",
+                condition = ItemCondition.LIKE_NEW
+            ),
+            location = GeoPoint(-3.7038, 40.4168),
+            status = TruekeStatus.OPEN,
+            createdAt = Instant.now().minus(2, ChronoUnit.HOURS)
+        ),
+        Trueke(
+            id = "tx3",
+            title = "PS4 por bici plegable",
+            description = "Intercambio acordado en Sol",
+            hostUser = chaimaUser,
+            hostItem = Item(
+                id = "ix1_host",
+                name = "Casco moto",
+                details = "Incluye 1 mando y cables. Funciona perfecta.",
+                imageUrls = listOf("https://cdn.wallapop.com/images/10420/j5/3o/__/c10420p1157427398/i5828379240.jpg?pictureSize=W800"),
+                brand = "Sony",
+                condition = ItemCondition.GOOD
+            ),
+            takerUser = carlosUser,
+            takerItem = Item(
+                id = "ix1_taker",
+                name = "Moto de cross",
+                details = "Plegable, ligera, ideal para ciudad.",
+                imageUrls = listOf("https://media.triumphmotorcycles.co.uk/image/upload/f_auto/q_auto:eco/sitecoremedialibrary/media-library/images/spain/offers-spain/hprs%20spain/esoffers-hpr_320x320/20220614_213942_img_8315_1x1.jpg"),
+                brand = "Decathlon",
+                condition = ItemCondition.LIKE_NEW
+            ),
+            location = GeoPoint(-3.7038, 40.4168),
+            status = TruekeStatus.OPEN,
+            createdAt = Instant.now().minus(2, ChronoUnit.HOURS)
         )
     )
 

@@ -39,6 +39,8 @@ fun ItemSelectorCard(
     val context = LocalContext.current
     var showDialog by remember { mutableStateOf(false) }
 
+    val hasSelectedItem = selectedItem != null
+
     OutlinedCard(
         modifier = modifier
             .fillMaxWidth()
@@ -51,15 +53,15 @@ fun ItemSelectorCard(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(if (hasSelectedItem) 12.dp else 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (selectedItem != null) {
+            if (hasSelectedItem) {
                 val image = selectedItem.imageUrls.first()
 
                 Box(
                     modifier = Modifier
-                        .size(64.dp)
+                        .size(72.dp)
                         .clip(RoundedCornerShape(8.dp))
                         .background(Color.Black.copy(alpha = 0.06f)),
                     contentAlignment = Alignment.Center
@@ -137,11 +139,12 @@ private fun ProductSelectionDialog(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
+                        .padding(12.dp, 8.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
+                        modifier = Modifier.padding(start = 8.dp),
                         text = "Selecciona un producto",
                         style = MaterialTheme.typography.titleLarge,
                         fontFamily = FontFamily(Font(R.font.saira_medium))

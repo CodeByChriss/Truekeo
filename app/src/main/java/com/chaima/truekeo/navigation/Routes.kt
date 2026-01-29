@@ -19,7 +19,6 @@ sealed class Routes(val route: String) {
 sealed class NavBarRoutes(val route: String) {
     object Home : NavBarRoutes("home")
     object MyTruekes : NavBarRoutes("mytruekes")
-    object Create : NavBarRoutes("create")
     object Messages : NavBarRoutes("messages")
     object Profile : NavBarRoutes("profile")
 }

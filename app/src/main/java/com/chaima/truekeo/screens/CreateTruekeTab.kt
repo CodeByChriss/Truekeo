@@ -54,11 +54,13 @@ fun CreateTruekeTab(){
 
     val titleOk = title.trim().isNotEmpty()
     val locationOk = locationText.trim().isNotEmpty() && locationCoordinates != null
+    val itemOk = selectedItem != null
 
     val showTitleError = triedSubmit && !titleOk
     val showLocationError = triedSubmit && !locationOk
+    val showItemError = triedSubmit && !itemOk
 
-    val formOk = titleOk && locationOk
+    val formOk = titleOk && locationOk && itemOk
 
     TruekeoTheme(dynamicColor = false) {
         Box(
@@ -96,10 +98,7 @@ fun CreateTruekeTab(){
                         shape = RoundedCornerShape(8.dp),
                         modifier = Modifier.fillMaxWidth().padding(top = 0.dp)
                     )
-                    FormErrorText(
-                        showError = showTitleError,
-                        message = stringResource(R.string.required_field_error)
-                    )
+                    FormErrorText(showError = showTitleError)
 
                     Spacer(Modifier.height(7.dp))
 
@@ -126,10 +125,7 @@ fun CreateTruekeTab(){
                         modifier = Modifier.fillMaxWidth(),
                         label = stringResource(R.string.location)
                     )
-                    FormErrorText(
-                        showError = showLocationError,
-                        message = stringResource(R.string.required_field_error)
-                    )
+                    FormErrorText(showError = showLocationError)
 
                     Spacer(Modifier.height(12.dp))
 
@@ -148,6 +144,10 @@ fun CreateTruekeTab(){
                         items = items,
                         selectedItem = selectedItem,
                         onItemSelected = { selectedItem = it }
+                    )
+                    FormErrorText(
+                        showError = showItemError,
+                        message = stringResource(R.string.required_item_error)
                     )
                 }
 

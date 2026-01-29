@@ -12,17 +12,26 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.SwapHoriz
+import androidx.compose.material.icons.outlined.LocationOn
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,6 +41,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -42,6 +52,7 @@ import com.chaima.truekeo.models.Item
 import com.chaima.truekeo.models.Trueke
 import com.chaima.truekeo.models.TruekeStatus
 import com.chaima.truekeo.models.User
+import com.chaima.truekeo.utils.resolvePlaceName
 
 @Composable
 fun TruekeCard(
@@ -49,10 +60,6 @@ fun TruekeCard(
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
-    val context = LocalContext.current
-
-    val (chipBg, chipFg) = statusColors(trueke.status)
-
     // area interactiva completa sin márgenes
     Box(
         modifier = modifier
@@ -63,53 +70,144 @@ fun TruekeCard(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(24.dp, 0.dp, 24.dp, 10.dp)
+                .padding(24.dp, 16.dp, 24.dp, 10.dp)
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 36.dp) // Espacio para la pestaña superior
-                    .clip(RoundedCornerShape(8.dp))
                     .background(Color.White)
             ) {
-                ExchangeLayout(
-                    leftItem = trueke.hostItem,
-                    leftUser = trueke.hostUser,
-                    rightItem = trueke.takerItem!!,
-                    rightUser = trueke.takerUser!!
-                )
-            }
-
-            // Pestaña que cuelga del borde superior
-            Box(
-                modifier = Modifier
-                    .align(Alignment.TopStart)
-                    .clip(
-                        RoundedCornerShape(
-                            topStart = 0.dp,
-                            topEnd = 0.dp,
-                            bottomStart = 8.dp,
-                            bottomEnd = 8.dp
+                when (trueke.status) {
+                    TruekeStatus.OPEN -> {
+                        // Información importante del trueke ya que aun no hay intercambio
+                        PendingTruekeLayout(
+                            trueke = trueke
                         )
-                    )
-                    .background(chipBg)
-                    .padding(horizontal = 16.dp, vertical = 2.dp)
+                    }
 
-            ) {
-                Text(
-                    text = trueke.status.displayName(context),
-                    color = chipFg,
-                    fontSize = 14.sp,
-                    fontFamily = FontFamily(Font(R.font.saira_bold))
-                )
+                    TruekeStatus.RESERVED, TruekeStatus.COMPLETED -> {
+                        // 2 items (host y taker)
+                        ExchangeLayout(
+                            status = trueke.status,
+                            leftItem = trueke.hostItem,
+                            leftUser = trueke.hostUser,
+                            rightItem = trueke.takerItem!!,
+                            rightUser = trueke.takerUser!!
+                        )
+                    }
+
+                    else -> null
+                }
             }
         }
     }
 }
 
+
+@Composable
+private fun PendingTruekeLayout(
+    trueke: Trueke
+) {
+    val context = LocalContext.current
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 10.dp)
+    ) {
+        Text(
+            text = trueke.title,
+            style = MaterialTheme.typography.titleMedium,
+            fontFamily = FontFamily(Font(R.font.saira_medium)),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+
+        Spacer(Modifier.height(2.dp))
+
+        Text(
+            text = trueke.title,
+            style = MaterialTheme.typography.bodyMedium,
+            fontFamily = FontFamily(Font(R.font.saira_regular))
+        )
+
+        Spacer(Modifier.height(5.dp))
+
+        Column(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = "Producto que ofrezco:",
+                style = MaterialTheme.typography.bodySmall,
+                color = Color.Black.copy(alpha = 0.5f),
+                fontFamily = FontFamily(Font(R.font.saira_regular))
+            )
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(MaterialTheme.colorScheme.tertiary.copy(alpha = 0.35f))
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    verticalAlignment = Alignment.Top
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(56.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(Color.Black.copy(alpha = 0.06f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        AsyncImage(
+                            model = trueke.hostItem.imageUrls.first(),
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+
+                    Spacer(Modifier.width(8.dp))
+
+                    Column(
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(
+                            text = trueke.hostItem.name,
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontFamily = FontFamily(Font(R.font.saira_regular)),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(4.dp))
+                                .background(MaterialTheme.colorScheme.tertiary)
+                                .padding(horizontal = 4.dp, vertical = 0.dp)
+                        ) {
+                            Text(
+                                text = trueke.hostItem.condition.displayName(context),
+                                color = Color.White,
+                                style = MaterialTheme.typography.labelSmall,
+                                fontFamily = FontFamily(Font(R.font.saira_regular))
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
 // Intercambio entre dos usuarios
 @Composable
 private fun ExchangeLayout(
+    status: TruekeStatus,
     leftItem: Item,
     leftUser: User,
     rightItem: Item,
@@ -145,6 +243,14 @@ private fun ExchangeLayout(
             modifier = Modifier.weight(1f)
         )
     }
+
+    if (status == TruekeStatus.COMPLETED) {
+        CompletedBadge(
+            modifier = Modifier
+                .padding(10.dp)
+        )
+    }
+
 }
 
 // Bloque de cada ítem en un intercambio entre dos usuarios
@@ -213,11 +319,19 @@ private fun ExchangeItemBlock(
     }
 }
 
-private fun statusColors(status: TruekeStatus): Pair<Color, Color> {
-    return when (status) {
-        TruekeStatus.OPEN -> Color(0xFFFFF2A6) to Color(0xFF8A6A00)
-        TruekeStatus.RESERVED -> Color(0xFFA7F3A0) to Color(0xFF1E6B1E)
-        TruekeStatus.COMPLETED -> Color(0xFFBFE6FF) to Color(0xFF0B4A6D)
-        TruekeStatus.CANCELLED -> Color(0xFFFFA0A0) to Color(0xFF7A1010)
+@Composable
+private fun CompletedBadge(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(999.dp))
+            .background(Color(0xFF1B5E20)) // verde oscuro
+            .padding(horizontal = 10.dp, vertical = 6.dp)
+    ) {
+        Text(
+            text = "COMPLETADO",
+            color = Color.White,
+            fontSize = 10.sp,
+            fontFamily = FontFamily(Font(R.font.saira_medium))
+        )
     }
 }

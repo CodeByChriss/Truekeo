@@ -15,10 +15,11 @@ data class Trueke(
     val takerUser: User? = null,
     val takerItem: Item? = null,
 
-    val location: GeoPoint? = null,
+    val location: GeoPoint,
 
     val status: TruekeStatus = TruekeStatus.OPEN,
-    val createdAt: Instant = Instant.now()
+    val createdAt: Instant = Instant.now(),
+    val editedAt: Instant? = null
 )
 
 enum class TruekeStatus {

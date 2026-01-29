@@ -18,7 +18,7 @@ import com.chaima.truekeo.models.User
 @Composable
 fun ProductImage(item: Item) {
     AsyncImage(
-        model = item.imageUrls.firstOrNull(),
+        model = item.imageUrls.first(),
         contentDescription = item.name,
         contentScale = ContentScale.Crop,
         modifier = Modifier

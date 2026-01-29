@@ -28,45 +28,13 @@ fun TruekeDetailsScreen(
         MockData.sampleTruekesWithTaker.firstOrNull { it.id == truekeId }
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(text = "Hola") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Volver"
-                        )
-                    }
-                }
-            )
-        }
-    ) { padding ->
-        if (trueke == null) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding),
-                contentAlignment = Alignment.Center
-            ) {
-                Text("Trueke no encontrado")
-            }
-        } else {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding)
-                    .padding(16.dp)
-            ) {
-                Text(trueke.title, style = MaterialTheme.typography.headlineSmall)
-                Spacer(Modifier.height(8.dp))
-                trueke?.description?.let { Text(it, style = MaterialTheme.typography.bodyMedium) }
-                Spacer(Modifier.height(16.dp))
-                Text("Estado: ${trueke.status.name}")
-                // Aquí metes imágenes, usuarios, items, ubicación, etc.
-            }
-        }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(6.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text("Trueke con id")
     }
 }
 

@@ -110,16 +110,18 @@ fun TruekeSheetContent(trueke: Trueke, modifier: Modifier = Modifier) {
 @Composable
 private fun TruekeInfoSection(trueke: Trueke) {
     val context = LocalContext.current
-    val location = trueke.location
+    val loc = trueke.location
 
-    var placeName by remember(trueke.id) { mutableStateOf<String?>(null) }
+    var placeText by remember(trueke.id) {
+        mutableStateOf("${loc.lat}, ${loc.lng}")
+    }
 
     LaunchedEffect(trueke.id) {
-        location?.let {
-            placeName = runCatching {
-                resolvePlaceName(context, it.lng, it.lat)
-            }.getOrNull()
-        }
+        placeText = runCatching {
+            resolvePlaceName(context, loc.lng, loc.lat)
+        }.getOrNull()
+            ?.takeIf { it.isNotBlank() }
+            ?: "${loc.lat}, ${loc.lng}"
     }
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -138,25 +140,27 @@ private fun TruekeInfoSection(trueke: Trueke) {
             )
         }
 
-        location?.let { loc ->
-            Row {
-                Icon(
-                    imageVector = Icons.Outlined.LocationOn,
-                    contentDescription = "Ubicación",
-                    tint = MaterialTheme.colorScheme.secondary,
-                    modifier = Modifier
-                        .size(20.dp)
-                        .offset(x = (-3).dp)
-                )
 
-                Text(
-                    text = placeName ?: "${loc.lat}, ${loc.lng}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.secondary,
-                    fontFamily = FontFamily(Font(R.font.saira_regular)),
-                )
-            }
+        Row (
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.LocationOn,
+                contentDescription = "Ubicación",
+                tint = MaterialTheme.colorScheme.secondary,
+                modifier = Modifier
+                    .size(20.dp)
+                    .offset(x = (-3).dp)
+            )
+
+            Text(
+                text = placeText,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.secondary,
+                fontFamily = FontFamily(Font(R.font.saira_regular)),
+            )
         }
+
 
         Text(
             text = timeAgo(context, trueke.createdAt),

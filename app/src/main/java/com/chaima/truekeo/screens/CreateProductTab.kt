@@ -123,7 +123,10 @@ fun CreateProductTab() {
                             }
                         }
                     )
-                    FormErrorText(showError = showImagesError, message = stringResource(R.string.at_least_one_image_required))
+                    FormErrorText(
+                        showError = showImagesError,
+                        message = stringResource(R.string.at_least_one_image_required)
+                    )
 
                     Spacer(Modifier.height(7.dp))
 
@@ -135,7 +138,7 @@ fun CreateProductTab() {
                         shape = RoundedCornerShape(8.dp),
                         modifier = Modifier.fillMaxWidth()
                     )
-                    FormErrorText(showError = showNameError, message = stringResource(R.string.required_field_error))
+                    FormErrorText(showError = showNameError)
 
                     Spacer(Modifier.height(7.dp))
 
