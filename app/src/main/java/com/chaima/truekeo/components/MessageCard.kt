@@ -17,7 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -37,7 +36,6 @@ fun MessageCard(
         modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
-            .background(Color.White)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -79,7 +77,6 @@ fun MessageCard(
                         ) {
                             Text(
                                 text = conversation.new_messages_count.toString(),
-                                color = MaterialTheme.colorScheme.onPrimary,
                                 fontSize = 12.sp,
                                 fontFamily = FontFamily(Font(R.font.saira_medium)),
                                 textAlign = TextAlign.Center

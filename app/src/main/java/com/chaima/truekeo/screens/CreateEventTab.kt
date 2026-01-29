@@ -29,7 +29,6 @@ import com.chaima.truekeo.components.LocationSearchField
 import com.chaima.truekeo.models.GeoPoint
 import com.chaima.truekeo.models.ItemCondition
 import com.chaima.truekeo.ui.theme.TruekeoTheme
-import com.mapbox.maps.extension.style.expressions.dsl.generated.color
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -223,9 +222,10 @@ fun CreateEventTab(){
                     shape = RoundedCornerShape(12.dp)
                 ) {
                     Text(
-                        text = "CREAR",
+                        text = getString(context, R.string.create_trueke),
                         style = MaterialTheme.typography.bodyLarge,
-                        fontFamily = FontFamily(Font(R.font.saira_medium))
+                        fontFamily = FontFamily(Font(R.font.saira_medium)),
+                        color = MaterialTheme.colorScheme.tertiary
                     )
                 }
 
@@ -255,7 +255,7 @@ private fun ItemConditionDropdown(
             value = value.displayName(context),
             onValueChange = {},
             readOnly = true,
-            label = { Text(stringResource(R.string.product_state)) },
+            label = { Text(stringResource(R.string.product_state), color = MaterialTheme.colorScheme.tertiary) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
             shape = RoundedCornerShape(8.dp),
             modifier = Modifier
@@ -268,7 +268,7 @@ private fun ItemConditionDropdown(
         ) {
             ItemCondition.entries.forEach { condition ->
                 DropdownMenuItem(
-                    text = { Text(condition.displayName(context)) },
+                    text = { Text(condition.displayName(context), color = MaterialTheme.colorScheme.background) },
                     onClick = {
                         onValueChange(condition)
                         expanded = false

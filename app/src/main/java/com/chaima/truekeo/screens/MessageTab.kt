@@ -30,7 +30,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -95,15 +94,20 @@ fun MessageTab(conversation: Conversation?, onBack: () -> Unit){
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = getString(context, R.string.go_back))
                     }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.White
-                )
+                }
+//                modifier = Modifier.dropShadow(
+//                    shape = RoundedCornerShape(20.dp),
+//                    shadow = Shadow(
+//                        radius = 10.dp,
+//                        spread = 6.dp,
+//                        color = MaterialTheme.colorScheme.background
+//                    )
+//                )
             )
         },
         bottomBar = {
             Surface(
-                color = Color(0xFFF5F5F5),
+//                color = Color(0xFFF5F5F5),
                 modifier = Modifier.imePadding()
             ) {
                 Row(
@@ -121,9 +125,9 @@ fun MessageTab(conversation: Conversation?, onBack: () -> Unit){
                             .padding(end = 8.dp),
                         shape = CircleShape,
                         colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color(0xFFF0F0F0),
-                            unfocusedContainerColor = Color(0xFFF0F0F0),
-                            focusedIndicatorColor = Color.Transparent,
+//                            focusedContainerColor = Color(0xFFF0F0F0),
+//                            unfocusedContainerColor = Color(0xFFF0F0F0),
+                            focusedIndicatorColor = Color.Transparent, // eliminamos las barras inferiores que no queremos
                             unfocusedIndicatorColor = Color.Transparent,
                             disabledIndicatorColor = Color.Transparent
                         )
@@ -134,15 +138,12 @@ fun MessageTab(conversation: Conversation?, onBack: () -> Unit){
                         enabled = textState.isNotBlank(),
                         modifier = Modifier
                             .clip(CircleShape)
-                            .background(
-                                if (textState.isNotBlank()) MaterialTheme.colorScheme.primary
-                                else Color.LightGray
-                            )
+                            .background(MaterialTheme.colorScheme.secondary)
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.Send,
                             contentDescription = getString(context, R.string.send),
-                            tint = Color.White
+                            tint = MaterialTheme.colorScheme.background
                         )
                     }
                 }
@@ -152,8 +153,7 @@ fun MessageTab(conversation: Conversation?, onBack: () -> Unit){
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
-                .background(Color(0xFFF5F5F5)),
+                .padding(innerPadding),
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
@@ -167,8 +167,9 @@ fun MessageTab(conversation: Conversation?, onBack: () -> Unit){
 @Composable
 fun ChatBubble(message: ChatMessage) {
     val alignment = if (message.isFromMe) Alignment.CenterEnd else Alignment.CenterStart
-    val bgColor = if (message.isFromMe) MaterialTheme.colorScheme.primary else Color.White
-    val textColor = if (message.isFromMe) Color.White else Color.Black
+    val timestampAlignment = if (message.isFromMe) Alignment.End else Alignment.Start
+    val bgColor = if (message.isFromMe) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.background
+    val textColor = if (message.isFromMe) Color.White else MaterialTheme.colorScheme.onSurface
     val shape = if (message.isFromMe) {
         RoundedCornerShape(16.dp, 16.dp, 0.dp, 16.dp)
     } else {
@@ -176,7 +177,7 @@ fun ChatBubble(message: ChatMessage) {
     }
 
     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = alignment) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(horizontalAlignment = timestampAlignment) {
             Surface(
                 color = bgColor,
                 shape = shape,

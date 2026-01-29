@@ -1,7 +1,6 @@
 package com.chaima.truekeo.screens
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -45,7 +45,6 @@ fun ProfileTab(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
     ) {
         item {
             Column(
@@ -91,7 +90,8 @@ fun ProfileTab(
                     Text(
                         text = stringResource(R.string.edit_profile),
                         fontSize = 18.sp,
-                        fontWeight = FontWeight.SemiBold
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.background
                     )
                 }
             }
@@ -103,7 +103,7 @@ fun ProfileTab(
             ProfileOption(
                 iconRes = R.drawable.intercambio,
                 title = stringResource(R.string.my_trueks),
-                onClick = onMyTruekesClick
+                onClick = onMyTruekesClick,
             )
         }
 
@@ -130,45 +130,44 @@ fun ProfileTab(
         item { Spacer(modifier = Modifier.height(24.dp)) }
     }
 }
-    @Composable
-    fun ProfileOption(
-        iconRes: Int,
-        title: String,
-        onClick: () -> Unit = {}
+
+@Composable
+fun ProfileOption(
+    iconRes: Int,
+    title: String,
+    onClick: () -> Unit = {}
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
+            .padding(horizontal = 20.dp)
+            .height(110.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { onClick() }
-                .padding(horizontal = 20.dp)
-                .height(110.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
 
-            Image(
-                painter = painterResource(id = iconRes),
-                contentDescription = title,
-                modifier = Modifier.size(48.dp)
-            )
+        Image(
+            painter = painterResource(id = iconRes),
+            contentDescription = title,
+            modifier = Modifier.size(48.dp),
+            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
+        )
 
-            Spacer(modifier = Modifier.width(20.dp))
+        Spacer(modifier = Modifier.width(20.dp))
 
-            Text(
-                text = title,
-                fontSize = 30.sp,
-                fontWeight = FontWeight.Black
-            )
+        Text(
+            text = title,
+            fontSize = 30.sp,
+            fontWeight = FontWeight.Black
+        )
 
-            Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.weight(1f))
 
-            Icon(
-                imageVector = Icons.Filled.ChevronRight,
-                modifier = Modifier.size(48.dp),
-                contentDescription = null,
-                tint = Color.Gray
-            )
-        }
+        Icon(
+            imageVector = Icons.Filled.ChevronRight,
+            modifier = Modifier.size(48.dp),
+            contentDescription = null,
+            tint = Color.Gray
+        )
     }
-
-
-
+}
