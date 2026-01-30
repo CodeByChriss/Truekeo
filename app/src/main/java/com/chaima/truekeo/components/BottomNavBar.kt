@@ -30,7 +30,6 @@ private data class BottomItem(
 @Composable
 fun BottomNavBar(
     navController: NavController,
-    fabExpanded: Boolean,
     onFabToggle: () -> Unit,
     onFabClose: () -> Unit
 ) {
@@ -92,8 +91,8 @@ fun BottomNavBar(
     fun goToTab(route: String) {
         onFabClose()
 
-        navController.popBackStack(Routes.CreateTrueke.route, inclusive = true)
-        navController.popBackStack(Routes.CreateProduct.route, inclusive = true)
+        navController.popBackStack(NavBarRoutes.CreateTrueke.route, inclusive = true)
+        navController.popBackStack(NavBarRoutes.CreateProduct.route, inclusive = true)
 
         navController.navigate(route) {
             launchSingleTop = true

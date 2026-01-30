@@ -56,7 +56,7 @@ import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MessageTab(conversation: Conversation?, onBack: () -> Unit){
+fun MessageScreen(conversation: Conversation?, onBack: () -> Unit){
     if(conversation == null){ // En caso de fallar el envio del mensaje
         onBack()
         return

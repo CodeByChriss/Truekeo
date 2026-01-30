@@ -13,11 +13,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
@@ -26,11 +21,8 @@ import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -45,6 +37,7 @@ import com.chaima.truekeo.R
 import com.chaima.truekeo.components.TruekeCard
 import com.chaima.truekeo.data.MockData
 import com.chaima.truekeo.models.TruekeStatus
+import com.chaima.truekeo.navigation.NavBarRoutes
 import com.chaima.truekeo.navigation.Routes
 import com.chaima.truekeo.ui.theme.TruekeoTheme
 import kotlinx.coroutines.launch
@@ -157,7 +150,7 @@ fun MyTruekesTab(navController: NavController) {
                                         trueke = trueke,
                                         onClick = {
                                             navController.navigate(
-                                                Routes.TruekeDetails.create(trueke.id)
+                                                NavBarRoutes.TruekeDetails.create(trueke.id)
                                             )
                                         }
                                     )

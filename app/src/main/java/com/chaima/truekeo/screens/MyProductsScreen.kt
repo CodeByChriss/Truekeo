@@ -36,7 +36,7 @@ data class MyProduct(
     val status: ProductStatus
 )
 @Composable
-fun MyProductsTab() {
+fun MyProductsScreen() {
 
     var searchQuery by remember { mutableStateOf("") }
 

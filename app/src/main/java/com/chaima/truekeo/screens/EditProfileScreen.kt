@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.sp
 import com.chaima.truekeo.R
 
 @Composable
-fun EditProfileTab(
+fun EditProfileScreen(
     onSaveClick: () -> Unit = {}
 ) {
     var name by remember { mutableStateOf("") }

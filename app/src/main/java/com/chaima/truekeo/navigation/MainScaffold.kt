@@ -22,14 +22,11 @@ import com.chaima.truekeo.screens.CreateProductTab
 import com.chaima.truekeo.screens.HomeTab
 import com.chaima.truekeo.screens.CreateTruekeTab
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.currentBackStackEntryAsState
 import com.chaima.truekeo.models.ChatViewModel
-import com.chaima.truekeo.screens.HomeTab
-import com.chaima.truekeo.screens.CreateEventTab
-import com.chaima.truekeo.screens.MessageTab
-import com.chaima.truekeo.screens.EditProfileTab
+import com.chaima.truekeo.screens.MessageScreen
+import com.chaima.truekeo.screens.EditProfileScreen
 import com.chaima.truekeo.screens.MessagesTab
-import com.chaima.truekeo.screens.MyProductsTab
+import com.chaima.truekeo.screens.MyProductsScreen
 import com.chaima.truekeo.screens.ProfileTab
 import com.chaima.truekeo.screens.MyTruekesTab
 import com.chaima.truekeo.screens.TruekeDetailsScreen
@@ -42,24 +39,15 @@ fun MainScaffold() {
     val currentRoute = backStackEntry?.destination?.route
 
     var fabExpanded by remember { mutableStateOf(false) }
+    val chatViewModel: ChatViewModel = viewModel()
 
     Scaffold(
         bottomBar = {
             BottomNavBar(
                 navController = navController,
-                fabExpanded = fabExpanded,
                 onFabToggle = { fabExpanded = !fabExpanded },
                 onFabClose = { fabExpanded = false }
             )
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
-    val chatViewModel: ChatViewModel = viewModel()
-
-    Scaffold(
-        bottomBar = {
-            if (currentRoute != NavBarRoutes.Message.route) {
-                BottomNavBar(navController)
-            }
         }
     ) { padding ->
         NavHost(
@@ -71,13 +59,12 @@ fun MainScaffold() {
             composable(NavBarRoutes.MyTruekes.route) {
                 MyTruekesTab(navController = navController)
             }
-            composable(Routes.CreateTrueke.route) { CreateTruekeTab() }
-            composable(Routes.CreateProduct.route) { CreateProductTab() }
-            composable(NavBarRoutes.Messages.route) { MessagesTab() }
-            composable(NavBarRoutes.Profile.route) { ProfileTab() }
+
+            composable(NavBarRoutes.CreateTrueke.route) { CreateTruekeTab() }
+            composable(NavBarRoutes.CreateProduct.route) { CreateProductTab() }
 
             composable(
-                route = Routes.TruekeDetails.route,
+                route = NavBarRoutes.TruekeDetails.route,
                 arguments = listOf(navArgument("truekeId") { type = NavType.StringType })
             ) { backStackEntry ->
                 val truekeId = backStackEntry.arguments?.getString("truekeId")!!
@@ -86,8 +73,6 @@ fun MainScaffold() {
                     onBack = { navController.popBackStack() }
                 )
             }
-            composable(NavBarRoutes.MyTruekes.route) { MyTruekesTab() }
-            composable(NavBarRoutes.Create.route) { CreateEventTab() }
             
             composable(NavBarRoutes.Messages.route) {
                 MessagesTab(
@@ -99,7 +84,7 @@ fun MainScaffold() {
             }
 
             composable(NavBarRoutes.Message.route) {
-                MessageTab(
+                MessageScreen(
                     conversation = chatViewModel.selectedMessage,
                     onBack = { navController.popBackStack() }
                 )
@@ -145,10 +130,10 @@ fun MainScaffold() {
                     }
                 )
             }
-            composable(NavBarRoutes.MyProducts.route) { MyProductsTab() }
+            composable(NavBarRoutes.MyProducts.route) { MyProductsScreen() }
 
             composable(NavBarRoutes.EditProfile.route) {
-                EditProfileTab(
+                EditProfileScreen(
                     onSaveClick = {
                         navController.popBackStack()
                     }
@@ -161,16 +146,16 @@ fun MainScaffold() {
             onDismiss = { fabExpanded = false },
             onCreateTrueke = {
                 fabExpanded = false
-                if (currentRoute != Routes.CreateTrueke.route) {
-                    navController.navigate(Routes.CreateTrueke.route) {
+                if (currentRoute != NavBarRoutes.CreateTrueke.route) {
+                    navController.navigate(NavBarRoutes.CreateTrueke.route) {
                         launchSingleTop = true
                     }
                 }
             },
             onCreateProduct = {
                 fabExpanded = false
-                if (currentRoute != Routes.CreateProduct.route) {
-                    navController.navigate(Routes.CreateProduct.route) {
+                if (currentRoute != NavBarRoutes.CreateProduct.route) {
+                    navController.navigate(NavBarRoutes.CreateProduct.route) {
                         launchSingleTop = true
                     }
                 }

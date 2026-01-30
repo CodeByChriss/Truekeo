@@ -48,7 +48,6 @@ import com.chaima.truekeo.models.TruekeStatus
 import com.chaima.truekeo.models.User
 import com.chaima.truekeo.utils.TimePrefix
 import com.chaima.truekeo.utils.prefixedTimeAgo
-import com.chaima.truekeo.utils.timeAgo
 
 // Contenido del bottom sheet que muestra los detalles del trueke seleccionado
 @Composable
