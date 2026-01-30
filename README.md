@@ -98,6 +98,25 @@ Este apartado documenta las principales librerías utilizadas en el proyecto y c
 - **Flujos Asíncronos con Corrutinas:** Implementación de `suspend functions` y extensión `.await()` para un manejo eficiente y no bloqueante de las tareas de Firebase.
 - **Seguridad en el Registro:** Implementación de envío automático de correo de verificación tras la creación de cuenta exitosa.
 
+### 💾 Supabase
+
+**Propósito:** Almacenamiento de archivos binarios y gestión de activos multimedia de alta disponibilidad mediante Supabase Storage.
+
+**Funcionalidades implementadas:**
+- **Gestión de Buckets:** Configuración de contenedores públicos para el almacenamiento centralizado de avatares de usuario.
+- **Optimización de Almacenamiento (Upsert):** Implementación de lógica de subida con sobrescritura automática (`upsert = true`) para minimizar el uso de cuota en el tier gratuito.
+- **Políticas de Seguridad (RLS):** Configuración de Row Level Security para controlar los permisos de lectura y escritura de archivos desde el cliente móvil.
+- **Generación de URLs Públicas:** Obtención dinámica de enlaces permanentes para la persistencia de rutas de imagen en los perfiles de Firestore.
+
+### 🖼️ Compressor (https://github.com/zetbaitsu/Compressor)
+
+**Propósito:** Optimización de recursos multimedia mediante la reducción del peso de las imágenes antes de la transferencia de datos.
+
+**Funcionalidades implementadas:**
+- **Compresión Adaptativa:** Reducción de dimensiones a un máximo de 320px, garantizando nitidez en pantallas de alta densidad (hasta 160dp) sin penalizar el rendimiento.
+- **Ahorro de Ancho de Banda:** Disminución drástica del peso del archivo (calidad 80%) para acelerar las subidas en conexiones móviles.
+- **Integración con Corrutinas:** Procesamiento asíncrono de imágenes para evitar bloqueos en el hilo principal de la interfaz durante la manipulación de archivos.
+
 ### 🖼️ Coil (v3.3.0)
 
 **Funcionalidades implementadas:**

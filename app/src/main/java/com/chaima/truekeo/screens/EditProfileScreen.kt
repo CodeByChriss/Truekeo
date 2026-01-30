@@ -29,6 +29,7 @@ import androidx.core.content.ContextCompat.getString
 import coil3.compose.AsyncImage
 import com.chaima.truekeo.R
 import com.chaima.truekeo.data.AuthContainer
+import com.chaima.truekeo.data.ImageStorageManager
 import kotlinx.coroutines.launch
 
 @Composable
@@ -67,7 +68,7 @@ fun EditProfileScreen(onSaveChangesClick: () -> Unit) {
             Spacer(modifier = Modifier.height(24.dp))
 
             AsyncImage(
-                model = user?.avatarUrl,
+                model = itemImageUri ?: user?.avatarUrl,
                 contentDescription = user?.username,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -116,16 +117,27 @@ fun EditProfileScreen(onSaveChangesClick: () -> Unit) {
                 onClick = {
                     // primeros comprobamos si hay cambios para evitar llamadas a la base de datos innecesarias
                     var changed = false
-                    if(username != user?.username.toString()) changed = true
-                    else if(name != user?.firstAndLastName.toString()) changed = true
-                    else if(itemImageUri.toString() != user?.avatarUrl) changed = true
+                    if (username != user?.username.toString()) changed = true
+                    else if (name != user?.firstAndLastName.toString()) changed = true
+                    else if (itemImageUri != null) changed = true
                     if (changed) {
                         scope.launch {
+                            // Si lo que ha cambiado es la imagen,la comprimimos y
+                            // la subimos a Supabase para unicamente guardar la URL en Firebase
+                            var finalImageUrl = user?.avatarUrl.toString()
+                            if (itemImageUri != null) {
+                                val storageManager = ImageStorageManager(context)
+                                finalImageUrl = storageManager.uploadProfilePhoto(
+                                    user?.id.toString(),
+                                    itemImageUri!!
+                                )
+                            }
+
                             val result = authManager.updateUserProfile(
                                 uid = user?.id.toString(),
                                 newUsername = username,
                                 newFullName = name,
-                                newAvatarUrl = itemImageUri.toString()
+                                newAvatarUrl = finalImageUrl
                             )
 
                             result.onSuccess { available ->
@@ -149,9 +161,11 @@ fun EditProfileScreen(onSaveChangesClick: () -> Unit) {
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }
+                            onSaveChangesClick()
                         }
+                    } else {
+                        onSaveChangesClick()
                     }
-                    onSaveChangesClick()
                 },
                 modifier = Modifier
                     .fillMaxWidth()
