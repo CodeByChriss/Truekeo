@@ -46,14 +46,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.getString
 import com.chaima.truekeo.R
-import com.chaima.truekeo.data.AuthManager
+import com.chaima.truekeo.data.AuthContainer
 import com.chaima.truekeo.ui.theme.TruekeoTheme
 import kotlinx.coroutines.launch
 import java.util.Locale
 
 @Composable
 fun SignupScreen(onSignUp: () -> Unit, onBackToLogin: () -> Unit) {
-    val authManager = remember { AuthManager() }
+    val authManager = remember { AuthContainer.authManager }
     val scope = rememberCoroutineScope()
     var email by remember { mutableStateOf("") }
     var username by remember { mutableStateOf("") }

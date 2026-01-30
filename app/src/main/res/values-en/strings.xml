@@ -17,6 +17,7 @@
     <string name="create_account">Create account</string>
     <string name="repeat_password">Repeat password</string>
     <string name="register">Sign up</string>
+    <string name="login">Login</string>
     <string name="email">Email</string>
     <string name="username">Username</string>
     <string name="account_created_success">Account successfully created</string>
@@ -55,8 +56,11 @@
     <string name="time_prefix_updated">Updated</string>
     <string name="time_now">just now</string>
     <string name="time_published_now">Published just now</string>
+    <string name="logout">Cerrar sesión</string>
     <string name="name">First and last name</string>
     <string name="user">User</string>
+    <string name="profile_updated">Updated profile</string>
+    <string name="username_already_exits">That username already exists</string>
     <string name="city">City</string>
     <string name="bio">Write something about yourself…</string>
     <string name="edit_profile">Edit profile</string>

@@ -52,16 +52,17 @@ import androidx.credentials.exceptions.GetCredentialException
 import androidx.credentials.exceptions.GetCredentialProviderConfigurationException
 import androidx.credentials.exceptions.NoCredentialException
 import com.chaima.truekeo.R
-import com.chaima.truekeo.data.AuthManager
+import com.chaima.truekeo.data.AuthContainer
 import com.chaima.truekeo.ui.theme.TruekeoTheme
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import kotlinx.coroutines.launch
 import java.util.Locale
+import androidx.compose.ui.res.stringResource
 
 @Composable
 fun LoginScreen(onGoToSignup: () -> Unit, onLogin: () -> Unit) {
-    val authManager = remember { AuthManager() }
+    val authManager = remember { AuthContainer.authManager }
     val scope = rememberCoroutineScope()
     var emailOusuario by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -73,7 +74,7 @@ fun LoginScreen(onGoToSignup: () -> Unit, onLogin: () -> Unit) {
     val googleIdOption = GetGoogleIdOption.Builder()
         .setFilterByAuthorizedAccounts(false)
         .setServerClientId(
-            context.getString(R.string.default_web_client_id)
+            stringResource(R.string.default_web_client_id)
         )
         .build()
 
@@ -98,7 +99,7 @@ fun LoginScreen(onGoToSignup: () -> Unit, onLogin: () -> Unit) {
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Text(
-                    text = getString(context,R.string.register),
+                    text = getString(context,R.string.login),
                     fontSize = 36.sp,
                     fontFamily = FontFamily(Font(R.font.saira_regular)),
                     color = MaterialTheme.colorScheme.primary
