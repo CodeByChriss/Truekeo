@@ -13,24 +13,28 @@ object MockData {
     val chaimaUser = User(
         id = "u1",
         username = "Chaima",
+        firstAndLastName = "No name",
         avatarUrl = "https://img.freepik.com/foto-gratis/hombre-negro-posando_23-2148171639.jpg?semt=ais_hybrid&w=740&q=80",
     )
 
     val mariaUser = User(
         id = "u2",
         username = "María",
+        firstAndLastName = "No name",
         avatarUrl = "https://img.freepik.com/foto-gratis/mujer-joven-hermosa-sueter-rosa-calido-aspecto-natural-sonriente-retrato-aislado-cabello-largo_285396-896.jpg?w=740",
     )
 
     val carlosUser = User(
         id = "u3",
         username = "Carlos",
+        firstAndLastName = "No name",
         avatarUrl = "https://img.freepik.com/foto-gratis/retrato-hombre-feliz-sonriente_23-2149022620.jpg?w=740",
     )
 
     val luciaUser = User(
         id = "u4",
         username = "Lucía",
+        firstAndLastName = "No name",
         avatarUrl = "https://img.freepik.com/foto-gratis/chica-joven-rizada-alegre_176420-9473.jpg?w=740",
     )
 

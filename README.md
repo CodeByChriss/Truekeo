@@ -88,6 +88,16 @@ Este apartado documenta las principales librerías utilizadas en el proyecto y c
 
 ### 🔥 Firebase Suite (BOM v34.7.0)
 
+**Propósito:** Gestión centralizada de autenticación y persistencia de perfiles de usuario en Firestore
+
+**Funcionalidades implementadas:**
+- **Autenticación Híbrida y Social:** Integración de `FirebaseAuth` para registro con Email/Password y soporte para `GoogleAuthProvider`.
+- **Identificación Dual de Usuario:** Sistema de inicio de sesión flexible que permite el acceso mediante **correo electrónico** o **nombre de usuario**, realizando consultas dinámicas en Firestore.
+- **Garantía de Unicidad (Transacciones):** Uso de `db.runTransaction` para asegurar que no existan duplicados en la colección de `usernames` durante el registro o actualización.
+- **Gestión Automática de Perfiles:** Generación de nombres de usuario aleatorios con lógica de reintento automático para nuevos registros mediante proveedores externos (Google).
+- **Flujos Asíncronos con Corrutinas:** Implementación de `suspend functions` y extensión `.await()` para un manejo eficiente y no bloqueante de las tareas de Firebase.
+- **Seguridad en el Registro:** Implementación de envío automático de correo de verificación tras la creación de cuenta exitosa.
+
 ### 🖼️ Coil (v3.3.0)
 
 **Funcionalidades implementadas:**

@@ -22,6 +22,8 @@ import com.chaima.truekeo.screens.CreateProductTab
 import com.chaima.truekeo.screens.HomeTab
 import com.chaima.truekeo.screens.CreateTruekeTab
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import com.chaima.truekeo.data.AuthContainer
 import com.chaima.truekeo.models.ChatViewModel
 import com.chaima.truekeo.screens.MessageScreen
 import com.chaima.truekeo.screens.EditProfileScreen
@@ -33,7 +35,9 @@ import com.chaima.truekeo.screens.TruekeDetailsScreen
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun MainScaffold() {
+fun MainScaffold(rootNavController: NavController) {
+    val authManager = AuthContainer.authManager
+
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
@@ -127,6 +131,12 @@ fun MainScaffold() {
                             launchSingleTop = true
                             restoreState = true
                         }
+                    },
+                    onLogoutClick = {
+                        authManager.logout()
+                        rootNavController.navigate(Routes.AuthGraph.route) {
+                            popUpTo(Routes.Main.route) { inclusive = true }
+                        }
                     }
                 )
             }
@@ -134,8 +144,14 @@ fun MainScaffold() {
 
             composable(NavBarRoutes.EditProfile.route) {
                 EditProfileScreen(
-                    onSaveClick = {
-                        navController.popBackStack()
+                    onSaveChangesClick = {
+                        navController.navigate(NavBarRoutes.Profile.route) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
                     }
                 )
             }

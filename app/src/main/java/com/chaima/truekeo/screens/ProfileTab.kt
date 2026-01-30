@@ -3,6 +3,7 @@ package com.chaima.truekeo.screens
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -28,25 +29,48 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImage
 import com.chaima.truekeo.R
+import com.chaima.truekeo.data.AuthContainer
 
 @Composable
 fun ProfileTab(
     onMyTruekesClick: () -> Unit,
     onMessagesClick: () -> Unit,
     onMyProductsClick: () -> Unit,
-    onEditProfileClick: () -> Unit
+    onEditProfileClick: () -> Unit,
+    onLogoutClick: () -> Unit
 ) {
+    val user = AuthContainer.authManager.userProfile
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
     ) {
+        item {
+            Box(
+                modifier = Modifier.fillMaxWidth().padding(20.dp),
+                contentAlignment = Alignment.CenterEnd
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.logout),
+                    contentDescription = stringResource(R.string.logout),
+                    modifier = Modifier
+                        .size(32.dp)
+                        .clickable {
+                            onLogoutClick()
+                        },
+                )
+            }
+        }
+
         item {
             Column(
                 modifier = Modifier
@@ -54,9 +78,10 @@ fun ProfileTab(
                     .padding(top = 40.dp, bottom = 32.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.profile),
-                    contentDescription = "Foto de perfil",
+                AsyncImage(
+                    model = user?.avatarUrl,
+                    contentDescription = user?.username,
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .size(160.dp)
                         .clip(CircleShape)
@@ -65,13 +90,13 @@ fun ProfileTab(
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Text(
-                    text = "Pablo García",
+                    text = user?.firstAndLastName.toString(),
                     fontSize = 28.sp,
                     fontWeight = FontWeight.Bold
                 )
 
                 Text(
-                    text = "@pablogarcia",
+                    text = "@${user?.username}",
                     fontSize = 22.sp,
                     color = Color.Gray
                 )
@@ -130,45 +155,46 @@ fun ProfileTab(
         item { Spacer(modifier = Modifier.height(24.dp)) }
     }
 }
-    @Composable
-    fun ProfileOption(
-        iconRes: Int,
-        title: String,
-        onClick: () -> Unit = {}
+
+@Composable
+fun ProfileOption(
+    iconRes: Int,
+    title: String,
+    onClick: () -> Unit = {}
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
+            .padding(horizontal = 20.dp)
+            .height(110.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { onClick() }
-                .padding(horizontal = 20.dp)
-                .height(110.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
 
-            Image(
-                painter = painterResource(id = iconRes),
-                contentDescription = title,
-                modifier = Modifier.size(48.dp)
-            )
+        Image(
+            painter = painterResource(id = iconRes),
+            contentDescription = title,
+            modifier = Modifier.size(48.dp)
+        )
 
-            Spacer(modifier = Modifier.width(20.dp))
+        Spacer(modifier = Modifier.width(20.dp))
 
-            Text(
-                text = title,
-                fontSize = 30.sp,
-                fontWeight = FontWeight.Black
-            )
+        Text(
+            text = title,
+            fontSize = 30.sp,
+            fontWeight = FontWeight.Black
+        )
 
-            Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.weight(1f))
 
-            Icon(
-                imageVector = Icons.Filled.ChevronRight,
-                modifier = Modifier.size(48.dp),
-                contentDescription = null,
-                tint = Color.Gray
-            )
-        }
+        Icon(
+            imageVector = Icons.Filled.ChevronRight,
+            modifier = Modifier.size(48.dp),
+            contentDescription = null,
+            tint = Color.Gray
+        )
     }
+}
 
 
 

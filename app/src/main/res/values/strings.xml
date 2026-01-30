@@ -21,7 +21,7 @@
     <!-- registro -->
     <string name="create_account">Crear cuenta</string>
     <string name="repeat_password">Repetir contraseña</string>
-    <string name="register">Registrarse</string>
+    <string name="login">Iniciar sesión</string>
     <string name="email">Correo electrónico</string>
     <string name="username">Nombre de usuario</string>
     <string name="account_created_success">Cuenta creada con éxito</string>
@@ -63,9 +63,12 @@
     <!-- Profile-->
     <string name="my_trueks">Mis trueques</string>
     <string name="my_products">Mis productos</string>
+    <string name="logout">Logout</string>
     <!-- Editar perfil y Profile-->
     <string name="name">Nombre y apellido</string>
     <string name="user">Usuario</string>
+    <string name="profile_updated">Perfil actualizado</string>
+    <string name="username_already_exits">Ese nombre de usuario ya existe</string>
     <!-- Editar perfil-->
     <string name="city">Ciudad</string>
     <string name="bio">Escribe algo sobre ti…</string>
@@ -105,4 +108,5 @@
     <string name="send">Enviar</string>
     <string name="write_message_here">Escribe un mensaje aquí…</string>
     <string name="go_back">Atrás</string>
+    <string name="register">Registrarse</string>
 </resources>
