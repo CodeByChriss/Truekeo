@@ -19,6 +19,8 @@ class AuthManager {
     private val auth = FirebaseAuth.getInstance()
     private val db = FirebaseFirestore.getInstance()
 
+    private val DEFAULT_PF_URL = "https://xcawesphifjagaixywdh.supabase.co/storage/v1/object/public/profile_photos/pf_default.png"
+
     // Para guardar los datos del usuario en memoria
     var userProfile by mutableStateOf<User?>(null)
         private set
@@ -66,7 +68,7 @@ class AuthManager {
                 id = uid,
                 username = normalizedUsername,
                 firstAndLastName = "No name",
-                avatarUrl = null,
+                avatarUrl = DEFAULT_PF_URL,
                 email = email
             )
 
@@ -162,7 +164,7 @@ class AuthManager {
                         id = uid,
                         username = username,
                         firstAndLastName = "No name",
-                        avatarUrl = null,
+                        avatarUrl = DEFAULT_PF_URL,
                         email = auth.currentUser?.email ?: ""
                     )
 
@@ -186,7 +188,7 @@ class AuthManager {
         uid: String,
         newUsername: String,
         newFullName: String,
-        newAvatarUrl: String?
+        newAvatarUrl: String
     ): Result<Boolean> {
         val normalizedNew = newUsername.lowercase().trim()
 

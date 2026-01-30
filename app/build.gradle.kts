@@ -75,4 +75,13 @@ dependencies {
     implementation("androidx.credentials:credentials:1.3.0")
     implementation("androidx.credentials:credentials-play-services-auth:1.3.0")
     implementation("androidx.compose.material:material-icons-extended")
+
+    // Supabase
+    implementation("io.github.jan-tennert.supabase:storage-kt:2.5.0")
+    implementation("io.github.jan-tennert.supabase:postgrest-kt:2.5.0")
+    implementation("io.github.jan-tennert.supabase:realtime-kt:2.5.0")
+    implementation("io.ktor:ktor-client-android:2.3.0")
+
+    // Compresión de imágenes
+    implementation("id.zelory:compressor:3.0.1")
 }
