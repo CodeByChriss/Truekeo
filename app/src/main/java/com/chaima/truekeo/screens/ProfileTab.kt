@@ -75,7 +75,7 @@ fun ProfileTab(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 40.dp, bottom = 32.dp),
+                    .padding(bottom = 32.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 AsyncImage(

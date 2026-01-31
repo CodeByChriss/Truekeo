@@ -39,6 +39,9 @@ fun EditProfileScreen(onSaveChangesClick: () -> Unit) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
+    // Para evitar realizar más de una vez la misma llamada
+    var isLoading by remember { mutableStateOf(false) }
+
     var name by remember { mutableStateOf(user?.firstAndLastName.toString()) }
     var username by remember { mutableStateOf(user?.username.toString()) }
     var itemImageUri by remember { mutableStateOf<Uri?>(null) }
@@ -115,56 +118,61 @@ fun EditProfileScreen(onSaveChangesClick: () -> Unit) {
 
             Button(
                 onClick = {
-                    // primeros comprobamos si hay cambios para evitar llamadas a la base de datos innecesarias
-                    var changed = false
-                    if (username != user?.username.toString()) changed = true
-                    else if (name != user?.firstAndLastName.toString()) changed = true
-                    else if (itemImageUri != null) changed = true
-                    if (changed) {
-                        scope.launch {
-                            // Si lo que ha cambiado es la imagen,la comprimimos y
-                            // la subimos a Supabase para unicamente guardar la URL en Firebase
-                            var finalImageUrl = user?.avatarUrl.toString()
-                            if (itemImageUri != null) {
-                                val storageManager = ImageStorageManager(context)
-                                finalImageUrl = storageManager.uploadProfilePhoto(
-                                    user?.id.toString(),
-                                    itemImageUri!!
+                    if (!isLoading) { // Comprobamos si ya hay una llamada en proceso para no hacer de más
+                        isLoading = true
+                        // primeros comprobamos si hay cambios para evitar llamadas a la base de datos innecesarias
+                        var changed = false
+                        if (username != user?.username.toString()) changed = true
+                        else if (name != user?.firstAndLastName.toString()) changed = true
+                        else if (itemImageUri != null) changed = true
+                        if (changed) {
+                            scope.launch {
+                                // Si lo que ha cambiado es la imagen,la comprimimos y
+                                // la subimos a Supabase para unicamente guardar la URL en Firebase
+                                var finalImageUrl = user?.avatarUrl.toString()
+                                if (itemImageUri != null) {
+                                    val storageManager = ImageStorageManager(context)
+                                    finalImageUrl = storageManager.uploadProfilePhoto(
+                                        user?.id.toString(),
+                                        itemImageUri!!
+                                    )
+                                }
+
+                                val result = authManager.updateUserProfile(
+                                    uid = user?.id.toString(),
+                                    newUsername = username,
+                                    newFullName = name,
+                                    newAvatarUrl = finalImageUrl
                                 )
-                            }
 
-                            val result = authManager.updateUserProfile(
-                                uid = user?.id.toString(),
-                                newUsername = username,
-                                newFullName = name,
-                                newAvatarUrl = finalImageUrl
-                            )
-
-                            result.onSuccess { available ->
-                                if (available) {
+                                result.onSuccess { available ->
+                                    if (available) {
+                                        Toast.makeText(
+                                            context,
+                                            getString(context, R.string.profile_updated),
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    } else {
+                                        Toast.makeText(
+                                            context,
+                                            getString(context, R.string.username_already_exits),
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                }.onFailure {
                                     Toast.makeText(
                                         context,
-                                        getString(context, R.string.profile_updated),
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                } else {
-                                    Toast.makeText(
-                                        context,
-                                        getString(context, R.string.username_already_exits),
+                                        getString(context, R.string.error_unknown),
                                         Toast.LENGTH_SHORT
                                     ).show()
                                 }
-                            }.onFailure {
-                                Toast.makeText(
-                                    context,
-                                    getString(context, R.string.error_unknown),
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                                onSaveChangesClick()
+                                isLoading = false
                             }
+                        } else {
                             onSaveChangesClick()
+                            isLoading = false
                         }
-                    } else {
-                        onSaveChangesClick()
                     }
                 },
                 modifier = Modifier
@@ -175,11 +183,17 @@ fun EditProfileScreen(onSaveChangesClick: () -> Unit) {
                     containerColor = MaterialTheme.colorScheme.secondary
                 )
             ) {
-                Text(
-                    text = stringResource(R.string.save),
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontFamily = FontFamily(Font(R.font.saira_medium))
-                )
+                if (isLoading) {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator(color = Color.White)
+                    }
+                } else {
+                    Text(
+                        text = stringResource(R.string.save),
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontFamily = FontFamily(Font(R.font.saira_medium))
+                    )
+                }
             }
         }
     }
