@@ -1,8 +1,6 @@
 package com.chaima.truekeo.data
 
 import io.github.jan.supabase.createSupabaseClient
-import io.github.jan.supabase.postgrest.Postgrest
-import io.github.jan.supabase.realtime.Realtime
 import io.github.jan.supabase.storage.Storage
 
 object SupabaseClient {
@@ -10,8 +8,6 @@ object SupabaseClient {
         supabaseUrl = "https://xcawesphifjagaixywdh.supabase.co",
         supabaseKey = "sb_publishable_pih72vXtMr3MZX0giDtkBw_s253mFOD"
     ) {
-        install(Postgrest)
-        install(Realtime)
         install(Storage)
     }
 }
