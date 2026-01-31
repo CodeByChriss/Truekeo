@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -69,6 +70,9 @@ fun LoginScreen(onGoToSignup: () -> Unit, onLogin: () -> Unit) {
     var showPassword by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
+    // Para evitar realizar más de una vez la misma llamada
+    var isLoading by remember { mutableStateOf(false) }
+
     // autenticarse con google
     val credentialManager = CredentialManager.create(context)
     val googleIdOption = GetGoogleIdOption.Builder()
@@ -92,14 +96,14 @@ fun LoginScreen(onGoToSignup: () -> Unit, onLogin: () -> Unit) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Image(
                     painter = painterResource(id = R.drawable.logo),
-                    contentDescription = getString(context,R.string.truekeo_logo),
+                    contentDescription = getString(context, R.string.truekeo_logo),
                     modifier = Modifier.size(96.dp)
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Text(
-                    text = getString(context,R.string.login),
+                    text = getString(context, R.string.login),
                     fontSize = 36.sp,
                     fontFamily = FontFamily(Font(R.font.saira_regular)),
                     color = MaterialTheme.colorScheme.primary
@@ -110,7 +114,7 @@ fun LoginScreen(onGoToSignup: () -> Unit, onLogin: () -> Unit) {
                 OutlinedTextField(
                     value = emailOusuario,
                     onValueChange = { emailOusuario = it },
-                    label = { Text(getString(context,R.string.username_or_email)) },
+                    label = { Text(getString(context, R.string.username_or_email)) },
                     singleLine = true,
                     shape = RoundedCornerShape(8.dp),
                     modifier = Modifier
@@ -122,7 +126,7 @@ fun LoginScreen(onGoToSignup: () -> Unit, onLogin: () -> Unit) {
                 OutlinedTextField(
                     value = password,
                     onValueChange = { password = it },
-                    label = { Text(getString(context,R.string.password)) },
+                    label = { Text(getString(context, R.string.password)) },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
@@ -134,7 +138,10 @@ fun LoginScreen(onGoToSignup: () -> Unit, onLogin: () -> Unit) {
                         IconButton(onClick = { showPassword = !showPassword }) {
                             Icon(
                                 imageVector = image,
-                                    contentDescription = getString(context,R.string.toggle_password_visibility),
+                                contentDescription = getString(
+                                    context,
+                                    R.string.toggle_password_visibility
+                                ),
                                 modifier = Modifier.width(24.dp)
                             )
                         }
@@ -148,13 +155,20 @@ fun LoginScreen(onGoToSignup: () -> Unit, onLogin: () -> Unit) {
 
                 Button(
                     onClick = {
-                        scope.launch {
-                            val result = authManager.login(emailOusuario, password)
-                            if (result.isSuccess) {
-                                onLogin()
-                            } else {
-                                val errorMsg = result.exceptionOrNull()?.message ?: getString(context,R.string.error_unknown)
-                                Toast.makeText(context, errorMsg, Toast.LENGTH_SHORT).show()
+                        if (!isLoading) {
+                            isLoading = true
+                            scope.launch {
+                                val result = authManager.login(emailOusuario, password)
+                                if (result.isSuccess) {
+                                    onLogin()
+                                } else {
+                                    val errorMsg = result.exceptionOrNull()?.message ?: getString(
+                                        context,
+                                        R.string.error_unknown
+                                    )
+                                    Toast.makeText(context, errorMsg, Toast.LENGTH_SHORT).show()
+                                }
+                                isLoading = false
                             }
                         }
                     },
@@ -167,23 +181,32 @@ fun LoginScreen(onGoToSignup: () -> Unit, onLogin: () -> Unit) {
                         contentColor = Color.White
                     )
                 ) {
-                    Text(
-                        text = getString(context,R.string.login_button).uppercase(Locale.getDefault()),
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontFamily = FontFamily(Font(R.font.saira_medium))
-                    )
+                    if (isLoading) {
+                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            CircularProgressIndicator(color = Color.White)
+                        }
+                    } else {
+                        Text(
+                            text = getString(
+                                context,
+                                R.string.login_button
+                            ).uppercase(Locale.getDefault()),
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontFamily = FontFamily(Font(R.font.saira_medium))
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Row {
                     Text(
-                        text = getString(context,R.string.dont_have_account),
+                        text = getString(context, R.string.dont_have_account),
                         fontSize = 12.sp,
                         fontFamily = FontFamily(Font(R.font.saira_regular))
                     )
                     Text(
-                        text = getString(context,R.string.here),
+                        text = getString(context, R.string.here),
                         fontSize = 12.sp,
                         fontFamily = FontFamily(Font(R.font.saira_medium)),
                         color = MaterialTheme.colorScheme.secondary,
@@ -196,7 +219,7 @@ fun LoginScreen(onGoToSignup: () -> Unit, onLogin: () -> Unit) {
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Text(
-                    text = getString(context,R.string.or),
+                    text = getString(context, R.string.or),
                     fontSize = 16.sp,
                     fontFamily = FontFamily(Font(R.font.saira_regular)),
                     color = Color.Black,
@@ -207,68 +230,81 @@ fun LoginScreen(onGoToSignup: () -> Unit, onLogin: () -> Unit) {
 
                 Button(
                     onClick = {
-                        scope.launch {
-                            try {
-                                val result = credentialManager.getCredential(
-                                    context = context,
-                                    request = request
-                                )
+                        if (!isLoading) {
+                            isLoading = true
+                            scope.launch {
+                                try {
+                                    val result = credentialManager.getCredential(
+                                        context = context,
+                                        request = request
+                                    )
 
-                                val credential = result.credential
+                                    val credential = result.credential
 
-                                if (credential is GoogleIdTokenCredential) {
-                                    val idToken = credential.idToken
+                                    if (credential is GoogleIdTokenCredential) {
+                                        val idToken = credential.idToken
 
-                                    val authResult = authManager.signInWithGoogle(idToken)
+                                        val authResult = authManager.signInWithGoogle(idToken)
 
-                                    authResult.onSuccess {
-                                        onLogin()
-                                    }.onFailure {
-                                        val errorMsg = it.message ?: getString(context,R.string.error_unknown)
-                                        Toast.makeText(context, errorMsg, Toast.LENGTH_SHORT).show()
+                                        authResult.onSuccess {
+                                            onLogin()
+                                        }.onFailure {
+                                            val errorMsg =
+                                                it.message ?: getString(
+                                                    context,
+                                                    R.string.error_unknown
+                                                )
+                                            Toast.makeText(context, errorMsg, Toast.LENGTH_SHORT)
+                                                .show()
+                                        }
+                                    } else {
+                                        Toast.makeText(
+                                            context,
+                                            getString(context, R.string.error_getting_credentials),
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                     }
-                                } else {
+
+                                } catch (_: GetCredentialCancellationException) {
+                                    // El usuario cerró el diálogo o presionó atrás
                                     Toast.makeText(
                                         context,
-                                        getString(context,R.string.error_getting_credentials),
+                                        getString(context, R.string.login_cancelled_by_user),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+
+                                } catch (_: NoCredentialException) {
+                                    // No hay cuentas Google en el dispositivo
+                                    Toast.makeText(
+                                        context,
+                                        getString(context, R.string.no_google_account),
+                                        Toast.LENGTH_LONG
+                                    ).show()
+
+                                } catch (_: GetCredentialProviderConfigurationException) {
+                                    // Error de configuración (SHA-1, clientId, Play Services, etc.)
+                                    Toast.makeText(
+                                        context,
+                                        getString(context, R.string.error_google_sign_in),
+                                        Toast.LENGTH_LONG
+                                    ).show()
+
+                                } catch (_: GetCredentialException) {
+                                    // Cualquier otro error de Credential Manager
+                                    Toast.makeText(
+                                        context,
+                                        getString(context, R.string.error_getting_credentials),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                } catch (_: Exception) {
+                                    // Cualquier otro crash
+                                    Toast.makeText(
+                                        context,
+                                        getString(context, R.string.error_unknown),
                                         Toast.LENGTH_SHORT
                                     ).show()
                                 }
-
-                            } catch (_: GetCredentialCancellationException) {
-                                // El usuario cerró el diálogo o presionó atrás
-                                Toast.makeText(context, getString(context,R.string.login_cancelled_by_user), Toast.LENGTH_SHORT).show()
-
-                            } catch (_: NoCredentialException) {
-                                // No hay cuentas Google en el dispositivo
-                                Toast.makeText(
-                                    context,
-                                    getString(context,R.string.no_google_account),
-                                    Toast.LENGTH_LONG
-                                ).show()
-
-                            } catch (_: GetCredentialProviderConfigurationException) {
-                                // Error de configuración (SHA-1, clientId, Play Services, etc.)
-                                Toast.makeText(
-                                    context,
-                                    getString(context,R.string.error_google_sign_in),
-                                    Toast.LENGTH_LONG
-                                ).show()
-
-                            } catch (_: GetCredentialException) {
-                                // Cualquier otro error de Credential Manager
-                                Toast.makeText(
-                                    context,
-                                    getString(context,R.string.error_getting_credentials),
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            } catch (_: Exception) {
-                                // Cualquier otro crash
-                                Toast.makeText(
-                                    context,
-                                    getString(context,R.string.error_unknown),
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                                isLoading = false
                             }
                         }
                     },
@@ -282,21 +318,27 @@ fun LoginScreen(onGoToSignup: () -> Unit, onLogin: () -> Unit) {
                         contentColor = Color.Black
                     )
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_google_logo),
-                            contentDescription = "Google Logo",
-                            modifier = Modifier.size(24.dp)
-                        )
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Text(
-                            text = getString(context,R.string.continue_with_google),
-                            fontFamily = FontFamily(Font(R.font.saira_regular)),
-                            color = Color.Black
-                        )
+                    if (isLoading) {
+                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            CircularProgressIndicator(color = Color.White)
+                        }
+                    } else {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_google_logo),
+                                contentDescription = "Google Logo",
+                                modifier = Modifier.size(24.dp)
+                            )
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Text(
+                                text = getString(context, R.string.continue_with_google),
+                                fontFamily = FontFamily(Font(R.font.saira_regular)),
+                                color = Color.Black
+                            )
+                        }
                     }
                 }
             }
