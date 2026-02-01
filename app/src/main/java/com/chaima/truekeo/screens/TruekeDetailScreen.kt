@@ -1,22 +1,57 @@
 package com.chaima.truekeo.screens
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.SwapHoriz
+import androidx.compose.material.icons.filled.SwapVert
+import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material.icons.rounded.SwapVert
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImage
+import com.chaima.truekeo.R
+import com.chaima.truekeo.components.ItemImageBox
+import com.chaima.truekeo.components.UserAvatarImage
 import com.chaima.truekeo.data.MockData
+import com.chaima.truekeo.models.Item
+import com.chaima.truekeo.models.Trueke
+import com.chaima.truekeo.models.TruekeStatus
+import com.chaima.truekeo.ui.theme.TruekeoTheme
+import com.chaima.truekeo.utils.resolvePlaceName
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -25,80 +60,372 @@ fun TruekeDetailsScreen(
     onBack: () -> Unit
 ) {
     val trueke = remember(truekeId) {
-        MockData.sampleTruekesWithTaker.firstOrNull { it.id == truekeId }
+        MockData.sampleTruekesWithTaker.first { it.id == truekeId }
     }
 
-    Box(
-        modifier = Modifier
+    TruekeoTheme(dynamicColor = false) {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Text(
+                            text = trueke.title,
+                            style = MaterialTheme.typography.titleLarge,
+                            fontFamily = FontFamily(Font(R.font.saira_semibold))
+                        )
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = onBack) {
+                            Icon(Icons.Rounded.ArrowBack, null)
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color.White
+                    )
+                )
+            },
+            containerColor = Color.White,
+            modifier = Modifier.fillMaxSize()
+        ) { padding ->
+            when (trueke.status) {
+                TruekeStatus.OPEN ->
+                    OpenTruekeLayout(trueke, Modifier.padding(padding))
+
+                TruekeStatus.RESERVED ->
+                    ReservedTruekeLayout(trueke, Modifier.padding(padding))
+
+                TruekeStatus.COMPLETED ->
+                {}
+
+                TruekeStatus.CANCELLED -> {}
+            }
+        }
+        }
+}
+
+@Composable
+fun OpenTruekeLayout(
+    trueke: Trueke,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
             .fillMaxSize()
-            .padding(6.dp),
-        contentAlignment = Alignment.Center
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 24.dp),
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
-        Text("Trueke con id")
+        Column {
+            Spacer(Modifier.height(12.dp))
+
+            BasicTruekeInfo(trueke = trueke)
+
+            Spacer(Modifier.height(12.dp))
+
+            Text(
+                text = "Tu oferta".uppercase(),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.primary,
+                fontFamily = FontFamily(Font(R.font.saira_medium))
+            )
+
+            Spacer(Modifier.height(4.dp))
+
+            ItemCard(item = trueke.hostItem)
+
+            Spacer(Modifier.height(24.dp))
+        }
+
+        Column {
+            Spacer(Modifier.height(24.dp))
+
+            Button(
+                onClick = {
+                    // TODO: Aquí ya está todo OK -> crear trueke
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text(
+                    text = "Editar Trueke".uppercase(Locale.getDefault()),
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontFamily = FontFamily(Font(R.font.saira_medium))
+                )
+            }
+        }
     }
 }
 
 @Composable
-private fun UserItemCard(
-    userTitle: String,
-    userName: String,
-    userSubtitle: String?,
-    itemName: String,
-    itemDetails: String?,
-    itemBrand: String?,
-    // itemImageUrl: String?
+fun ReservedTruekeLayout(
+    trueke: Trueke,
+    modifier: Modifier = Modifier
 ) {
-    OutlinedCard(
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 24.dp)
+    ) {
+        Spacer(Modifier.height(12.dp))
+
+        BasicTruekeInfo(trueke = trueke)
+
+        Spacer(Modifier.height(12.dp))
+
+        // Sección de intercambio
+
+        Text(
+            text = "Intercambio".uppercase(),
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.primary,
+            fontFamily = FontFamily(Font(R.font.saira_medium))
+        )
+
+        Spacer(Modifier.height(2.dp))
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            Text(
+                text = "Truekeado con",
+                style = MaterialTheme.typography.bodyMedium,
+                fontFamily = FontFamily(Font(R.font.saira_regular))
+            )
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(3.dp)
+            ) {
+                UserAvatarImage(trueke.takerUser!!, size = 24.dp)
+
+                Text(
+                    text = "@${trueke.takerUser.username}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.Black,
+                    fontFamily = FontFamily(Font(R.font.saira_medium))
+                )
+            }
+        }
+
+        Spacer(Modifier.height(8.dp))
+
+        Text(
+            text = "Tu oferta:",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            fontFamily = FontFamily(Font(R.font.saira_medium))
+        )
+        Spacer(Modifier.height(4.dp))
+
+        ItemCard(item = trueke.hostItem)
+
+        Spacer(Modifier.height(16.dp))
+
+        // Icono de intercambio
+        Icon(
+            imageVector = Icons.Rounded.SwapVert,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier
+                .size(32.dp)
+                .align(Alignment.CenterHorizontally)
+        )
+
+        Spacer(Modifier.height(4.dp))
+
+        Text(
+            text = "Recibes:",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            fontFamily = FontFamily(Font(R.font.saira_medium))
+        )
+        Spacer(Modifier.height(4.dp))
+
+        ItemCard(item = trueke.takerItem!!)
+
+        Spacer(Modifier.height(24.dp))
+
+        // Botones de acción
+        Button(
+            onClick = { /* TODO: Marcar como completado */ },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(52.dp),
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            Text(
+                text = "Marcar como completado".uppercase(Locale.getDefault()),
+                style = MaterialTheme.typography.bodyLarge,
+                fontFamily = FontFamily(Font(R.font.saira_medium))
+            )
+        }
+
+        Spacer(Modifier.height(12.dp))
+
+        OutlinedButton(
+            onClick = { /* TODO: Cancelar trueke */ },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(52.dp),
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            Text(
+                text = "Cancelar trueke".uppercase(Locale.getDefault()),
+                style = MaterialTheme.typography.bodyLarge,
+                fontFamily = FontFamily(Font(R.font.saira_medium))
+            )
+        }
+    }
+}
+
+@Composable
+private fun BasicTruekeInfo(
+    trueke: Trueke
+) {
+    val context = LocalContext.current
+    val loc = trueke.location
+
+    var placeText by remember(trueke.id) {
+        mutableStateOf("${loc.lat}, ${loc.lng}")
+    }
+
+    LaunchedEffect(trueke.id) {
+        placeText = runCatching {
+            resolvePlaceName(context, loc.lng, loc.lat)
+        }.getOrNull()
+            ?.takeIf { it.isNotBlank() }
+            ?: "${loc.lat}, ${loc.lng}"
+    }
+
+    trueke.description?.let {
+        LabeledValue(
+            label = "Descripción",
+            value = it
+        )
+        Spacer(Modifier.height(12.dp))
+    }
+
+    LabeledValue(
+        label = "Ubicación",
+        value = placeText
+    )
+}
+
+@Composable
+fun LabeledValue(
+    label: String,
+    value: String
+) {
+    Column {
+        Text(
+            text = label.uppercase(),
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.primary,
+            fontFamily = FontFamily(Font(R.font.saira_medium))
+        )
+
+        Spacer(Modifier.height(2.dp))
+
+        Text(
+            text = value,
+            style = MaterialTheme.typography.bodyMedium,
+            fontFamily = FontFamily(Font(R.font.saira_regular))
+        )
+    }
+}
+
+@Composable
+fun ItemCard(
+    item: Item,
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.tertiary.copy(alpha = 0.18f))
+    ) {
+        Column(
+            modifier = Modifier.padding(12.dp)
+        ) {
+            ItemImageBox(
+                item = item,
+                height = 200.dp
+            )
+
+            Spacer(Modifier.height(12.dp))
+
+            // Nombre del item
+            Text(
+                text = item.name,
+                style = MaterialTheme.typography.titleMedium,
+                fontFamily = FontFamily(Font(R.font.saira_medium))
+            )
+
+            // Detalles del item si existe
+            item.details?.let { details ->
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    text = details,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontFamily = FontFamily(Font(R.font.saira_regular)),
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+
+            // Condición del item
+            Spacer(Modifier.height(8.dp))
+
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(MaterialTheme.colorScheme.tertiary)
+                    .padding(horizontal = 6.dp, vertical = 2.dp)
+            ) {
+                Text(
+                    text = item.condition.displayName(context),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = Color.White,
+                    fontFamily = FontFamily(Font(R.font.saira_regular))
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun CompletedBanner() {
+    Surface(
+        color = Color(0xFF278652),
+        shape = MaterialTheme.shapes.medium,
         modifier = Modifier.fillMaxWidth()
     ) {
-        Column(Modifier.padding(14.dp)) {
-
-            Text(
-                text = userTitle,
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.primary
-            )
-            Spacer(Modifier.height(4.dp))
-            Text(
-                text = userName,
-                style = MaterialTheme.typography.titleMedium
-            )
-            userSubtitle?.takeIf { it.isNotBlank() }?.let {
-                Spacer(Modifier.height(2.dp))
-                Text(text = it, style = MaterialTheme.typography.bodySmall)
-            }
-
-            Spacer(Modifier.height(12.dp))
-            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-            Spacer(Modifier.height(12.dp))
-
-            // Aquí podrías poner una fila con imagen + textos
-            // Row(verticalAlignment = Alignment.CenterVertically) { ... }
-
-            Text(
-                text = itemName,
-                style = MaterialTheme.typography.titleMedium
+        Row(
+            modifier = Modifier.padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                imageVector = Icons.Rounded.Check,
+                contentDescription = null,
+                tint = Color.White
             )
 
-            itemBrand?.takeIf { it.isNotBlank() }?.let {
-                Spacer(Modifier.height(4.dp))
-                Text("Marca: $it", style = MaterialTheme.typography.bodyMedium)
-            }
+            Spacer(modifier = Modifier.width(8.dp))
 
-            itemDetails?.takeIf { it.isNotBlank() }?.let {
-                Spacer(Modifier.height(6.dp))
-                Text(it, style = MaterialTheme.typography.bodyMedium)
-            }
-
-            // Si quieres imagen con Coil:
-            // Spacer(Modifier.height(10.dp))
-            // AsyncImage(
-            //     model = itemImageUrl,
-            //     contentDescription = "Imagen del item",
-            //     modifier = Modifier
-            //         .fillMaxWidth()
-            //         .height(180.dp)
-            // )
+            Text(
+                text = "TRUEKE COMPLETADO",
+                style = MaterialTheme.typography.titleMedium,
+                color = Color.White
+            )
         }
     }
 }
