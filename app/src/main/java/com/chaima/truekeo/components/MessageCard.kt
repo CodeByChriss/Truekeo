@@ -88,7 +88,7 @@ fun MessageCard(
                     }
                 }
                 Text(
-                    text = conversation.lastMessage,
+                    text = conversation.last_message,
                     color = MaterialTheme.colorScheme.onSurface,
                     fontFamily = FontFamily(Font(if(conversation.readed) R.font.saira_medium else R.font.saira_semibold)),
                     maxLines = 1,

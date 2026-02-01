@@ -56,7 +56,7 @@ class ChatManager {
                 .await()
 
             db.collection("conversations").document(conversationId)
-                .update("readed", false)
+                .update("readed", false, "last_message", text)
                 .await()
             true
         } catch (_: Exception) {
