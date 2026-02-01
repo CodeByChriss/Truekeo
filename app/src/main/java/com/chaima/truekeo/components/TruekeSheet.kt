@@ -1,5 +1,6 @@
 package com.chaima.truekeo.components
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -20,6 +22,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -30,6 +33,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,7 +44,11 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.getString
 import com.chaima.truekeo.R
+import com.chaima.truekeo.data.AuthContainer
+import com.chaima.truekeo.data.ChatContainer
+import com.chaima.truekeo.models.Conversation
 import com.chaima.truekeo.utils.resolvePlaceName
 import com.chaima.truekeo.models.Item
 import com.chaima.truekeo.models.Trueke
@@ -48,11 +56,18 @@ import com.chaima.truekeo.models.TruekeStatus
 import com.chaima.truekeo.models.User
 import com.chaima.truekeo.utils.TimePrefix
 import com.chaima.truekeo.utils.prefixedTimeAgo
+import kotlinx.coroutines.launch
 
 // Contenido del bottom sheet que muestra los detalles del trueke seleccionado
 @Composable
-fun TruekeSheetContent(trueke: Trueke, modifier: Modifier = Modifier) {
+fun TruekeSheetContent(trueke: Trueke, modifier: Modifier = Modifier, onConversationClicked: (Conversation) -> Unit) {
     val scrollState = rememberScrollState()
+    val user = AuthContainer.authManager.userProfile
+    val chatManager = ChatContainer.chatManager
+    // Para evitar realizar más de una vez la misma llamada
+    var isLoading by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     Column(
         modifier = modifier.verticalScroll(scrollState),
@@ -76,17 +91,44 @@ fun TruekeSheetContent(trueke: Trueke, modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxWidth()
         ) {
             OutlinedButton(
-                onClick = { /* abrir chat */ },
+                onClick = {
+                    if (!isLoading) {
+                        val hostUserId = trueke.hostUser.id
+                        if (user?.id != hostUserId) {
+                            scope.launch {
+                                isLoading = true
+                                val conversation = chatManager.startOrGetConversation(
+                                    user?.id ?: "error",
+                                    hostUserId
+                                )
+                                if(conversation == null){
+                                    Toast.makeText(context, getString(context,R.string.error_starting_conversation), Toast.LENGTH_SHORT).show()
+                                }else{
+                                    onConversationClicked(conversation)
+                                }
+                                isLoading = false
+                            }
+                        }else{
+                            Toast.makeText(context, getString(context,R.string.cant_start_conversation_with_you), Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                },
                 modifier = Modifier
                     .weight(1f)
                     .height(52.dp),
                 shape = RoundedCornerShape(12.dp)
             ) {
-                Text(
-                    text = "Escribir",
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontFamily = FontFamily(Font(R.font.saira_medium))
-                )
+                if (isLoading) {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator(color = Color.White)
+                    }
+                } else {
+                    Text(
+                        text = stringResource(R.string.write),
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontFamily = FontFamily(Font(R.font.saira_medium))
+                    )
+                }
             }
 
             Button(
@@ -98,7 +140,7 @@ fun TruekeSheetContent(trueke: Trueke, modifier: Modifier = Modifier) {
                 enabled = trueke.status == TruekeStatus.OPEN
             ) {
                 Text(
-                    text = "Aceptar",
+                    text = stringResource(R.string.accept),
                     style = MaterialTheme.typography.bodyLarge,
                     fontFamily = FontFamily(Font(R.font.saira_medium))
                 )
@@ -142,7 +184,7 @@ private fun TruekeInfoSection(trueke: Trueke) {
         }
 
 
-        Row (
+        Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
@@ -210,7 +252,10 @@ private fun TruekeHostItemSection(item: Item) {
                 RowDivider(thickness = 0.5.dp, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
 
-            KeyValueRow(label = stringResource(R.string.product_status_label), value = item.condition.displayName(context))
+            KeyValueRow(
+                label = stringResource(R.string.product_status_label),
+                value = item.condition.displayName(context)
+            )
         }
     }
     // Imagen del ítem
@@ -274,7 +319,7 @@ private fun RowDivider(
 
 @Composable
 private fun UploadedByRow(hostUser: User) {
-    Row (
+    Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {

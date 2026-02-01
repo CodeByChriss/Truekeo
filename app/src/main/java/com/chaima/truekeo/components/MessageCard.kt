@@ -44,8 +44,8 @@ fun MessageCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             AsyncImage(
-                model = conversation.profile_photo,
-                contentDescription = conversation.profile_name,
+                model = conversation.otherUserPhoto,
+                contentDescription = conversation.otherUserName,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(64.dp)
@@ -58,7 +58,7 @@ fun MessageCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = conversation.profile_name,
+                        text = conversation.otherUserName,
                         fontSize = 24.sp,
                         color = MaterialTheme.colorScheme.onSurface,
                         fontFamily = FontFamily(Font(if(conversation.readed) R.font.saira_medium else R.font.saira_semibold)),

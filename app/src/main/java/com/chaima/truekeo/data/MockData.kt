@@ -11,10 +11,10 @@ import java.time.temporal.ChronoUnit
 
 object MockData {
     val chaimaUser = User(
-        id = "u1",
-        username = "Chaima",
-        firstAndLastName = "No name",
-        avatarUrl = "https://img.freepik.com/foto-gratis/hombre-negro-posando_23-2148171639.jpg?semt=ais_hybrid&w=740&q=80",
+        id = "AeRc6FqDgwfhxlOsYbThCPdVgok1",
+        username = "chaima",
+        firstAndLastName = "Soy Chaimaa",
+        avatarUrl = "https://xcawesphifjagaixywdh.supabase.co/storage/v1/object/public/profile_photos/pf_AeRc6FqDgwfhxlOsYbThCPdVgok1.jpg",
     )
 
     val mariaUser = User(
