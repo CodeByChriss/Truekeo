@@ -48,7 +48,6 @@ import androidx.core.content.ContextCompat.getString
 import com.chaima.truekeo.R
 import com.chaima.truekeo.data.AuthContainer
 import com.chaima.truekeo.data.ChatContainer
-import com.chaima.truekeo.models.Conversation
 import com.chaima.truekeo.utils.resolvePlaceName
 import com.chaima.truekeo.models.Item
 import com.chaima.truekeo.models.Trueke
@@ -60,7 +59,7 @@ import kotlinx.coroutines.launch
 
 // Contenido del bottom sheet que muestra los detalles del trueke seleccionado
 @Composable
-fun TruekeSheetContent(trueke: Trueke, modifier: Modifier = Modifier, onConversationClicked: (Conversation) -> Unit) {
+fun TruekeSheetContent(trueke: Trueke, modifier: Modifier = Modifier, onConversationClicked: (String) -> Unit) {
     val scrollState = rememberScrollState()
     val user = AuthContainer.authManager.userProfile
     val chatManager = ChatContainer.chatManager
@@ -97,14 +96,14 @@ fun TruekeSheetContent(trueke: Trueke, modifier: Modifier = Modifier, onConversa
                         if (user?.id != hostUserId) {
                             scope.launch {
                                 isLoading = true
-                                val conversation = chatManager.startOrGetConversation(
+                                val conversationId = chatManager.startOrGetConversation(
                                     user?.id ?: "error",
                                     hostUserId
                                 )
-                                if(conversation == null){
+                                if(conversationId == null){
                                     Toast.makeText(context, getString(context,R.string.error_starting_conversation), Toast.LENGTH_SHORT).show()
                                 }else{
-                                    onConversationClicked(conversation)
+                                    onConversationClicked(conversationId)
                                 }
                                 isLoading = false
                             }

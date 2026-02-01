@@ -31,10 +31,9 @@ class ChatManager {
                     val userDoc = db.collection("users").document(otherId).get().await()
                     conv.copy(
                         otherUserName = userDoc.getString("username") ?: "Usuario",
-                        otherUserPhoto = userDoc.getString("avatarUrl") ?: "https://xcawesphifjagaixywdh.supabase.co/storage/v1/object/public/profile_photos/pf_default.png",
-                        messages = getMessages(conv.id, currentUserId)
+                        otherUserPhoto = userDoc.getString("avatarUrl") ?: "https://xcawesphifjagaixywdh.supabase.co/storage/v1/object/public/profile_photos/pf_default.png"
                     )
-                } else conv.copy(messages = getMessages(conv.id, currentUserId))
+                } else conv
             }
         } catch (_: Exception) {
             emptyList()
@@ -87,46 +86,66 @@ class ChatManager {
         }
     }
 
-    suspend fun startOrGetConversation(myUid: String, otherUid: String): Conversation? {
+    suspend fun getConversationById(conversationId: String, currentUserId: String) : Conversation?{
+        return try {
+            if(currentUserId == "error"){
+                null
+            }
+            val snapshot = db.collection("conversations")
+                .document(conversationId)
+                .get()
+                .await()
+
+            val conversation = snapshot.toObject(Conversation::class.java) ?: return null
+
+            val otherId = conversation.participants.firstOrNull { it != currentUserId }
+
+            if (otherId != null) {
+                val userDoc = db.collection("users").document(otherId).get().await()
+
+                conversation.copy(
+                    otherUserName = userDoc.getString("username") ?: "Usuario",
+                    otherUserPhoto = userDoc.getString("avatarUrl") ?: "https://xcawesphifjagaixywdh.supabase.co/storage/v1/object/public/profile_photos/pf_default.png",
+                    messages = getMessages(conversationId, currentUserId)
+                )
+            } else {
+                conversation.copy(messages = getMessages(conversationId, currentUserId))
+            }
+        } catch (e: Exception) {
+            Log.e("ChatManager", "Error al obtener conversación por ID: ${e.message}")
+            null
+        }
+    }
+
+    suspend fun startOrGetConversation(myUid: String, otherUid: String): String? {
         return try {
             if(myUid == "error"){
                 null
             }
-            // recogemos todas las conversaciones del usuario
             val existing = db.collection("conversations")
                 .whereArrayContains("participants", myUid)
                 .get()
                 .await()
 
-            // filtramos manualmente porque Firestore no permite "whereArrayContains" doble
             val alreadyExists = existing.documents.firstOrNull { doc ->
                 val participants = doc.get("participants") as? List<*>
                 participants?.contains(otherUid) == true
             }
 
-            if (alreadyExists != null) { // Si ya existe, devolvemos la conversación
-                val conv = alreadyExists.toObject(Conversation::class.java)
-                val userDoc = db.collection("users").document(otherUid).get().await()
-                val finalConversation = conv?.copy(
-                    otherUserName = userDoc.getString("username") ?: "Not found",
-                    otherUserPhoto = userDoc.getString("avatarUrl") ?: "https://xcawesphifjagaixywdh.supabase.co/storage/v1/object/public/profile_photos/pf_default.png",
-                    messages = getMessages(conv.id, myUid)
-                )
-                return finalConversation
+            if (alreadyExists != null) {
+                return alreadyExists.id // Si ya existe, devolvemos el ID
             }
 
             val newConvRef = db.collection("conversations").document()
-
-            val newConversation = Conversation(
-                id = newConvRef.id,
-                participants = listOf(myUid, otherUid),
-                readed = true,
-                new_messages_count = 0
+            val newConversation = mapOf(
+                "id" to newConvRef.id,
+                "participants" to listOf(myUid, otherUid),
+                "readed" to true,
+                "new_messages_count" to 0
             )
 
-            // Guardamos la conversacion en firestore
             newConvRef.set(newConversation).await()
-            return newConversation
+            newConvRef.id // Devolvemos el nuevo ID generado
         } catch (e: Exception) {
             Log.e("ChatManager", "Error al crear conversación: ${e.message}")
             null
