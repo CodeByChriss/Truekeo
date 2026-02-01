@@ -38,7 +38,6 @@ import com.chaima.truekeo.components.TruekeCard
 import com.chaima.truekeo.data.MockData
 import com.chaima.truekeo.models.TruekeStatus
 import com.chaima.truekeo.navigation.NavBarRoutes
-import com.chaima.truekeo.navigation.Routes
 import com.chaima.truekeo.ui.theme.TruekeoTheme
 import kotlinx.coroutines.launch
 

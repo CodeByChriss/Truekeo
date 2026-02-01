@@ -19,7 +19,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.chaima.truekeo.navigation.NavBarRoutes
-import com.chaima.truekeo.navigation.Routes
 
 private data class BottomItem(
     val route: String,

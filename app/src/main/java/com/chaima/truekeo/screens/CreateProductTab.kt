@@ -41,7 +41,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.chaima.truekeo.R
 import com.chaima.truekeo.components.ImageSelectorGrid
-import com.chaima.truekeo.models.GeoPoint
 import com.chaima.truekeo.models.ItemCondition
 import com.chaima.truekeo.ui.theme.TruekeoTheme
 import com.chaima.truekeo.utils.FormErrorText
