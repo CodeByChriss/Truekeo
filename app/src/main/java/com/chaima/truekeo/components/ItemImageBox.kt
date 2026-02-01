@@ -26,7 +26,10 @@ import com.chaima.truekeo.models.Item
 
 // Contenedor de la imagen del ítem con funcionalidad para ver en pantalla completa
 @Composable
-fun ItemImageBox(item: Item, height: Dp) {
+fun ItemImageBox(
+    item: Item,
+    height: Dp
+) {
     var showImageViewer by remember { mutableStateOf(false) }
 
     Box(modifier = Modifier
