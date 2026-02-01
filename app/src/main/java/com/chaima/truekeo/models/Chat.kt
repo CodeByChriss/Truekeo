@@ -16,8 +16,6 @@ data class Conversation(
     @get:Exclude var otherUserPhoto: String = ""
 ) {
     @get:Exclude
-    val lastMessage: String get() = messages.lastOrNull()?.text ?: ""
-    @get:Exclude
     val lastTimestamp: Long get() = messages.lastOrNull()?.timestamp ?: 0L
 }
 
