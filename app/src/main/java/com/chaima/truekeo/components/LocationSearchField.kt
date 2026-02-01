@@ -10,12 +10,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.chaima.truekeo.R
 import com.mapbox.search.ApiType
 import com.mapbox.search.ResponseInfo
@@ -27,7 +25,6 @@ import com.mapbox.search.SearchSelectionCallback
 import com.mapbox.search.SearchOptions
 import com.chaima.truekeo.models.GeoPoint
 import com.mapbox.search.common.IsoCountryCode
-import com.mapbox.geojson.Point
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
