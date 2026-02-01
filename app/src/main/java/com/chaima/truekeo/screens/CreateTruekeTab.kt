@@ -70,82 +70,84 @@ fun CreateTruekeTab(){
                     .imePadding(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Spacer(Modifier.height(24.dp))
+                Column {
+                    Spacer(Modifier.height(24.dp))
 
-                Text(
-                    text = stringResource(R.string.create_trueke),
-                    fontSize = 32.sp,
-                    fontFamily = FontFamily(Font(R.font.saira_medium)),
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Start
-                )
-
-                Spacer(Modifier.height(12.dp))
-
-                Column(modifier = Modifier.fillMaxSize()) {
-                    OutlinedTextField(
-                        value = title,
-                        onValueChange = { title = it },
-                        label = { Text(stringResource(R.string.title)) },
-                        singleLine = true,
-                        shape = RoundedCornerShape(8.dp),
-                        modifier = Modifier.fillMaxWidth().padding(top = 0.dp)
-                    )
-                    FormErrorText(showError = showTitleError)
-
-                    Spacer(Modifier.height(7.dp))
-
-                    OutlinedTextField(
-                        value = details,
-                        onValueChange = { details = it },
-                        label = { Text(stringResource(R.string.product_details_label)) },
-                        shape = RoundedCornerShape(8.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(140.dp),
-                        maxLines = 5
-                    )
-
-                    Spacer(Modifier.height(7.dp))
-
-                    LocationSearchField(
-                        value = locationText,
-                        onValueChange = { locationText = it },
-                        onLocationSelected = { locationData ->
-                            locationText = locationData.name
-                            locationCoordinates = locationData.coordinates
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        label = stringResource(R.string.location)
-                    )
-                    FormErrorText(showError = showLocationError)
-
-                    Spacer(Modifier.height(12.dp))
-
-                    // Sección del producto del trueke
                     Text(
-                        text = stringResource(R.string.product_to_trueke),
+                        text = stringResource(R.string.create_trueke),
+                        fontSize = 32.sp,
                         fontFamily = FontFamily(Font(R.font.saira_medium)),
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onBackground,
+                        color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Start
                     )
-                    Spacer(Modifier.height(6.dp))
 
-                    ItemSelectorCard(
-                        items = items,
-                        selectedItem = selectedItem,
-                        onItemSelected = { selectedItem = it }
-                    )
-                    FormErrorText(
-                        showError = showItemError,
-                        message = stringResource(R.string.required_item_error)
-                    )
+                    Spacer(Modifier.height(12.dp))
+
+                    Column(modifier = Modifier.fillMaxSize()) {
+                        OutlinedTextField(
+                            value = title,
+                            onValueChange = { title = it },
+                            label = { Text(stringResource(R.string.title)) },
+                            singleLine = true,
+                            shape = RoundedCornerShape(8.dp),
+                            modifier = Modifier.fillMaxWidth().padding(top = 0.dp)
+                        )
+                        FormErrorText(showError = showTitleError)
+
+                        Spacer(Modifier.height(7.dp))
+
+                        OutlinedTextField(
+                            value = details,
+                            onValueChange = { details = it },
+                            label = { Text(stringResource(R.string.product_details_label)) },
+                            shape = RoundedCornerShape(8.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(140.dp),
+                            maxLines = 5
+                        )
+
+                        Spacer(Modifier.height(7.dp))
+
+                        LocationSearchField(
+                            value = locationText,
+                            onValueChange = { locationText = it },
+                            onLocationSelected = { locationData ->
+                                locationText = locationData.name
+                                locationCoordinates = locationData.coordinates
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            label = stringResource(R.string.location)
+                        )
+                        FormErrorText(showError = showLocationError)
+
+                        Spacer(Modifier.height(12.dp))
+
+                        // Sección del producto del trueke
+                        Text(
+                            text = stringResource(R.string.product_to_trueke),
+                            fontFamily = FontFamily(Font(R.font.saira_medium)),
+                            style = MaterialTheme.typography.titleLarge,
+                            color = MaterialTheme.colorScheme.onBackground,
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Start
+                        )
+                        Spacer(Modifier.height(6.dp))
+
+                        ItemSelectorCard(
+                            items = items,
+                            selectedItem = selectedItem,
+                            onItemSelected = { selectedItem = it }
+                        )
+                        FormErrorText(
+                            showError = showItemError,
+                            message = stringResource(R.string.required_item_error)
+                        )
+                    }
                 }
 
-                Spacer(Modifier.height(22.dp))
+                Spacer(modifier = Modifier.weight(1f))
 
                 Button(
                     onClick = {

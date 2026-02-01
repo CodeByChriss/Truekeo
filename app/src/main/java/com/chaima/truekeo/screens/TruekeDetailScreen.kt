@@ -125,8 +125,6 @@ fun OpenTruekeLayout(
             Spacer(Modifier.height(4.dp))
 
             ItemCard(item = trueke.hostItem)
-
-            Spacer(Modifier.height(24.dp))
         }
 
         Column {

@@ -95,74 +95,76 @@ fun CreateProductTab() {
                     .imePadding(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Spacer(Modifier.height(24.dp))
+                Column {
+                    Spacer(Modifier.height(24.dp))
 
-                Text(
-                    text = stringResource(R.string.create_product),
-                    fontSize = 32.sp,
-                    fontFamily = FontFamily(Font(R.font.saira_medium)),
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Start
-                )
+                    Text(
+                        text = stringResource(R.string.create_product),
+                        fontSize = 32.sp,
+                        fontFamily = FontFamily(Font(R.font.saira_medium)),
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Start
+                    )
 
-                Spacer(Modifier.height(12.dp))
+                    Spacer(Modifier.height(12.dp))
 
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    ImageSelectorGrid(
-                        images = imageUris,
-                        maxImages = 5,
-                        onAddImage = { slot ->
-                            currentImageSlot = slot
-                            pickImageLauncher.launch("image/*")
-                        },
-                        onRemoveImage = { index ->
-                            imageUris = imageUris.toMutableList().apply {
-                                removeAt(index)
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        ImageSelectorGrid(
+                            images = imageUris,
+                            maxImages = 5,
+                            onAddImage = { slot ->
+                                currentImageSlot = slot
+                                pickImageLauncher.launch("image/*")
+                            },
+                            onRemoveImage = { index ->
+                                imageUris = imageUris.toMutableList().apply {
+                                    removeAt(index)
+                                }
                             }
-                        }
-                    )
-                    FormErrorText(
-                        showError = showImagesError,
-                        message = stringResource(R.string.at_least_one_image_required)
-                    )
+                        )
+                        FormErrorText(
+                            showError = showImagesError,
+                            message = stringResource(R.string.at_least_one_image_required)
+                        )
 
-                    Spacer(Modifier.height(7.dp))
+                        Spacer(Modifier.height(7.dp))
 
-                    OutlinedTextField(
-                        value = name,
-                        onValueChange = { name = it },
-                        label = { Text(stringResource(R.string.product_name)) },
-                        singleLine = true,
-                        shape = RoundedCornerShape(8.dp),
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    FormErrorText(showError = showNameError)
+                        OutlinedTextField(
+                            value = name,
+                            onValueChange = { name = it },
+                            label = { Text(stringResource(R.string.product_name)) },
+                            singleLine = true,
+                            shape = RoundedCornerShape(8.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        FormErrorText(showError = showNameError)
 
-                    Spacer(Modifier.height(7.dp))
+                        Spacer(Modifier.height(7.dp))
 
-                    OutlinedTextField(
-                        value = description,
-                        onValueChange = { description = it },
-                        label = { Text(stringResource(R.string.product_description)) },
-                        shape = RoundedCornerShape(8.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(110.dp),
-                        maxLines = 5
-                    )
+                        OutlinedTextField(
+                            value = description,
+                            onValueChange = { description = it },
+                            label = { Text(stringResource(R.string.product_description)) },
+                            shape = RoundedCornerShape(8.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(110.dp),
+                            maxLines = 5
+                        )
 
-                    Spacer(Modifier.height(7.dp))
+                        Spacer(Modifier.height(7.dp))
 
-                    // Dropdown condición
-                    ItemConditionDropdown(
-                        value = condition,
-                        onValueChange = { condition = it },
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                        // Dropdown condición
+                        ItemConditionDropdown(
+                            value = condition,
+                            onValueChange = { condition = it },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
                 }
 
-                Spacer(Modifier.height(22.dp))
+                Spacer(modifier = Modifier.weight(1f))
 
                 Button(
                     onClick = {
@@ -184,6 +186,8 @@ fun CreateProductTab() {
                         fontFamily = FontFamily(Font(R.font.saira_medium))
                     )
                 }
+
+                Spacer(Modifier.height(24.dp))
             }
         }
     }
