@@ -37,7 +37,7 @@ import com.chaima.truekeo.models.Conversation
 import com.chaima.truekeo.ui.theme.TruekeoTheme
 
 @Composable
-fun MessagesTab(onMessageClick: (Conversation) -> Unit) {
+fun MessagesTab(onMessageClick: (String) -> Unit) {
     val user = AuthContainer.authManager.userProfile
     val chatManager = ChatContainer.chatManager
     var conversations by remember { mutableStateOf(emptyList<Conversation>()) }
@@ -104,7 +104,7 @@ fun MessagesTab(onMessageClick: (Conversation) -> Unit) {
                                     conversation = conversation,
                                     modifier = Modifier
                                         .clickable {
-                                            onMessageClick(conversation)
+                                            onMessageClick(conversation.id)
                                         }
                                         .padding(horizontal = 24.dp)
                                 )

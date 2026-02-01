@@ -6,6 +6,7 @@ data class Conversation(
     val id: String = "",
     val participants: List<String> = emptyList(),
     val readed: Boolean = false,
+    var last_message: String = "",
     var new_messages_count: Int = 0,
 
     // Estos campos no se guardarán en la base de datos
@@ -24,5 +25,5 @@ data class ChatMessage(
     val senderId: String = "",
     val text: String = "",
     val timestamp: Long = 0L,
-    val isFromMe : Boolean = false
+    @get:Exclude val isFromMe : Boolean = false
 )

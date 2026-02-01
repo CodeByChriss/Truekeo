@@ -21,10 +21,8 @@ import com.chaima.truekeo.components.FabOverlayActions
 import com.chaima.truekeo.screens.CreateProductTab
 import com.chaima.truekeo.screens.HomeTab
 import com.chaima.truekeo.screens.CreateTruekeTab
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.chaima.truekeo.data.AuthContainer
-import com.chaima.truekeo.models.ChatViewModel
 import com.chaima.truekeo.screens.MessageScreen
 import com.chaima.truekeo.screens.EditProfileScreen
 import com.chaima.truekeo.screens.MessagesTab
@@ -43,7 +41,6 @@ fun MainScaffold(rootNavController: NavController) {
     val currentRoute = backStackEntry?.destination?.route
 
     var fabExpanded by remember { mutableStateOf(false) }
-    val chatViewModel: ChatViewModel = viewModel()
 
     Scaffold(
         bottomBar = {
@@ -59,9 +56,8 @@ fun MainScaffold(rootNavController: NavController) {
             startDestination = NavBarRoutes.Home.route,
             modifier = Modifier.padding(padding)
         ) {
-            composable(NavBarRoutes.Home.route) { HomeTab({conversation ->
-                chatViewModel.onMessageSelected(conversation)
-                navController.navigate(NavBarRoutes.Message.route)
+            composable(NavBarRoutes.Home.route) { HomeTab({conversationId ->
+                navController.navigate("${NavBarRoutes.Message.route}/$conversationId")
             }) }
             composable(NavBarRoutes.MyTruekes.route) {
                 MyTruekesTab(navController = navController)
@@ -83,16 +79,19 @@ fun MainScaffold(rootNavController: NavController) {
             
             composable(NavBarRoutes.Messages.route) {
                 MessagesTab(
-                    onMessageClick = { message ->
-                        chatViewModel.onMessageSelected(message)
-                        navController.navigate(NavBarRoutes.Message.route)
+                    onMessageClick = { conversationId ->
+                        navController.navigate("${NavBarRoutes.Message.route}/$conversationId")
                     }
                 )
             }
 
-            composable(NavBarRoutes.Message.route) {
+            composable(
+                route = "${NavBarRoutes.Message.route}/{conversationId}",
+                arguments = listOf(navArgument("conversationId") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val conversationId = backStackEntry.arguments?.getString("conversationId")
                 MessageScreen(
-                    conversation = chatViewModel.selectedMessage,
+                    conversationId = conversationId,
                     onBack = { navController.popBackStack() }
                 )
             }
