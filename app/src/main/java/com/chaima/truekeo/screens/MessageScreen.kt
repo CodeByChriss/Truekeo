@@ -35,6 +35,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,117 +49,141 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.getString
 import coil3.compose.AsyncImage
 import com.chaima.truekeo.R
+import com.chaima.truekeo.data.AuthContainer
+import com.chaima.truekeo.data.ChatContainer
 import com.chaima.truekeo.models.ChatMessage
 import com.chaima.truekeo.models.Conversation
+import com.chaima.truekeo.ui.theme.TruekeoTheme
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MessageScreen(conversation: Conversation?, onBack: () -> Unit){
-    if(conversation == null){ // En caso de fallar el envio del mensaje
+fun MessageScreen(conversation: Conversation?, onBack: () -> Unit) {
+    if (conversation == null) { // En caso de fallar el envio del mensaje
         onBack()
         return
     }
 
-    // Ordenamos los mensajes de la conversación por tiempo (del más viejo al más nuevo)
-    val chatMessages = remember { conversation.messages.sortedBy { it.timestamp } }
-
     val context = LocalContext.current
-
+    val scope = rememberCoroutineScope()
+    val chatManager = ChatContainer.chatManager
+    val user = AuthContainer.authManager.userProfile
+    val chatMessages = remember { conversation.messages }
     var textState by remember { mutableStateOf("") }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        AsyncImage(
-                            model = conversation.profile_photo,
-                            contentDescription = conversation.profile_name,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .size(40.dp)
-                                .clip(CircleShape)
-                        )
-
-                        Spacer(modifier = Modifier.width(12.dp))
-
-                        Text(
-                            text = conversation.profile_name,
-                            fontFamily = FontFamily(Font(R.font.saira_medium)),
-                        )
-                    }
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = getString(context, R.string.go_back))
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.White
-                )
-            )
-        },
-        bottomBar = {
-            Surface(
-                color = Color(0xFFF5F5F5),
-                modifier = Modifier.imePadding()
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp, vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    TextField(
-                        value = textState,
-                        onValueChange = { textState = it },
-                        placeholder = { Text(getString(context, R.string.write_message_here)) },
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(end = 8.dp),
-                        shape = CircleShape,
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color(0xFFF0F0F0),
-                            unfocusedContainerColor = Color(0xFFF0F0F0),
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                            disabledIndicatorColor = Color.Transparent
-                        )
-                    )
-
-                    IconButton(
-                        onClick = {  },
-                        enabled = textState.isNotBlank(),
-                        modifier = Modifier
-                            .clip(CircleShape)
-                            .background(
-                                if (textState.isNotBlank()) MaterialTheme.colorScheme.primary
-                                else Color.LightGray
+    TruekeoTheme {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            AsyncImage(
+                                model = conversation.otherUserPhoto,
+                                contentDescription = conversation.otherUserName,
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .clip(CircleShape)
                             )
+
+                            Spacer(modifier = Modifier.width(12.dp))
+
+                            Text(
+                                text = conversation.otherUserName,
+                                fontFamily = FontFamily(Font(R.font.saira_medium)),
+                            )
+                        }
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = onBack) {
+                            Icon(
+                                Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = getString(context, R.string.go_back)
+                            )
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color.White
+                    )
+                )
+            },
+            bottomBar = {
+                Surface(
+                    color = Color(0xFFF5F5F5),
+                    modifier = Modifier.imePadding()
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp, vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.Send,
-                            contentDescription = getString(context, R.string.send),
-                            tint = Color.White
+                        TextField(
+                            value = textState,
+                            onValueChange = { textState = it },
+                            placeholder = {
+                                Text(
+                                    getString(
+                                        context,
+                                        R.string.write_message_here
+                                    )
+                                )
+                            },
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(end = 8.dp),
+                            shape = CircleShape,
+                            colors = TextFieldDefaults.colors(
+                                focusedContainerColor = Color(0xFFF0F0F0),
+                                unfocusedContainerColor = Color(0xFFF0F0F0),
+                                focusedIndicatorColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent,
+                                disabledIndicatorColor = Color.Transparent
+                            )
                         )
+
+                        IconButton(
+                            onClick = {
+                                scope.launch {
+                                    chatManager.sendMessage(
+                                        conversation.id,
+                                        user?.id ?: "error",
+                                        textState
+                                    )
+                                }
+                            },
+                            enabled = textState.isNotBlank(),
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .background(
+                                    if (textState.isNotBlank()) MaterialTheme.colorScheme.primary
+                                    else Color.LightGray
+                                )
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.Send,
+                                contentDescription = getString(context, R.string.send),
+                                tint = Color.White
+                            )
+                        }
                     }
                 }
             }
-        }
-    ) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .background(Color(0xFFF5F5F5)),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(chatMessages) { msg ->
-                ChatBubble(msg)
+        ) { innerPadding ->
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .background(Color(0xFFF5F5F5)),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(chatMessages) { msg ->
+                    ChatBubble(msg)
+                }
             }
         }
     }

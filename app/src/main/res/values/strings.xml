@@ -40,6 +40,10 @@
     <string name="product_brand_label">Marca</string>
     <string name="product_status_label">Estado</string>
     <string name="uploaded_by">Subido por</string>
+    <string name="write">Escribir</string>
+    <string name="accept">Aceptar</string>
+    <string name="cant_start_conversation_with_you">No puedes empezar una conversación contigo mismo</string>
+    <string name="error_starting_conversation">Error al empezar la conversación</string>
     <!-- pestaña de crear trueke -->
     <string name="create_trueke">Crear trueke</string>
     <string name="title">Título</string>
@@ -109,4 +113,5 @@
     <string name="write_message_here">Escribe un mensaje aquí…</string>
     <string name="go_back">Atrás</string>
     <string name="register">Registrarse</string>
+    <string name="no_conversation">No tienes ninguna conversación</string>
 </resources>

@@ -13,6 +13,7 @@ import androidx.compose.ui.platform.LocalDensity
 import com.chaima.truekeo.models.Trueke
 import com.chaima.truekeo.components.TruekeSheetContent
 import com.chaima.truekeo.data.MockData
+import com.chaima.truekeo.models.Conversation
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraBoundsOptions
 import com.mapbox.maps.CameraOptions
@@ -27,7 +28,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, MapboxExperimental::class)
 @Composable
-fun HomeTab() {
+fun HomeTab(openConversation: (Conversation) -> Unit) {
     val madrid = Point.fromLngLat(-3.7038, 40.4168)
     val mapViewportState = rememberMapViewportState {
         setCameraOptions {
@@ -55,7 +56,7 @@ fun HomeTab() {
 
     // Función para centrar el marcador teniendo en cuenta el sheet
     fun centerMarker(trueke: Trueke) {
-        val loc = trueke.location ?: return
+        val loc = trueke.location
 
         scope.launch {
             // Calcular el offset vertical para centrar el marcador en el espacio visible
@@ -105,7 +106,7 @@ fun HomeTab() {
         truekes
             .filter { it.location != null }
             .forEach { trueke ->
-                val loc = trueke.location!!
+                val loc = trueke.location
 
                 Marker(
                     point = Point.fromLngLat(loc.lng, loc.lat),
@@ -153,7 +154,10 @@ fun HomeTab() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 20.dp)
-                        .padding(bottom = 24.dp)
+                        .padding(bottom = 24.dp),
+                    onConversationClicked = { conversationId ->
+                        openConversation(conversationId)
+                    }
                 )
             }
         }

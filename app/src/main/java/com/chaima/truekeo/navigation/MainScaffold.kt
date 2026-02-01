@@ -59,7 +59,10 @@ fun MainScaffold(rootNavController: NavController) {
             startDestination = NavBarRoutes.Home.route,
             modifier = Modifier.padding(padding)
         ) {
-            composable(NavBarRoutes.Home.route) { HomeTab() }
+            composable(NavBarRoutes.Home.route) { HomeTab({conversation ->
+                chatViewModel.onMessageSelected(conversation)
+                navController.navigate(NavBarRoutes.Message.route)
+            }) }
             composable(NavBarRoutes.MyTruekes.route) {
                 MyTruekesTab(navController = navController)
             }
