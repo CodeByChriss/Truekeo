@@ -1,6 +1,7 @@
 package com.chaima.truekeo.screens
 
 import android.os.Build
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -12,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
@@ -23,18 +25,24 @@ import com.chaima.truekeo.R
 import com.chaima.truekeo.components.ItemSelectorCard
 import com.chaima.truekeo.components.LocationSearchField
 import com.chaima.truekeo.data.MockData.items
+import com.chaima.truekeo.data.TruekeContainer
 import com.chaima.truekeo.models.GeoPoint
 import com.chaima.truekeo.models.Item
 import com.chaima.truekeo.ui.theme.TruekeoTheme
 import com.chaima.truekeo.utils.FormErrorText
+import kotlinx.coroutines.launch
 import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateTruekeTab(){
+    val truekeManager = remember { TruekeContainer.truekeManager }
+    val scope = rememberCoroutineScope()
+
     val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState()
+    val context = LocalContext.current
 
     var title by remember { mutableStateOf("") }
     var details by remember { mutableStateOf("") }
@@ -55,6 +63,8 @@ fun CreateTruekeTab(){
     val showItemError = triedSubmit && !itemOk
 
     val formOk = titleOk && locationOk && itemOk
+
+    var isLoading by remember { mutableStateOf(false) }
 
     TruekeoTheme(dynamicColor = false) {
         Box(
@@ -150,24 +160,63 @@ fun CreateTruekeTab(){
                 Spacer(modifier = Modifier.weight(1f))
 
                 Button(
+                    enabled = !isLoading,
                     onClick = {
                         triedSubmit = true
                         focusManager.clearFocus()
 
                         if (!formOk) return@Button
+                        if (isLoading) return@Button
 
-                        // TODO: Aquí ya está todo OK -> crear trueke
+                        isLoading = true
+
+                        scope.launch {
+                            val res = truekeManager.createTrueke(
+                                title = title,
+                                description = details,
+                                location = locationCoordinates!!,  // ya validado
+                                hostItemId = selectedItem!!.id     // ya validado
+                            )
+
+                            isLoading = false
+
+                            res.onSuccess {
+                                Toast.makeText(context, "Trueke creado ✅", Toast.LENGTH_SHORT).show()
+
+                                // opcional: limpiar formulario
+                                title = ""
+                                details = ""
+                                locationText = ""
+                                locationCoordinates = null
+                                selectedItem = null
+                                triedSubmit = false
+
+                                // opcional: navegar al home/detalle si tienes nav
+                            }.onFailure { e ->
+                                Toast.makeText(
+                                    context,
+                                    e.message ?: "Error creando trueke",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
                     },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),
                     shape = RoundedCornerShape(12.dp)
                 ) {
-                    Text(
-                        text = stringResource(R.string.create).uppercase(Locale.getDefault()),
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontFamily = FontFamily(Font(R.font.saira_medium))
-                    )
+                    if (isLoading) {
+                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            CircularProgressIndicator()
+                        }
+                    } else {
+                        Text(
+                            text = stringResource(R.string.create).uppercase(Locale.getDefault()),
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontFamily = FontFamily(Font(R.font.saira_medium))
+                        )
+                    }
                 }
 
                 Spacer(Modifier.height(24.dp))
