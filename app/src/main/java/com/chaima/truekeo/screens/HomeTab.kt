@@ -12,7 +12,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import com.chaima.truekeo.models.Trueke
 import com.chaima.truekeo.components.TruekeSheetContent
-import com.chaima.truekeo.data.MockData
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraBoundsOptions
 import com.mapbox.maps.CameraOptions
@@ -37,7 +36,7 @@ fun HomeTab(openConversation: (String) -> Unit) {
     }
     val scope = rememberCoroutineScope()
 
-    val truekes = remember { MockData.sampleTruekes }
+    //val truekes = remember { MockData.sampleTruekes }
 
     var selectedTrueke by remember { mutableStateOf<Trueke?>(null) }
     var showSheet by remember { mutableStateOf(false) }
@@ -102,7 +101,7 @@ fun HomeTab(openConversation: (String) -> Unit) {
             )
         }
 
-        truekes
+        /*truekes
             .filter { it.location != null }
             .forEach { trueke ->
                 val loc = trueke.location
@@ -118,7 +117,7 @@ fun HomeTab(openConversation: (String) -> Unit) {
                         true
                     }
                 )
-            }
+            }*/
     }
 
     if (showSheet && selectedTrueke != null) {

@@ -4,10 +4,10 @@ import android.util.Log
 import com.chaima.truekeo.models.GeoPoint
 import com.chaima.truekeo.models.Item
 import com.chaima.truekeo.models.ItemCondition
+import com.chaima.truekeo.models.ItemStatus
 import com.chaima.truekeo.models.Trueke
 import com.chaima.truekeo.models.TruekeStatus
 import com.chaima.truekeo.models.User
-import com.chaima.truekeo.data.models.TruekeDto
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
@@ -15,7 +15,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.tasks.await
-import java.time.Instant
 
 object TruekeContainer {
     val truekeManager = TruekeManager()
@@ -38,21 +37,19 @@ class TruekeManager {
             val newRef = db.collection("truekes").document()
             val now = System.currentTimeMillis()
 
-            val dto = TruekeDto(
+            val trueke = Trueke(
                 id = newRef.id,
                 title = title.trim(),
                 description = description?.trim().takeUnless { it.isNullOrBlank() },
                 hostUserId = uid,
                 hostItemId = hostItemId,
-                takerUserId = null,
-                takerItemId = null,
                 location = location,
-                status = TruekeStatus.OPEN.name, // "OPEN"
+                status = TruekeStatus.OPEN,
                 createdAt = now,
                 updatedAt = now
             )
 
-            newRef.set(dto).await()
+            newRef.set(trueke).await()
             Result.success(newRef.id)
         } catch (e: Exception) {
             Log.e("TruekeManager", "Error creando trueke: ${e.message}")
@@ -60,25 +57,26 @@ class TruekeManager {
         }
     }
 
-    suspend fun getTruekesWhereUserIsInvolved(userId: String): List<Trueke> {
+    suspend fun getMyTruekes(): List<Trueke> {
         return try {
+            val uid = auth.currentUser?.uid ?: return emptyList()
+
             val hostSnap = db.collection("truekes")
-                .whereEqualTo("hostUserId", userId)
+                .whereEqualTo("hostUserId", uid)
                 .get().await()
 
             val takerSnap = db.collection("truekes")
-                .whereEqualTo("takerUserId", userId)
+                .whereEqualTo("takerUserId", uid)
                 .get().await()
 
-            val hostDtos = hostSnap.toObjects(TruekeDto::class.java)
-            val takerDtos = takerSnap.toObjects(TruekeDto::class.java)
+            val hostTruekes = hostSnap.toObjects(Trueke::class.java)
+            val takerTruekes = takerSnap.toObjects(Trueke::class.java)
 
-            val merged = (hostDtos + takerDtos)
-                .distinctBy { it.id }
+            val merged = (hostTruekes + takerTruekes).distinctBy { it.id }
 
             hydrateTruekes(merged)
         } catch (e: Exception) {
-            Log.e("TruekeManager", "Error getTruekesWhereUserIsInvolved: ${e.message}")
+            Log.e("TruekeManager", "Error getTruekesWhereUserIsInvolved: ${e.message}", e)
             emptyList()
         }
     }
@@ -86,8 +84,8 @@ class TruekeManager {
     suspend fun getTruekeById(truekeId: String): Trueke? {
         return try {
             val doc = db.collection("truekes").document(truekeId).get().await()
-            val dto = doc.toObject(TruekeDto::class.java) ?: return null
-            hydrateTrueke(dto)
+            val trueke = doc.toObject(Trueke::class.java) ?: return null
+            hydrateTrueke(trueke)
         } catch (e: Exception) {
             Log.e("TruekeManager", "Error getTruekeById: ${e.message}")
             null
@@ -111,36 +109,37 @@ class TruekeManager {
         }
     }
 
-    // TruekeDto -> Trueke UI
-    private suspend fun hydrateTruekes(dtos: List<TruekeDto>): List<Trueke> = coroutineScope {
+    private suspend fun hydrateTruekes(truekes: List<Trueke>): List<Trueke> = coroutineScope {
         val usersCache = mutableMapOf<String, User>()
         val itemsCache = mutableMapOf<String, Item>()
 
-        dtos.map { dto ->
-            async { hydrateTrueke(dto, usersCache, itemsCache) }
+        truekes.map { trueke ->
+            async { hydrateTrueke(trueke, usersCache, itemsCache) }
         }.awaitAll().filterNotNull()
     }
 
-    private suspend fun hydrateTrueke(dto: TruekeDto): Trueke? = coroutineScope {
+    private suspend fun hydrateTrueke(trueke: Trueke): Trueke? = coroutineScope {
         val usersCache = mutableMapOf<String, User>()
         val itemsCache = mutableMapOf<String, Item>()
-        hydrateTrueke(dto, usersCache, itemsCache)
+        hydrateTrueke(trueke, usersCache, itemsCache)
     }
 
     private suspend fun hydrateTrueke(
-        dto: TruekeDto,
+        trueke: Trueke,
         usersCache: MutableMap<String, User>,
         itemsCache: MutableMap<String, Item>
     ): Trueke? = coroutineScope {
         try {
-            val hostUserDeferred = async { getUserCached(dto.hostUserId, usersCache) }
-            val hostItemDeferred = async { getItemCached(dto.hostItemId, itemsCache) }
+            Log.d("TruekeManager", ">>> Hidratando trueke: ${trueke.id}")
+
+            val hostUserDeferred = async { getUserCached(trueke.hostUserId, usersCache) }
+            val hostItemDeferred = async { getItemCached(trueke.hostItemId, itemsCache) }
 
             val takerUserDeferred = async {
-                dto.takerUserId?.let { getUserCached(it, usersCache) }
+                trueke.takerUserId?.let { getUserCached(it, usersCache) }
             }
             val takerItemDeferred = async {
-                dto.takerItemId?.let { getItemCached(it, itemsCache) }
+                trueke.takerItemId?.let { getItemCached(it, itemsCache) }
             }
 
             val hostUser = hostUserDeferred.await()
@@ -148,31 +147,24 @@ class TruekeManager {
             val takerUser = takerUserDeferred.await()
             val takerItem = takerItemDeferred.await()
 
-            if (hostUser == null || hostItem == null) return@coroutineScope null
+            Log.d("TruekeManager", "    hostUser: ${hostUser?.id ?: "NULL"}")
+            Log.d("TruekeManager", "    hostItem: ${hostItem?.id ?: "NULL"}")
 
-            Trueke(
-                id = dto.id,
-                title = dto.title,
-                description = dto.description,
+            if (hostUser == null || hostItem == null) {
+                Log.e("TruekeManager", "❌ Descartando trueke ${trueke.id}")
+                return@coroutineScope null
+            }
 
+            Log.d("TruekeManager", "✓ Trueke ${trueke.id} hidratado correctamente")
+
+            trueke.copy(
                 hostUser = hostUser,
                 hostItem = hostItem,
-
                 takerUser = takerUser,
-                takerItem = takerItem,
-
-                location = dto.location,
-
-                status = runCatching { TruekeStatus.valueOf(dto.status) }
-                    .getOrElse { TruekeStatus.OPEN },
-
-                createdAt = Instant.ofEpochMilli(dto.createdAt),
-                updatedAt = dto.updatedAt
-                    .takeIf { it > 0L && it != dto.createdAt }
-                    ?.let { Instant.ofEpochMilli(it) }
+                takerItem = takerItem
             )
         } catch (e: Exception) {
-            Log.e("TruekeManager", "Error hidratando ${dto.id}: ${e.message}")
+            Log.e("TruekeManager", "❌ Error hidratando ${trueke.id}: ${e.message}", e)
             null
         }
     }
@@ -181,10 +173,12 @@ class TruekeManager {
         cache[uid]?.let { return it }
         return try {
             val snap = db.collection("users").document(uid).get().await()
-            val user = (snap.toObject(User::class.java) ?: User()).copy(id = snap.id)
+            if (!snap.exists()) return null
+            val user = snap.toObject(User::class.java)?.copy(id = snap.id) ?: return null
             cache[uid] = user
             user
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            Log.e("TruekeManager", "getUserCached ERROR: ${e.message}")
             null
         }
     }
@@ -193,14 +187,15 @@ class TruekeManager {
         cache[itemId]?.let { return it }
         return try {
             val snap = db.collection("items").document(itemId).get().await()
+            if (!snap.exists()) return null
 
-            // Si tu Item tiene defaults en id/name -> perfecto:
             val item = snap.toObject(Item::class.java)?.copy(id = snap.id)
-                ?: itemFromDocManual(snap) // fallback por seguridad
+                ?: itemFromDocManual(snap)
 
             cache[itemId] = item
             item
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            Log.e("TruekeManager", "getItemCached ERROR: ${e.message}")
             null
         }
     }
@@ -211,13 +206,19 @@ class TruekeManager {
         val condition = runCatching { ItemCondition.valueOf(conditionStr) }
             .getOrElse { ItemCondition.GOOD }
 
+        val statusStr = doc.getString("status") ?: "AVAILABLE"
+        val status = runCatching { ItemStatus.valueOf(statusStr) }
+            .getOrElse { ItemStatus.AVAILABLE }
+
         return Item(
             id = doc.id,
             name = doc.getString("name") ?: "",
             details = doc.getString("details"),
             imageUrls = imageUrls,
             brand = doc.getString("brand"),
-            condition = condition
+            condition = condition,
+            ownerId = doc.getString("ownerId") ?: "",
+            status = status
         )
     }
 }

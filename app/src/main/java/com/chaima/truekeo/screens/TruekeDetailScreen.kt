@@ -38,7 +38,7 @@ import androidx.compose.ui.unit.dp
 import com.chaima.truekeo.R
 import com.chaima.truekeo.components.ItemImageBox
 import com.chaima.truekeo.components.UserAvatarImage
-import com.chaima.truekeo.data.MockData
+import com.chaima.truekeo.data.TruekeContainer
 import com.chaima.truekeo.models.Item
 import com.chaima.truekeo.models.Trueke
 import com.chaima.truekeo.models.TruekeStatus
@@ -46,16 +46,56 @@ import com.chaima.truekeo.ui.theme.TruekeoTheme
 import com.chaima.truekeo.utils.resolvePlaceName
 import java.util.Locale
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TruekeDetailsScreen(
     truekeId: String,
     onBack: () -> Unit
 ) {
-    val trueke = remember(truekeId) {
-        MockData.sampleTruekesWithTaker.first { it.id == truekeId }
+    val truekeManager = remember { TruekeContainer.truekeManager }
+
+    var trueke by remember { mutableStateOf<Trueke?>(null) }
+    var loading by remember { mutableStateOf(true) }
+
+    LaunchedEffect(truekeId) {
+        trueke = truekeManager.getTruekeById(truekeId)
+        loading = false
     }
 
+    when {
+        loading -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+
+        trueke == null -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text("Trueke no encontrado")
+            }
+        }
+
+        else -> {
+            TruekeDetailsContent(
+                trueke = trueke!!,
+                onBack = onBack
+            )
+        }
+    }
+
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TruekeDetailsContent(
+    trueke: Trueke,
+    onBack: () -> Unit
+) {
     TruekeoTheme(dynamicColor = false) {
         Scaffold(
             topBar = {
@@ -93,7 +133,7 @@ fun TruekeDetailsScreen(
                 TruekeStatus.CANCELLED -> {}
             }
         }
-        }
+    }
 }
 
 @Composable

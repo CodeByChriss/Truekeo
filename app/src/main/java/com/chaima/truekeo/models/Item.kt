@@ -4,16 +4,22 @@ import android.content.Context
 import com.chaima.truekeo.R
 
 data class Item(
-    val id: String,
-    val name: String,
+    val id: String = "",
+    val name: String = "",
     val details: String? = null,
     val imageUrls: List<String> = emptyList(),
     val brand: String? = null,
-    val condition: ItemCondition = ItemCondition.GOOD
+    val condition: ItemCondition = ItemCondition.GOOD,
+    val ownerId: String = "",
+    val status: ItemStatus = ItemStatus.AVAILABLE
 )
 
 enum class ItemCondition {
-    NEW, LIKE_NEW, GOOD, FAIR, POOR;
+    NEW,
+    LIKE_NEW,
+    GOOD,
+    FAIR,
+    POOR;
 
     fun getStringResource(): Int = when (this) {
         NEW -> R.string.product_state_new
@@ -26,4 +32,10 @@ enum class ItemCondition {
     fun displayName(context: Context): String {
         return context.getString(getStringResource())
     }
+}
+
+enum class ItemStatus {
+    AVAILABLE,
+    RESERVED,
+    EXCHANGED;
 }

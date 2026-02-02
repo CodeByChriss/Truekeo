@@ -1,5 +1,6 @@
 package com.chaima.truekeo.screens
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,8 +42,8 @@ import androidx.navigation.NavController
 import com.chaima.truekeo.R
 import com.chaima.truekeo.components.TruekeCard
 import com.chaima.truekeo.data.AuthContainer
-import com.chaima.truekeo.data.MockData
 import com.chaima.truekeo.data.TruekeContainer
+import com.chaima.truekeo.models.Trueke
 import com.chaima.truekeo.models.TruekeStatus
 import com.chaima.truekeo.navigation.NavBarRoutes
 import com.chaima.truekeo.ui.theme.TruekeoTheme
@@ -53,7 +54,7 @@ fun MyTruekesTab(navController: NavController) {
     val authManager = remember { AuthContainer.authManager }
     val truekeManager = remember { TruekeContainer.truekeManager }
 
-    var truekes by remember { mutableStateOf(emptyList<com.chaima.truekeo.models.Trueke>()) }
+    var truekes by remember { mutableStateOf(emptyList<Trueke>()) }
     var isLoading by remember { mutableStateOf(true) }
 
     // Cargar truekes al entrar (y cuando cambie el usuario)
@@ -66,8 +67,8 @@ fun MyTruekesTab(navController: NavController) {
         }
 
         isLoading = true
-        truekes = truekeManager.getTruekesWhereUserIsInvolved(uid)
-            .filter { it.status != TruekeStatus.CANCELLED } // por si acaso
+        truekes = truekeManager.getMyTruekes()
+            .filter { it.status != TruekeStatus.CANCELLED }
         isLoading = false
     }
 

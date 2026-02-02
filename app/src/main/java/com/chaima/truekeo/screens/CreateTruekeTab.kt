@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.sp
 import com.chaima.truekeo.R
 import com.chaima.truekeo.components.ItemSelectorCard
 import com.chaima.truekeo.components.LocationSearchField
-import com.chaima.truekeo.data.MockData.items
+import com.chaima.truekeo.data.ItemContainer
 import com.chaima.truekeo.data.TruekeContainer
 import com.chaima.truekeo.models.GeoPoint
 import com.chaima.truekeo.models.Item
@@ -38,6 +38,7 @@ import java.util.Locale
 @Composable
 fun CreateTruekeTab(){
     val truekeManager = remember { TruekeContainer.truekeManager }
+    val itemManager = remember { ItemContainer.itemManager }
     val scope = rememberCoroutineScope()
 
     val focusManager = LocalFocusManager.current
@@ -50,6 +51,15 @@ fun CreateTruekeTab(){
     var locationCoordinates by remember { mutableStateOf<GeoPoint?>(null) }
 
     var selectedItem by remember { mutableStateOf<Item?>(null) }
+    var myItems by remember { mutableStateOf<List<Item>>(emptyList()) }
+    var isLoadingItems by remember { mutableStateOf(true) }
+
+    // Cargar items del usuario al iniciar
+    LaunchedEffect(Unit) {
+        isLoadingItems = true
+        myItems = itemManager.getMyAvailableItems()
+        isLoadingItems = false
+    }
 
     // Validación de formulario
     var triedSubmit by remember { mutableStateOf(false) }
@@ -145,11 +155,36 @@ fun CreateTruekeTab(){
                         )
                         Spacer(Modifier.height(6.dp))
 
-                        ItemSelectorCard(
-                            items = items,
-                            selectedItem = selectedItem,
-                            onItemSelected = { selectedItem = it }
-                        )
+                        if (isLoadingItems) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(200.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator()
+                            }
+                        } else if (myItems.isEmpty()) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(200.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "No hay articulos",
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.padding(16.dp)
+                                )
+                            }
+                        } else {
+                            ItemSelectorCard(
+                                items = myItems,
+                                selectedItem = selectedItem,
+                                onItemSelected = { selectedItem = it }
+                            )
+                        }
                         FormErrorText(
                             showError = showItemError,
                             message = stringResource(R.string.required_item_error)
