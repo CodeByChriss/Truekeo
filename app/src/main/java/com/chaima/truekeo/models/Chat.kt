@@ -1,6 +1,9 @@
 package com.chaima.truekeo.models
 
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.Exclude
+import com.google.firebase.firestore.ServerTimestamp
+import java.util.Date
 
 data class Conversation(
     val id: String = "",
@@ -16,12 +19,17 @@ data class Conversation(
     @get:Exclude var otherUserPhoto: String = ""
 ) {
     @get:Exclude
-    val lastTimestamp: Long get() = messages.lastOrNull()?.timestamp ?: 0L
+    val lastTimestamp: Long get() = messages.lastOrNull()?.getLongTimestamp() ?: 0L
 }
 
 data class ChatMessage(
     val senderId: String = "",
     val text: String = "",
-    val timestamp: Long = 0L,
+    @ServerTimestamp
+    val timestamp: Timestamp? = null,
     @get:Exclude val isFromMe : Boolean = false
-)
+){
+    fun getLongTimestamp(): Long {
+        return timestamp?.toDate()?.time ?: System.currentTimeMillis()
+    }
+}

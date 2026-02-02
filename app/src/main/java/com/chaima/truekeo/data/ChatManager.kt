@@ -47,7 +47,6 @@ class ChatManager {
         val message = ChatMessage(
             senderId = senderId,
             text = text,
-            timestamp = System.currentTimeMillis(),
             isFromMe = true
         )
 

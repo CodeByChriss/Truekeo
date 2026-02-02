@@ -255,7 +255,7 @@ fun ChatBubble(message: ChatMessage) {
                 )
             }
             Text(
-                text = formatTimestamp(message.timestamp),
+                text = formatTimestamp(message.getLongTimestamp()),
                 style = MaterialTheme.typography.labelSmall,
                 color = Color.Gray,
                 modifier = Modifier.padding(top = 2.dp)
