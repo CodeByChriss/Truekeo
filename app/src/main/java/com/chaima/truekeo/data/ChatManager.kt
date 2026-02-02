@@ -43,12 +43,10 @@ class ChatManager {
         }
     }
 
-    suspend fun sendMessage(conversationId: String, senderId: String, text: String): Boolean {
+    suspend fun sendMessage(conversationId: String, senderId: String, text: String, otherId: String): Boolean {
         val message = ChatMessage(
             senderId = senderId,
-            text = text,
-            timestamp = System.currentTimeMillis(),
-            isFromMe = true
+            text = text
         )
 
         return try {
@@ -59,11 +57,21 @@ class ChatManager {
                 .await()
 
             db.collection("conversations").document(conversationId)
-                .update("readed", false, "last_message", text)
+                .update("unread_count.$otherId", com.google.firebase.firestore.FieldValue.increment(1), "last_message", text)
                 .await()
             true
         } catch (_: Exception) {
             false
+        }
+    }
+
+    suspend fun markAsRead(conversationId: String, myId: String) {
+        try {
+            db.collection("conversations").document(conversationId).update(
+                "unread_count.$myId", 0
+            ).await()
+        } catch (e: Exception) {
+            Log.e("ChatManager", "Error al marcar como leído: ${e.message}")
         }
     }
 

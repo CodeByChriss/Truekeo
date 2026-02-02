@@ -106,7 +106,8 @@ fun MessagesTab(onMessageClick: (String) -> Unit) {
                                         .clickable {
                                             onMessageClick(conversation.id)
                                         }
-                                        .padding(horizontal = 24.dp)
+                                        .padding(horizontal = 24.dp),
+                                    currentUserId = user?.id ?: "error"
                                 )
 
                                 HorizontalDivider(
