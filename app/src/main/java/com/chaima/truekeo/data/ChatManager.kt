@@ -5,6 +5,9 @@ import com.chaima.truekeo.models.ChatMessage
 import com.chaima.truekeo.models.Conversation
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 
 // Creamos una única instancia del ChatManager para toda la aplicación y asi evitamos errores
@@ -115,6 +118,30 @@ class ChatManager {
             Log.e("ChatManager", "Error al obtener conversación por ID: ${e.message}")
             null
         }
+    }
+
+    fun getMessagesFlow(conversationId: String, currentUserId: String): Flow<List<ChatMessage>> = callbackFlow {
+        val query = db.collection("conversations")
+            .document(conversationId)
+            .collection("messages")
+            .orderBy("timestamp", Query.Direction.ASCENDING)
+
+        val subscription = query.addSnapshotListener { snapshot, error ->
+            if (error != null) {
+                close(error)
+                return@addSnapshotListener
+            }
+
+            val messages = snapshot?.documents?.mapNotNull { doc ->
+                val msg = doc.toObject(ChatMessage::class.java)
+                msg?.copy(isFromMe = msg.senderId == currentUserId)
+            } ?: emptyList()
+
+            trySend(messages) // Enviamos la nueva lista a la UI
+        }
+
+        // cerramos el listener cuando se destruya el Composable para evitar errores
+        awaitClose { subscription.remove() }
     }
 
     suspend fun startOrGetConversation(myUid: String, otherUid: String): String? {

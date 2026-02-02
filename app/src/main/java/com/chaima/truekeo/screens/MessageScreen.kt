@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -77,17 +78,32 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
     var chatMessages by remember { mutableStateOf(emptyList<ChatMessage>()) }
     var textState by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(true) }
+    val listState = rememberLazyListState()
 
-    // Recogemos la conversación
-    LaunchedEffect(Unit) {
+    // Cargamos los datos se la conversación con los mensajes y todo
+    LaunchedEffect(conversationId) {
         conversation = chatManager.getConversationById(conversationId, user?.id ?: "error")
         if(conversation == null){
-            onBack()
-            return@LaunchedEffect
+            onBack() // si ha habido algún error se vuelve atrás
         }else{
             chatMessages = conversation!!.messages
         }
         isLoading = false
+    }
+
+    // nos quedamos escuchamos para posibles nuevos mensajes
+    LaunchedEffect(conversationId) {
+        chatManager.getMessagesFlow(conversationId, user?.id ?: "error")
+            .collect { updatedMessages ->
+                chatMessages = updatedMessages
+            }
+    }
+
+    // hacemos scroll al usuario al ultimo mensaje que haya
+    LaunchedEffect(chatMessages.size) {
+        if (chatMessages.isNotEmpty()) {
+            listState.animateScrollToItem(chatMessages.size - 1)
+        }
     }
 
     TruekeoTheme {
@@ -168,11 +184,13 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
 
                             IconButton(
                                 onClick = {
+                                    val messageToSend = textState
+                                    textState = ""
                                     scope.launch {
                                         chatManager.sendMessage(
                                             conversation!!.id,
                                             user?.id ?: "error",
-                                            textState
+                                            messageToSend
                                         )
                                     }
                                 },
@@ -195,6 +213,7 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
                 }
             ) { innerPadding ->
                 LazyColumn(
+                    state = listState,
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(innerPadding)
