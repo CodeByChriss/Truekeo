@@ -100,9 +100,11 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
     }
 
     // hacemos scroll al usuario al ultimo mensaje que haya
+    // y ponemos el contador de mensajes sin leer a 0
     LaunchedEffect(chatMessages.size) {
         if (chatMessages.isNotEmpty()) {
             listState.animateScrollToItem(chatMessages.size - 1)
+            chatManager.markAsRead(conversationId, user?.id ?: "error")
         }
     }
 
@@ -190,7 +192,8 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
                                         chatManager.sendMessage(
                                             conversation!!.id,
                                             user?.id ?: "error",
-                                            messageToSend
+                                            messageToSend,
+                                            conversation!!.participants.firstOrNull { it != (user?.id ?: "error") } ?: "error"
                                         )
                                     }
                                 },
@@ -233,6 +236,7 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
 @Composable
 fun ChatBubble(message: ChatMessage) {
     val alignment = if (message.isFromMe) Alignment.CenterEnd else Alignment.CenterStart
+    val columnAlignment = if (message.isFromMe) Alignment.End else Alignment.Start
     val bgColor = if (message.isFromMe) MaterialTheme.colorScheme.primary else Color.White
     val textColor = if (message.isFromMe) Color.White else Color.Black
     val shape = if (message.isFromMe) {
@@ -242,7 +246,7 @@ fun ChatBubble(message: ChatMessage) {
     }
 
     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = alignment) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(horizontalAlignment = columnAlignment) {
             Surface(
                 color = bgColor,
                 shape = shape,

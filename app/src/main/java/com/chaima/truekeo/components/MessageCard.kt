@@ -31,8 +31,12 @@ import com.chaima.truekeo.R
 @Composable
 fun MessageCard(
     conversation: Conversation,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    currentUserId: String
 ) {
+    val myUnreadCount = conversation.unread_count[currentUserId] ?: 0
+    val isUnread = myUnreadCount > 0
+
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -61,13 +65,13 @@ fun MessageCard(
                         text = conversation.otherUserName,
                         fontSize = 24.sp,
                         color = MaterialTheme.colorScheme.onSurface,
-                        fontFamily = FontFamily(Font(if(conversation.readed) R.font.saira_medium else R.font.saira_semibold)),
+                        fontFamily = FontFamily(Font(if(!isUnread) R.font.saira_medium else R.font.saira_semibold)),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
 
                     // Solo se muestra si el último mensaje no ha sido leido ya
-                    if(!conversation.readed){
+                    if(isUnread){
                         Spacer(modifier = Modifier.width(12.dp))
 
                         Box(
@@ -78,7 +82,7 @@ fun MessageCard(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = conversation.new_messages_count.toString(),
+                                text = myUnreadCount.toString(),
                                 color = MaterialTheme.colorScheme.onPrimary,
                                 fontSize = 12.sp,
                                 fontFamily = FontFamily(Font(R.font.saira_medium)),
@@ -90,7 +94,7 @@ fun MessageCard(
                 Text(
                     text = conversation.last_message,
                     color = MaterialTheme.colorScheme.onSurface,
-                    fontFamily = FontFamily(Font(if(conversation.readed) R.font.saira_medium else R.font.saira_semibold)),
+                    fontFamily = FontFamily(Font(if(!isUnread) R.font.saira_medium else R.font.saira_semibold)),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
