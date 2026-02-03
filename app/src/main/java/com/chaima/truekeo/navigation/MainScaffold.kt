@@ -44,7 +44,7 @@ fun MainScaffold(rootNavController: NavController) {
 
     Scaffold(
         bottomBar = {
-            if (currentRoute != null && !currentRoute.startsWith(NavBarRoutes.Message.route)) {
+            if (currentRoute != null && currentRoute != "${NavBarRoutes.Message.route}/{conversationId}") {
                 BottomNavBar(
                     navController = navController,
                     onFabToggle = { fabExpanded = !fabExpanded },
