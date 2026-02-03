@@ -111,16 +111,16 @@ private fun OpenTruekeLayout(
     val context = LocalContext.current
 
     val timeText = remember(trueke.createdAt, trueke.updatedAt) {
-        if (trueke.updatedAt != null && trueke.updatedAt.isAfter(trueke.createdAt)) {
+        if (trueke.updatedAtInstant != null && trueke.updatedAtInstant!!.isAfter(trueke.createdAtInstant)) {
             prefixedTimeAgo(
                 context = context,
-                from = trueke.updatedAt,
+                from = trueke.updatedAtInstant!!,
                 prefix = TimePrefix.UPDATED
             )
         } else {
             prefixedTimeAgo(
                 context = context,
-                from = trueke.createdAt,
+                from = trueke.createdAtInstant,
                 prefix = TimePrefix.PUBLISHED
             )
         }

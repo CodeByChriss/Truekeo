@@ -207,7 +207,7 @@ private fun TruekeInfoSection(trueke: Trueke) {
         Text(
             text = prefixedTimeAgo(
                 context = context,
-                from = trueke.createdAt,
+                from = trueke.createdAtInstant,
                 prefix = TimePrefix.PUBLISHED
             ),
             style = MaterialTheme.typography.bodySmall,

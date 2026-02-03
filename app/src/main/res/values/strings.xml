@@ -114,4 +114,8 @@
     <string name="go_back">Atrás</string>
     <string name="register">Registrarse</string>
     <string name="no_conversation">No tienes ninguna conversación</string>
+    <string name="product_availability_available">Disponible</string>
+    <string name="product_availability_reserved">Reservado</string>
+    <string name="product_availability_exchanged">Intercambiado</string>
+
 </resources>

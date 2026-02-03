@@ -38,7 +38,7 @@ import androidx.compose.ui.unit.dp
 import com.chaima.truekeo.R
 import com.chaima.truekeo.components.ItemImageBox
 import com.chaima.truekeo.components.UserAvatarImage
-import com.chaima.truekeo.data.MockData
+import com.chaima.truekeo.data.TruekeContainer
 import com.chaima.truekeo.models.Item
 import com.chaima.truekeo.models.Trueke
 import com.chaima.truekeo.models.TruekeStatus
@@ -46,16 +46,56 @@ import com.chaima.truekeo.ui.theme.TruekeoTheme
 import com.chaima.truekeo.utils.resolvePlaceName
 import java.util.Locale
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TruekeDetailsScreen(
     truekeId: String,
     onBack: () -> Unit
 ) {
-    val trueke = remember(truekeId) {
-        MockData.sampleTruekesWithTaker.first { it.id == truekeId }
+    val truekeManager = remember { TruekeContainer.truekeManager }
+
+    var trueke by remember { mutableStateOf<Trueke?>(null) }
+    var loading by remember { mutableStateOf(true) }
+
+    LaunchedEffect(truekeId) {
+        trueke = truekeManager.getTruekeById(truekeId)
+        loading = false
     }
 
+    when {
+        loading -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+
+        trueke == null -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text("Trueke no encontrado")
+            }
+        }
+
+        else -> {
+            TruekeDetailsContent(
+                trueke = trueke!!,
+                onBack = onBack
+            )
+        }
+    }
+
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TruekeDetailsContent(
+    trueke: Trueke,
+    onBack: () -> Unit
+) {
     TruekeoTheme(dynamicColor = false) {
         Scaffold(
             topBar = {
@@ -88,12 +128,12 @@ fun TruekeDetailsScreen(
                     ReservedTruekeLayout(trueke, Modifier.padding(padding))
 
                 TruekeStatus.COMPLETED ->
-                {}
+                    CompletedTruekeLayout(trueke, Modifier.padding(padding))
 
                 TruekeStatus.CANCELLED -> {}
             }
         }
-        }
+    }
 }
 
 @Composable
@@ -125,8 +165,6 @@ fun OpenTruekeLayout(
             Spacer(Modifier.height(4.dp))
 
             ItemCard(item = trueke.hostItem)
-
-            Spacer(Modifier.height(24.dp))
         }
 
         Column {
@@ -167,8 +205,6 @@ fun ReservedTruekeLayout(
         BasicTruekeInfo(trueke = trueke)
 
         Spacer(Modifier.height(12.dp))
-
-        // Sección de intercambio
 
         Text(
             text = "Intercambio".uppercase(),
@@ -271,6 +307,110 @@ fun ReservedTruekeLayout(
                 style = MaterialTheme.typography.bodyLarge,
                 fontFamily = FontFamily(Font(R.font.saira_medium))
             )
+        }
+    }
+}
+
+@Composable
+fun CompletedTruekeLayout(
+    trueke: Trueke,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+    ) {
+        Spacer(Modifier.height(12.dp))
+
+        CompletedBanner()
+
+        Spacer(Modifier.height(16.dp))
+
+        Column(modifier = Modifier
+            .padding(horizontal = 24.dp)
+        ) {
+            Text(
+                text = "Finalizado el ",
+                style = MaterialTheme.typography.bodyLarge,
+                fontFamily = FontFamily(Font(R.font.saira_regular))
+            )
+
+            Spacer(Modifier.height(12.dp))
+
+            BasicTruekeInfo(trueke = trueke)
+
+            Spacer(Modifier.height(12.dp))
+
+            Text(
+                text = "Intercambio".uppercase(),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.primary,
+                fontFamily = FontFamily(Font(R.font.saira_medium))
+            )
+
+            Spacer(Modifier.height(2.dp))
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                Text(
+                    text = "Truekeado con",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontFamily = FontFamily(Font(R.font.saira_regular))
+                )
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(3.dp)
+                ) {
+                    UserAvatarImage(trueke.takerUser!!, size = 24.dp)
+
+                    Text(
+                        text = "@${trueke.takerUser.username}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.Black,
+                        fontFamily = FontFamily(Font(R.font.saira_medium))
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(8.dp))
+
+            Text(
+                text = "Tu oferta:",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontFamily = FontFamily(Font(R.font.saira_medium))
+            )
+            Spacer(Modifier.height(4.dp))
+
+            ItemCard(item = trueke.hostItem)
+
+            Spacer(Modifier.height(16.dp))
+
+            // Icono de intercambio
+            Icon(
+                imageVector = Icons.Rounded.SwapVert,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier
+                    .size(32.dp)
+                    .align(Alignment.CenterHorizontally)
+            )
+
+            Spacer(Modifier.height(4.dp))
+
+            Text(
+                text = "Recibes:",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontFamily = FontFamily(Font(R.font.saira_medium))
+            )
+            Spacer(Modifier.height(4.dp))
+
+            ItemCard(item = trueke.takerItem!!)
         }
     }
 }
@@ -397,9 +537,8 @@ fun ItemCard(
 @Composable
 fun CompletedBanner() {
     Surface(
-        color = Color(0xFF278652),
-        shape = MaterialTheme.shapes.medium,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
+        color = Color(0xFF30B677)
     ) {
         Row(
             modifier = Modifier.padding(12.dp),
@@ -417,7 +556,8 @@ fun CompletedBanner() {
             Text(
                 text = "TRUEKE COMPLETADO",
                 style = MaterialTheme.typography.titleMedium,
-                color = Color.White
+                color = Color.White,
+                fontFamily = FontFamily(Font(R.font.saira_medium))
             )
         }
     }
