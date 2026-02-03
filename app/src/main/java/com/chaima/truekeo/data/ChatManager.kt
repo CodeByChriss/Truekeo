@@ -18,28 +18,27 @@ object ChatContainer {
 class ChatManager {
     private val db = FirebaseFirestore.getInstance()
 
-    suspend fun getConversations(currentUserId: String): List<Conversation> {
-        return try {
-            val snapshot = db.collection("conversations")
-                .whereArrayContains("participants", currentUserId)
-                .get()
-                .await()
-
-            val conversations = snapshot.toObjects(Conversation::class.java)
-
-            // Para cada conversación, buscamos los datos del otro usuario
-            conversations.map { conv ->
-                val otherId = conv.participants.firstOrNull { it != currentUserId }
-                if (otherId != null) {
-                    val userDoc = db.collection("users").document(otherId).get().await()
-                    conv.copy(
-                        otherUserName = userDoc.getString("username") ?: "Usuario",
-                        otherUserPhoto = userDoc.getString("avatarUrl") ?: "https://xcawesphifjagaixywdh.supabase.co/storage/v1/object/public/profile_photos/pf_default.png"
-                    )
-                } else conv
+    fun getConversationsFlow(currentUserId: String): Flow<List<Conversation>> = callbackFlow {
+        val subscription = db.collection("conversations")
+            .whereArrayContains("participants", currentUserId)
+            .addSnapshotListener { snapshot, _ ->
+                val conversations = snapshot?.toObjects(Conversation::class.java) ?: emptyList()
+                trySend(conversations)
             }
+        awaitClose { subscription.remove() }
+    }
+
+    suspend fun getUserData(userId: String): Map<String, String>? {
+        return try {
+            val doc = db.collection("users").document(userId).get().await()
+            if (doc.exists()) {
+                mapOf(
+                    "username" to (doc.getString("username") ?: "Usuario"),
+                    "avatarUrl" to (doc.getString("avatarUrl") ?: "https://xcawesphifjagaixywdh.supabase.co/storage/v1/object/public/profile_photos/pf_default.png")
+                )
+            } else null
         } catch (_: Exception) {
-            emptyList()
+            null
         }
     }
 
@@ -112,11 +111,10 @@ class ChatManager {
             val otherId = conversation.participants.firstOrNull { it != currentUserId }
 
             if (otherId != null) {
-                val userDoc = db.collection("users").document(otherId).get().await()
-
+                val userDoc = getUserData(otherId)
                 conversation.copy(
-                    otherUserName = userDoc.getString("username") ?: "Usuario",
-                    otherUserPhoto = userDoc.getString("avatarUrl") ?: "https://xcawesphifjagaixywdh.supabase.co/storage/v1/object/public/profile_photos/pf_default.png",
+                    otherUserName = userDoc?.getValue("username") ?: "Usuario",
+                    otherUserPhoto = userDoc?.getValue("avatarUrl") ?: "https://xcawesphifjagaixywdh.supabase.co/storage/v1/object/public/profile_photos/pf_default.png",
                     messages = getMessages(conversationId, currentUserId)
                 )
             } else {
@@ -184,6 +182,29 @@ class ChatManager {
         } catch (e: Exception) {
             Log.e("ChatManager", "Error al crear conversación: ${e.message}")
             null
+        }
+    }
+
+    suspend fun deleteConversation(conversationId: String): Boolean {
+        return try {
+            // Primero borramos los mensajes de la subcolección para que no se queden ocupando espacio
+            val messages = db.collection("conversations")
+                .document(conversationId)
+                .collection("messages")
+                .get()
+                .await()
+
+            for (doc in messages.documents) {
+                doc.reference.delete().await()
+            }
+
+            // Ahora borramos el documento de la conversación
+            db.collection("conversations").document(conversationId).delete().await()
+
+            true
+        } catch (e: Exception) {
+            Log.e("ChatManager", "Error al eliminar conversación: ${e.message}")
+            false
         }
     }
 }
