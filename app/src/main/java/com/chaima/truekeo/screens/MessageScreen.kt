@@ -21,6 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -46,6 +47,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
@@ -79,13 +81,14 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
     var textState by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(true) }
     val listState = rememberLazyListState()
+    var showDeleteDialog by remember { mutableStateOf(false) }
 
     // Cargamos los datos se la conversación con los mensajes y todo
     LaunchedEffect(conversationId) {
         conversation = chatManager.getConversationById(conversationId, user?.id ?: "error")
-        if(conversation == null){
+        if (conversation == null) {
             onBack() // si ha habido algún error se vuelve atrás
-        }else{
+        } else {
             chatMessages = conversation!!.messages
         }
         isLoading = false
@@ -146,7 +149,18 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
                         },
                         colors = TopAppBarDefaults.topAppBarColors(
                             containerColor = Color.White
-                        )
+                        ),
+                        actions = {
+                            IconButton(onClick = {
+                                scope.launch { showDeleteDialog = true }
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Default.Delete,
+                                    contentDescription = stringResource(R.string.delete_conversation),
+                                    tint = Color.Red
+                                )
+                            }
+                        }
                     )
                 },
                 bottomBar = {
@@ -193,7 +207,9 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
                                             conversation!!.id,
                                             user?.id ?: "error",
                                             messageToSend,
-                                            conversation!!.participants.firstOrNull { it != (user?.id ?: "error") } ?: "error"
+                                            conversation!!.participants.firstOrNull {
+                                                it != (user?.id ?: "error")
+                                            } ?: "error"
                                         )
                                     }
                                 },
@@ -229,6 +245,43 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
                     }
                 }
             }
+        }
+
+        // El diálogo de eliminar conversación
+        if (showDeleteDialog) {
+            androidx.compose.material3.AlertDialog(
+                onDismissRequest = { showDeleteDialog = false },
+                icon = { Icon(Icons.Default.Delete, contentDescription = null) },
+                title = {
+                    Text(
+                        text = stringResource(R.string.remove_conversation),
+                        fontFamily = FontFamily(Font(R.font.saira_medium))
+                    )
+                },
+                text = {
+                    Text(stringResource(R.string.remove_conversation_text))
+                },
+                confirmButton = {
+                    androidx.compose.material3.TextButton(
+                        onClick = {
+                            showDeleteDialog = false
+                            scope.launch {
+                                val success = chatManager.deleteConversation(conversationId)
+                                if (success) onBack()
+                            }
+                        }
+                    ) {
+                        Text(stringResource(R.string.yes_delete), color = Color.Red)
+                    }
+                },
+                dismissButton = {
+                    androidx.compose.material3.TextButton(
+                        onClick = { showDeleteDialog = false }
+                    ) {
+                        Text(stringResource(R.string.no))
+                    }
+                }
+            )
         }
     }
 }

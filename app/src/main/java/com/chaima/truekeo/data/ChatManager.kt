@@ -1,16 +1,6 @@
 package com.chaima.truekeo.data
 
-import android.Manifest
-import android.app.PendingIntent
-import android.content.Context
-import android.content.Intent
-import android.content.pm.PackageManager
 import android.util.Log
-import androidx.core.app.ActivityCompat
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
-import com.chaima.truekeo.MainActivity
-import com.chaima.truekeo.R
 import com.chaima.truekeo.models.ChatMessage
 import com.chaima.truekeo.models.Conversation
 import com.google.firebase.firestore.FirebaseFirestore
@@ -27,31 +17,6 @@ object ChatContainer {
 
 class ChatManager {
     private val db = FirebaseFirestore.getInstance()
-
-    suspend fun getConversations(currentUserId: String): List<Conversation> {
-        return try {
-            val snapshot = db.collection("conversations")
-                .whereArrayContains("participants", currentUserId)
-                .get()
-                .await()
-
-            val conversations = snapshot.toObjects(Conversation::class.java)
-
-            // Para cada conversación, buscamos los datos del otro usuario
-            conversations.map { conv ->
-                val otherId = conv.participants.firstOrNull { it != currentUserId }
-                if (otherId != null) {
-                    val userDoc = getUserData(otherId)
-                    conv.copy(
-                        otherUserName = userDoc?.getValue("username") ?: "Usuario",
-                        otherUserPhoto = userDoc?.getValue("avatarUrl") ?: "https://xcawesphifjagaixywdh.supabase.co/storage/v1/object/public/profile_photos/pf_default.png"
-                    )
-                } else conv
-            }
-        } catch (_: Exception) {
-            emptyList()
-        }
-    }
 
     fun getConversationsFlow(currentUserId: String): Flow<List<Conversation>> = callbackFlow {
         val subscription = db.collection("conversations")
@@ -220,30 +185,26 @@ class ChatManager {
         }
     }
 
-    fun showNotification(context: Context, title: String, message: String, conversationId: String) {
-        // Esto hace que al tocar la notificación se abra la app en el chat específico
-        val intent = Intent(context, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            putExtra("conversationId", conversationId)
-        }
+    suspend fun deleteConversation(conversationId: String): Boolean {
+        return try {
+            // Primero borramos los mensajes de la subcolección para que no se queden ocupando espacio
+            val messages = db.collection("conversations")
+                .document(conversationId)
+                .collection("messages")
+                .get()
+                .await()
 
-        val pendingIntent = PendingIntent.getActivity(
-            context, 0, intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-
-        val builder = NotificationCompat.Builder(context, "CHAT_CHANNEL")
-            .setSmallIcon(R.drawable.logo)
-            .setContentTitle(title)
-            .setContentText(message)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setContentIntent(pendingIntent)
-            .setAutoCancel(true)
-
-        with(NotificationManagerCompat.from(context)) {
-            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-                notify(conversationId.hashCode(), builder.build())
+            for (doc in messages.documents) {
+                doc.reference.delete().await()
             }
+
+            // Ahora borramos el documento de la conversación
+            db.collection("conversations").document(conversationId).delete().await()
+
+            true
+        } catch (e: Exception) {
+            Log.e("ChatManager", "Error al eliminar conversación: ${e.message}")
+            false
         }
     }
 }
