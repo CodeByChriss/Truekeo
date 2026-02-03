@@ -69,6 +69,10 @@ fun MyTruekesTab(navController: NavController) {
         isLoading = true
         truekes = truekeManager.getMyTruekes()
             .filter { it.status != TruekeStatus.CANCELLED }
+            .sortedByDescending { t ->
+                val u = t.updatedAt
+                if (u > 0L) u else t.createdAt
+            }
         isLoading = false
     }
 
