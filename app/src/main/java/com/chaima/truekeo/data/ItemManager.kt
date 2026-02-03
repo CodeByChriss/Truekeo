@@ -1,5 +1,7 @@
 package com.chaima.truekeo.data
 
+import android.content.Context
+import android.net.Uri
 import android.util.Log
 import com.chaima.truekeo.models.Item
 import com.chaima.truekeo.models.ItemCondition
@@ -16,9 +18,7 @@ class ItemManager {
     private val db = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
 
-    /**
-     * Obtiene todos los items del usuario actual que estén disponibles para trueke
-     */
+    // Obtiene todos los items del usuario actual que estén disponibles para trueke
     suspend fun getMyAvailableItems(): List<Item> {
         return try {
             val uid = auth.currentUser?.uid ?: return emptyList()
@@ -36,9 +36,7 @@ class ItemManager {
         }
     }
 
-    /**
-     * Obtiene todos los items del usuario actual (sin importar el status)
-     */
+    // Obtiene todos los items del usuario actual sin importar el estado
     suspend fun getMyItems(): List<Item> {
         return try {
             val uid = auth.currentUser?.uid ?: return emptyList()
@@ -55,13 +53,12 @@ class ItemManager {
         }
     }
 
-    /**
-     * Crea un nuevo item
-     */
+    // Crea un nuevo producto subiendo sus imágenes a Supabase y guarda el item en Firestore
     suspend fun createItem(
+        context: Context,
         name: String,
         details: String?,
-        imageUrls: List<String>,
+        imageUris: List<Uri>,
         brand: String?,
         condition: ItemCondition
     ): Result<String> {
@@ -69,30 +66,37 @@ class ItemManager {
             val uid = auth.currentUser?.uid
                 ?: return Result.failure(Exception("No autenticado"))
 
-            val newRef = db.collection("items").document()
+            // Generar itemId para usarlo en las rutas de Supabase y en Firestore
+            val itemId = db.collection("items").document().id
 
+            // Subir imágenes comprimidas a supabase y nos devuelve urls
+            val imageStorage = ImageStorageManager(context)
+            val imageUrls = imageStorage.uploadItemImages(
+                itemId = itemId,
+                imageUris = imageUris
+            )
+
+            val ref = db.collection("items").document(itemId)
             val item = Item(
-                id = newRef.id,
+                id = itemId,
                 name = name.trim(),
                 details = details?.trim(),
                 imageUrls = imageUrls,
                 brand = brand?.trim(),
                 condition = condition,
                 ownerId = uid,
-                status = ItemStatus.AVAILABLE // Ya es enum directamente
+                status = ItemStatus.AVAILABLE
             )
 
-            newRef.set(item).await()
-            Result.success(newRef.id)
+            ref.set(item).await()
+            Result.success(itemId)
+
         } catch (e: Exception) {
-            Log.e("ItemManager", "Error createItem: ${e.message}")
+            Log.e("ItemManager", "Error createItem: ${e.message}", e)
             Result.failure(e)
         }
     }
 
-    /**
-     * Actualiza el status de un item
-     */
     suspend fun updateItemStatus(itemId: String, newStatus: ItemStatus): Result<Unit> {
         return try {
             db.collection("items").document(itemId)
@@ -105,9 +109,6 @@ class ItemManager {
         }
     }
 
-    /**
-     * Obtiene un item por su ID
-     */
     suspend fun getItemById(itemId: String): Item? {
         return try {
             val doc = db.collection("items").document(itemId).get().await()
@@ -118,9 +119,7 @@ class ItemManager {
         }
     }
 
-    /**
-     * Elimina un item (solo si es AVAILABLE)
-     */
+
     suspend fun deleteItem(itemId: String): Result<Unit> {
         return try {
             val item = getItemById(itemId)

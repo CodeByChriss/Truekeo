@@ -38,4 +38,14 @@ enum class ItemStatus {
     AVAILABLE,
     RESERVED,
     EXCHANGED;
+
+    fun getStringResource(): Int = when (this) {
+        AVAILABLE -> R.string.product_availability_available
+        RESERVED -> R.string.product_availability_reserved
+        EXCHANGED -> R.string.product_availability_exchanged
+    }
+
+    fun displayName(context: Context): String {
+        return context.getString(getStringResource())
+    }
 }

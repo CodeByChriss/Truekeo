@@ -27,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,15 +42,25 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.chaima.truekeo.R
 import com.chaima.truekeo.components.ImageSelectorGrid
+import com.chaima.truekeo.data.AuthContainer
+import com.chaima.truekeo.data.ImageStorageManager
+import com.chaima.truekeo.data.ItemContainer
 import com.chaima.truekeo.models.ItemCondition
 import com.chaima.truekeo.ui.theme.TruekeoTheme
 import com.chaima.truekeo.utils.FormErrorText
+import kotlinx.coroutines.launch
 import java.util.Locale
 
 @Composable
 fun CreateProductTab() {
     val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState()
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+
+    val itemManager = remember { ItemContainer.itemManager }
+    val imageStorage = remember { ImageStorageManager(context) }
+    val authManager = remember { AuthContainer.authManager }
 
     var name by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
@@ -71,6 +82,10 @@ fun CreateProductTab() {
         }
     }
 
+    var isCreating by remember { mutableStateOf(false) }
+    var submitError by remember { mutableStateOf<String?>(null) }
+    var createdOk by remember { mutableStateOf(false) }
+
     var triedSubmit by remember { mutableStateOf(false) }
 
     val nameOk = name.trim().isNotEmpty()
@@ -80,6 +95,43 @@ fun CreateProductTab() {
     val showImagesError = triedSubmit && !imagesOk
 
     val formOk = nameOk && imagesOk
+
+    fun handleSubmit() {
+        triedSubmit = true
+        submitError = null
+        createdOk = false
+        focusManager.clearFocus()
+
+        if (!formOk) return
+
+        scope.launch {
+            isCreating = true
+            try {
+                val res = itemManager.createItem(
+                    context = context,
+                    name = name,
+                    details = description.ifBlank { null },
+                    imageUris = imageUris,
+                    brand = null,
+                    condition = condition
+                )
+
+                res.getOrThrow()
+
+                createdOk = true
+                name = ""
+                description = ""
+                condition = ItemCondition.GOOD
+                imageUris = emptyList()
+                triedSubmit = false
+
+            } catch (e: Exception) {
+                submitError = e.message ?: "Error creando el producto"
+            } finally {
+                isCreating = false
+            }
+        }
+    }
 
     TruekeoTheme(dynamicColor = false) {
         Box(
@@ -167,14 +219,7 @@ fun CreateProductTab() {
                 Spacer(modifier = Modifier.weight(1f))
 
                 Button(
-                    onClick = {
-                        triedSubmit = true
-                        focusManager.clearFocus()
-
-                        if (!formOk) return@Button
-
-                        // TODO: Aquí ya está todo OK -> crear trueke
-                    },
+                    onClick = { handleSubmit() },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),
