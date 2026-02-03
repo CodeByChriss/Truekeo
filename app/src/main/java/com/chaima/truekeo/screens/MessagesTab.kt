@@ -45,10 +45,24 @@ fun MessagesTab(onMessageClick: (String) -> Unit) {
     // Para mostrar una pantalla de carga mientras se recogen las conversaciones del usuario
     var isLoading by remember { mutableStateOf(true) }
 
-    // recogemos las conversaciones del usuario
-    LaunchedEffect(Unit) {
-        conversations = chatManager.getConversations(user?.id ?: "error")
-        isLoading = false
+    // recogemos las conversaciones del usuario y nos quedamos actualizando por si hay nuevas conversaciones o mensajes en alguna nueva
+    LaunchedEffect(user?.id) {
+        if (user?.id != null) {
+            chatManager.getConversationsFlow(user.id).collect { updatedList ->
+                val enrichedConversations = updatedList.map { conv ->
+                    val otherId = conv.participants.firstOrNull { it != user.id }
+                    if (otherId != null) {
+                        val userDoc = chatManager.getUserData(otherId)
+                        conv.copy(
+                            otherUserName = userDoc?.getValue("username") ?: "Usuario",
+                            otherUserPhoto = userDoc?.getValue("avatarUrl") ?: "https://xcawesphifjagaixywdh.supabase.co/storage/v1/object/public/profile_photos/pf_default.png"
+                        )
+                    } else conv
+                }
+                conversations = enrichedConversations
+                isLoading = false
+            }
+        }
     }
 
     TruekeoTheme(dynamicColor = false) {

@@ -1,6 +1,16 @@
 package com.chaima.truekeo.data
 
+import android.Manifest
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.util.Log
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import com.chaima.truekeo.MainActivity
+import com.chaima.truekeo.R
 import com.chaima.truekeo.models.ChatMessage
 import com.chaima.truekeo.models.Conversation
 import com.google.firebase.firestore.FirebaseFirestore
@@ -31,15 +41,39 @@ class ChatManager {
             conversations.map { conv ->
                 val otherId = conv.participants.firstOrNull { it != currentUserId }
                 if (otherId != null) {
-                    val userDoc = db.collection("users").document(otherId).get().await()
+                    val userDoc = getUserData(otherId)
                     conv.copy(
-                        otherUserName = userDoc.getString("username") ?: "Usuario",
-                        otherUserPhoto = userDoc.getString("avatarUrl") ?: "https://xcawesphifjagaixywdh.supabase.co/storage/v1/object/public/profile_photos/pf_default.png"
+                        otherUserName = userDoc?.getValue("username") ?: "Usuario",
+                        otherUserPhoto = userDoc?.getValue("avatarUrl") ?: "https://xcawesphifjagaixywdh.supabase.co/storage/v1/object/public/profile_photos/pf_default.png"
                     )
                 } else conv
             }
         } catch (_: Exception) {
             emptyList()
+        }
+    }
+
+    fun getConversationsFlow(currentUserId: String): Flow<List<Conversation>> = callbackFlow {
+        val subscription = db.collection("conversations")
+            .whereArrayContains("participants", currentUserId)
+            .addSnapshotListener { snapshot, _ ->
+                val conversations = snapshot?.toObjects(Conversation::class.java) ?: emptyList()
+                trySend(conversations)
+            }
+        awaitClose { subscription.remove() }
+    }
+
+    suspend fun getUserData(userId: String): Map<String, String>? {
+        return try {
+            val doc = db.collection("users").document(userId).get().await()
+            if (doc.exists()) {
+                mapOf(
+                    "username" to (doc.getString("username") ?: "Usuario"),
+                    "avatarUrl" to (doc.getString("avatarUrl") ?: "https://xcawesphifjagaixywdh.supabase.co/storage/v1/object/public/profile_photos/pf_default.png")
+                )
+            } else null
+        } catch (_: Exception) {
+            null
         }
     }
 
@@ -112,11 +146,10 @@ class ChatManager {
             val otherId = conversation.participants.firstOrNull { it != currentUserId }
 
             if (otherId != null) {
-                val userDoc = db.collection("users").document(otherId).get().await()
-
+                val userDoc = getUserData(otherId)
                 conversation.copy(
-                    otherUserName = userDoc.getString("username") ?: "Usuario",
-                    otherUserPhoto = userDoc.getString("avatarUrl") ?: "https://xcawesphifjagaixywdh.supabase.co/storage/v1/object/public/profile_photos/pf_default.png",
+                    otherUserName = userDoc?.getValue("username") ?: "Usuario",
+                    otherUserPhoto = userDoc?.getValue("avatarUrl") ?: "https://xcawesphifjagaixywdh.supabase.co/storage/v1/object/public/profile_photos/pf_default.png",
                     messages = getMessages(conversationId, currentUserId)
                 )
             } else {
@@ -184,6 +217,33 @@ class ChatManager {
         } catch (e: Exception) {
             Log.e("ChatManager", "Error al crear conversación: ${e.message}")
             null
+        }
+    }
+
+    fun showNotification(context: Context, title: String, message: String, conversationId: String) {
+        // Esto hace que al tocar la notificación se abra la app en el chat específico
+        val intent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            putExtra("conversationId", conversationId)
+        }
+
+        val pendingIntent = PendingIntent.getActivity(
+            context, 0, intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val builder = NotificationCompat.Builder(context, "CHAT_CHANNEL")
+            .setSmallIcon(R.drawable.logo)
+            .setContentTitle(title)
+            .setContentText(message)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+
+        with(NotificationManagerCompat.from(context)) {
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+                notify(conversationId.hashCode(), builder.build())
+            }
         }
     }
 }
