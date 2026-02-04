@@ -1,5 +1,8 @@
 package com.chaima.truekeo.screens
 
+import android.Manifest
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -9,9 +12,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import com.chaima.truekeo.components.ManualLocationDialog
 import com.chaima.truekeo.models.Trueke
 import com.chaima.truekeo.components.TruekeSheetContent
+import com.chaima.truekeo.data.LocationManager
+import com.chaima.truekeo.data.LocationPreferences
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraBoundsOptions
 import com.mapbox.maps.CameraOptions
@@ -27,30 +34,68 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class, MapboxExperimental::class)
 @Composable
 fun HomeTab(openConversation: (String) -> Unit) {
-    val madrid = Point.fromLngLat(-3.7038, 40.4168)
-    val mapViewportState = rememberMapViewportState {
-        setCameraOptions {
-            center(madrid)
-            zoom(12.0)
-        }
-    }
+    val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    //val truekes = remember { MockData.sampleTruekes }
+    // Managers y preferencias
+    val locationManager = remember { LocationManager(context) }
+    val locationPreferences = remember { LocationPreferences(context) }
 
+    // Estado del mapa
+    val mapViewportState = rememberMapViewportState {
+        setCameraOptions {
+            center(Point.fromLngLat(-3.7038, 40.4168)) // Madrid por defecto
+            zoom(6.0) // Vista de España
+        }
+    }
+
+    // Estados de UI
+    var showManualLocationDialog by remember { mutableStateOf(false) }
     var selectedTrueke by remember { mutableStateOf<Trueke?>(null) }
     var showSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     // Altura máxima del sheet
     val maxSheetHeight = 500.dp
-
-    // Calcular altura del sheet para ajustar el padding del mapa
     val density = LocalDensity.current
     val sheetHeightPx = with(density) { maxSheetHeight.toPx() }
-
     val extraMarkerOffsetDp = 72.dp
     val extraMarkerOffsetPx = with(density) { extraMarkerOffsetDp.toPx() }
+
+    // Launcher para solicitar permisos
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        locationPreferences.hasAskedPermission = true
+
+        if (granted) {
+            // Permiso concedido, obtener ubicación
+            scope.launch {
+                val location = locationManager.getCurrentLocation()
+                if (location != null) {
+                    mapViewportState.flyTo(
+                        CameraOptions.Builder()
+                            .center(Point.fromLngLat(location.longitude, location.latitude))
+                            .zoom(13.0)
+                            .build(),
+                        MapAnimationOptions.mapAnimationOptions { duration(900) }
+                    )
+                } else {
+                    // No se pudo obtener ubicación, mostrar diálogo manual
+                    showManualLocationDialog = true
+                }
+            }
+        } else {
+            // Permiso denegado, mostrar diálogo manual
+            showManualLocationDialog = true
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        if (!locationManager.hasLocationPermission()) {
+            permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+    }
 
     // Función para centrar el marcador teniendo en cuenta el sheet
     fun centerMarker(trueke: Trueke) {
@@ -120,6 +165,33 @@ fun HomeTab(openConversation: (String) -> Unit) {
             }*/
     }
 
+    // Diálogo de ubicación manual (solo cuando se rechaza el permiso)
+    if (showManualLocationDialog) {
+        ManualLocationDialog(
+            onLocationSelected = { query ->
+                showManualLocationDialog = false
+
+                scope.launch {
+                    val result = locationManager.geocodeLocation(query)
+
+                    mapViewportState.flyTo(
+                        CameraOptions.Builder()
+                            .center(result.point)
+                            .zoom(result.zoom)
+                            .build(),
+                        MapAnimationOptions.mapAnimationOptions {
+                            duration(900)
+                        }
+                    )
+                }
+            },
+            onDismiss = {
+                showManualLocationDialog = false
+            }
+        )
+    }
+
+    // Bottom sheet para mostrar detalles del trueke
     if (showSheet && selectedTrueke != null) {
         val t = selectedTrueke!!
 

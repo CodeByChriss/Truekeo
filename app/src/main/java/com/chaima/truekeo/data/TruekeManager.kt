@@ -24,39 +24,6 @@ class TruekeManager {
     private val db = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
 
-    suspend fun createTrueke(
-        title: String,
-        description: String?,
-        location: GeoPoint,
-        hostItemId: String
-    ): Result<String> {
-        return try {
-            val uid = auth.currentUser?.uid
-                ?: return Result.failure(Exception("No autenticado"))
-
-            val newRef = db.collection("truekes").document()
-            val now = System.currentTimeMillis()
-
-            val trueke = Trueke(
-                id = newRef.id,
-                title = title.trim(),
-                description = description?.trim().takeUnless { it.isNullOrBlank() },
-                hostUserId = uid,
-                hostItemId = hostItemId,
-                location = location,
-                status = TruekeStatus.OPEN,
-                createdAt = now,
-                updatedAt = now
-            )
-
-            newRef.set(trueke).await()
-            Result.success(newRef.id)
-        } catch (e: Exception) {
-            Log.e("TruekeManager", "Error creando trueke: ${e.message}")
-            Result.failure(e)
-        }
-    }
-
     suspend fun getMyTruekes(): List<Trueke> {
         return try {
             val uid = auth.currentUser?.uid ?: return emptyList()
@@ -89,6 +56,39 @@ class TruekeManager {
         } catch (e: Exception) {
             Log.e("TruekeManager", "Error getTruekeById: ${e.message}")
             null
+        }
+    }
+
+    suspend fun createTrueke(
+        title: String,
+        description: String?,
+        location: GeoPoint,
+        hostItemId: String
+    ): Result<String> {
+        return try {
+            val uid = auth.currentUser?.uid
+                ?: return Result.failure(Exception("No autenticado"))
+
+            val newRef = db.collection("truekes").document()
+            val now = System.currentTimeMillis()
+
+            val trueke = Trueke(
+                id = newRef.id,
+                title = title.trim(),
+                description = description?.trim().takeUnless { it.isNullOrBlank() },
+                hostUserId = uid,
+                hostItemId = hostItemId,
+                location = location,
+                status = TruekeStatus.OPEN,
+                createdAt = now,
+                updatedAt = now
+            )
+
+            newRef.set(trueke).await()
+            Result.success(newRef.id)
+        } catch (e: Exception) {
+            Log.e("TruekeManager", "Error creando trueke: ${e.message}")
+            Result.failure(e)
         }
     }
 
