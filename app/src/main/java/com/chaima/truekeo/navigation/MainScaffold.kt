@@ -76,7 +76,7 @@ fun MainScaffold(rootNavController: NavController) {
                     onBack = { navController.popBackStack() }
                 )
             }
-            
+
             composable(NavBarRoutes.Messages.route) {
                 MessagesTab(
                     onMessageClick = { conversationId ->
@@ -95,7 +95,7 @@ fun MainScaffold(rootNavController: NavController) {
                     onBack = { navController.popBackStack() }
                 )
             }
-            
+
             composable(NavBarRoutes.Profile.route) {
                 ProfileTab(
                     onMyTruekesClick = {
