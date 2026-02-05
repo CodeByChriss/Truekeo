@@ -76,7 +76,7 @@ fun CreateTruekeTab(
 
     val formOk = titleOk && locationOk && itemOk
 
-    var isLoading by remember { mutableStateOf(false) }
+    var isCreating by remember { mutableStateOf(false) }
 
     fun resetForm() {
         title = ""
@@ -92,9 +92,9 @@ fun CreateTruekeTab(
         focusManager.clearFocus()
 
         if (!formOk) return
-        if (isLoading) return
+        if (isCreating) return
 
-        isLoading = true
+        isCreating = true
 
         scope.launch {
             val res = truekeManager.createTrueke(
@@ -104,7 +104,7 @@ fun CreateTruekeTab(
                 hostItemId = selectedItem!!.id
             )
 
-            isLoading = false
+            isCreating = false
 
             res.onSuccess { truekeId ->
                 Toast.makeText(context, "Trueke creado ✅", Toast.LENGTH_SHORT).show()
@@ -192,7 +192,7 @@ fun CreateTruekeTab(
                         )
                         FormErrorText(showError = showLocationError)
 
-                        Spacer(Modifier.height(12.dp))
+                        Spacer(Modifier.height(16.dp))
 
                         // Sección del producto del trueke
                         Text(
@@ -203,7 +203,7 @@ fun CreateTruekeTab(
                             modifier = Modifier.fillMaxWidth(),
                             textAlign = TextAlign.Start
                         )
-                        Spacer(Modifier.height(6.dp))
+                        Spacer(Modifier.height(7.dp))
 
                         if (isLoadingItems) {
                             Box(
@@ -245,14 +245,14 @@ fun CreateTruekeTab(
                 Spacer(modifier = Modifier.weight(1f))
 
                 Button(
-                    enabled = !isLoading,
+                    enabled = !isCreating,
                     onClick = { handleSubmitCreate() },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),
                     shape = RoundedCornerShape(12.dp)
                 ) {
-                    if (isLoading) {
+                    if (isCreating) {
                         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                             CircularProgressIndicator()
                         }
