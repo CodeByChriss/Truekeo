@@ -71,7 +71,9 @@
     <string name="save">Save changes</string>
     <string name="my_trueks">My truekes</string>
     <string name="my_products">My products</string>
-    <string name="search_product">Search a product...</string>
+    <string name="save_changes_question">Do you want to save changes before leaving?</string>
+    <string name="discard">Discard</string>
+    <string name="search_product">Search a product…</string>
 
     <string name="my_truekes">My truekes</string>
 
@@ -98,8 +100,9 @@
     <string name="empty_reserved_truekes">You have no reserved trades</string>
     <string name="empty_completed_truekes">You have no completed trades</string>
     <string name="send">Send</string>
-    <string name="write_message_here">Write a message here...</string>
+    <string name="write_message_here">Write a message here…</string>
     <string name="go_back">Go back</string>
     <string name="no_conversation">You have no conversations</string>
     <string name="write">Send a message</string>
+    <string name="unsaved_changes">Unsaved changes</string>
 </resources>

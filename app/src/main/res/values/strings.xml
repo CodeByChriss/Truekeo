@@ -79,6 +79,9 @@
     <string name="edit_profile">Editar perfil</string>
     <string name="change_picture">Cambia tu foto de perfil</string>
     <string name="save">Guardar</string>
+    <string name="unsaved_changes">Cambios sin guardar</string>
+    <string name="save_changes_question">¿Quieres guardar los cambios antes de salir?</string>
+    <string name="discard">Descartar</string>
     <!-- MisProductos-->
     <string name="search_product">Busca un producto…</string>
 

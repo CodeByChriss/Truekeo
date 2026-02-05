@@ -146,6 +146,15 @@ fun MainScaffold(rootNavController: NavController) {
 
             composable(NavBarRoutes.EditProfile.route) {
                 EditProfileScreen(
+                    onCloseClick = {
+                        navController.navigate(NavBarRoutes.Profile.route) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
                     onSaveChangesClick = {
                         navController.navigate(NavBarRoutes.Profile.route) {
                             popUpTo(navController.graph.startDestinationId) {
@@ -157,6 +166,7 @@ fun MainScaffold(rootNavController: NavController) {
                     }
                 )
             }
+
         }
 
         FabOverlayActions(
