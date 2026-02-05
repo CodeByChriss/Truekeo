@@ -12,13 +12,15 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun ManualLocationDialog(
-    onLocationSelected: (String) -> Unit,
-    onDismiss: () -> Unit
+    onLocationSelected: (String) -> Unit
 ) {
     var locationText by remember { mutableStateOf("") }
+    val isValid = locationText.trim().isNotBlank()
 
     AlertDialog(
-        onDismissRequest = onDismiss,
+        // ❌ NO se puede cerrar de ninguna forma
+        onDismissRequest = { /* NO HACER NADA */ },
+
         icon = {
             Icon(
                 Icons.Default.Search,
@@ -39,7 +41,7 @@ fun ManualLocationDialog(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Text(
-                    "Introduce tu municipio, ciudad o región",
+                    "Como no has permitido el GPS, debes introducir una ubicación para continuar.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center
@@ -51,14 +53,13 @@ fun ManualLocationDialog(
                     label = { Text("Ubicación") },
                     placeholder = { Text("Ej: Madrid, Barcelona, Andalucía...") },
                     singleLine = true,
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Text(
-                    "Si no introduces ninguna ubicación, el mapa se centrará en España",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center
+                    modifier = Modifier.fillMaxWidth(),
+                    isError = !isValid && locationText.isNotEmpty(),
+                    supportingText = {
+                        if (!isValid && locationText.isNotEmpty()) {
+                            Text("La ubicación es obligatoria")
+                        }
+                    }
                 )
             }
         },
@@ -67,15 +68,11 @@ fun ManualLocationDialog(
                 onClick = {
                     onLocationSelected(locationText.trim())
                 },
-                enabled = true // Siempre habilitado, incluso si está vacío
+                enabled = isValid // ✅ solo habilitado si hay texto
             ) {
                 Text("Aceptar")
             }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Cancelar")
-            }
         }
+        // ❌ SIN dismissButton
     )
 }

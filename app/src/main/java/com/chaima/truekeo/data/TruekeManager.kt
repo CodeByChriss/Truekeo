@@ -92,6 +92,45 @@ class TruekeManager {
         }
     }
 
+    suspend fun updateTrueke(
+        truekeId: String,
+        newTitle: String,
+        newDescription: String?,
+        newLat: Double,
+        newLng: Double,
+        newHostItemId: String
+    ): Result<Unit> {
+        return try {
+            val uid = auth.currentUser?.uid ?: return Result.failure(Exception("No autenticado"))
+
+            val ref = db.collection("truekes").document(truekeId)
+            val snap = ref.get().await()
+
+            val status = snap.getString("status")
+            val hostUserId = snap.getString("hostUserId") // o como lo guardes tú
+
+            if (hostUserId != uid) {
+                return Result.failure(Exception("No puedes editar un trueke que no es tuyo"))
+            }
+            if (status != TruekeStatus.OPEN.name) {
+                return Result.failure(Exception("Solo se puede editar si está OPEN"))
+            }
+
+            val updates = mapOf(
+                "title" to newTitle.trim(),
+                "description" to newDescription?.trim(),
+                "location.lat" to newLat,
+                "location.lng" to newLng,
+                "updatedAt" to System.currentTimeMillis()
+            )
+
+            ref.update(updates).await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     suspend fun updateTruekeStatus(truekeId: String, newStatus: TruekeStatus): Result<Unit> {
         return try {
             val now = System.currentTimeMillis()

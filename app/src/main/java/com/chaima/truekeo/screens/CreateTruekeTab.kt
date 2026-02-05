@@ -36,7 +36,9 @@ import java.util.Locale
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateTruekeTab(){
+fun CreateTruekeTab(
+    navController: androidx.navigation.NavController
+) {
     val truekeManager = remember { TruekeContainer.truekeManager }
     val itemManager = remember { ItemContainer.itemManager }
     val scope = rememberCoroutineScope()
@@ -75,6 +77,54 @@ fun CreateTruekeTab(){
     val formOk = titleOk && locationOk && itemOk
 
     var isLoading by remember { mutableStateOf(false) }
+
+    fun resetForm() {
+        title = ""
+        details = ""
+        locationText = ""
+        locationCoordinates = null
+        selectedItem = null
+        triedSubmit = false
+    }
+
+    fun handleSubmitCreate() {
+        triedSubmit = true
+        focusManager.clearFocus()
+
+        if (!formOk) return
+        if (isLoading) return
+
+        isLoading = true
+
+        scope.launch {
+            val res = truekeManager.createTrueke(
+                title = title,
+                description = details,
+                location = locationCoordinates!!,
+                hostItemId = selectedItem!!.id
+            )
+
+            isLoading = false
+
+            res.onSuccess { truekeId ->
+                Toast.makeText(context, "Trueke creado ✅", Toast.LENGTH_SHORT).show()
+
+                // resetear formulario
+                resetForm()
+
+                // navegar al detalle
+                navController.navigate("trueke_details/$truekeId") {
+                    launchSingleTop = true
+                }
+            }.onFailure { e ->
+                Toast.makeText(
+                    context,
+                    e.message ?: "Error creando trueke",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
 
     TruekeoTheme(dynamicColor = false) {
         Box(
@@ -196,46 +246,7 @@ fun CreateTruekeTab(){
 
                 Button(
                     enabled = !isLoading,
-                    onClick = {
-                        triedSubmit = true
-                        focusManager.clearFocus()
-
-                        if (!formOk) return@Button
-                        if (isLoading) return@Button
-
-                        isLoading = true
-
-                        scope.launch {
-                            val res = truekeManager.createTrueke(
-                                title = title,
-                                description = details,
-                                location = locationCoordinates!!,  // ya validado
-                                hostItemId = selectedItem!!.id     // ya validado
-                            )
-
-                            isLoading = false
-
-                            res.onSuccess {
-                                Toast.makeText(context, "Trueke creado ✅", Toast.LENGTH_SHORT).show()
-
-                                // opcional: limpiar formulario
-                                title = ""
-                                details = ""
-                                locationText = ""
-                                locationCoordinates = null
-                                selectedItem = null
-                                triedSubmit = false
-
-                                // opcional: navegar al home/detalle si tienes nav
-                            }.onFailure { e ->
-                                Toast.makeText(
-                                    context,
-                                    e.message ?: "Error creando trueke",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
-                        }
-                    },
+                    onClick = { handleSubmitCreate() },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),

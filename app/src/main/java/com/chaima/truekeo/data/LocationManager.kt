@@ -56,13 +56,18 @@ class LocationManager(private val context: Context) {
 
     @SuppressLint("MissingPermission")
     suspend fun getCurrentLocation(): Location? {
-        if (!hasLocationPermission()) {
-            Log.e(TAG, "No hay permisos de ubicación")
-            return null
-        }
+        if (!hasLocationPermission()) return null
 
         return try {
-            fusedLocationClient.lastLocation.await()
+            // primero lastLocation (rápido)
+            val last = fusedLocationClient.lastLocation.await()
+            if (last != null) return last
+
+            // fallback: ubicación actual (más fiable)
+            fusedLocationClient.getCurrentLocation(
+                Priority.PRIORITY_HIGH_ACCURACY,
+                null
+            ).await()
         } catch (e: Exception) {
             Log.e(TAG, "Error obteniendo ubicación: ${e.message}")
             null

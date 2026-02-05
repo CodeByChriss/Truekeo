@@ -10,6 +10,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -69,31 +70,66 @@ fun HomeTab(openConversation: (String) -> Unit) {
         locationPreferences.hasAskedPermission = true
 
         if (granted) {
-            // Permiso concedido, obtener ubicación
             scope.launch {
-                val location = locationManager.getCurrentLocation()
-                if (location != null) {
+                val loc = locationManager.getCurrentLocation()
+                if (loc != null) {
+                    // Si el usuario permitió GPS, (opcional) dejamos de usar manual
+                    locationPreferences.clearManualLocation()
+
                     mapViewportState.flyTo(
                         CameraOptions.Builder()
-                            .center(Point.fromLngLat(location.longitude, location.latitude))
+                            .center(Point.fromLngLat(loc.longitude, loc.latitude))
                             .zoom(13.0)
                             .build(),
                         MapAnimationOptions.mapAnimationOptions { duration(900) }
                     )
                 } else {
-                    // No se pudo obtener ubicación, mostrar diálogo manual
+                    // Permiso concedido pero no se pudo obtener ubicación
                     showManualLocationDialog = true
                 }
             }
         } else {
-            // Permiso denegado, mostrar diálogo manual
+            // Si no acepta el diálogo del sistema lo debe hacer manual
             showManualLocationDialog = true
         }
     }
 
     LaunchedEffect(Unit) {
-        if (!locationManager.hasLocationPermission()) {
-            permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        val manual = locationPreferences.getManualLocation()
+
+        when {
+            // Si hay manual guardada, centra ahí (aunque no haya permiso)
+            manual != null && locationPreferences.useManualLocation -> {
+                val (lat, lng, zoom) = manual
+                mapViewportState.setCameraOptions(
+                    CameraOptions.Builder()
+                        .center(Point.fromLngLat(lng, lat))
+                        .zoom(zoom)
+                        .build()
+                )
+            }
+
+            // Si hay permiso, intenta GPS y centra
+            locationManager.hasLocationPermission() -> {
+                val loc = locationManager.getCurrentLocation()
+                if (loc != null) {
+                    mapViewportState.setCameraOptions(
+                        CameraOptions.Builder()
+                            .center(Point.fromLngLat(loc.longitude, loc.latitude))
+                            .zoom(13.0)
+                            .build()
+                    )
+                }
+            }
+
+            // Sin permiso: deja España y pregunta 1 vez; si ya preguntaste, manual
+            else -> {
+                if (!locationPreferences.hasAskedPermission) {
+                    permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                } else {
+                    showManualLocationDialog = true
+                }
+            }
         }
     }
 
@@ -174,19 +210,21 @@ fun HomeTab(openConversation: (String) -> Unit) {
                 scope.launch {
                     val result = locationManager.geocodeLocation(query)
 
+                    locationPreferences.saveManualLocation(
+                        lat = result.point.latitude(),
+                        lng = result.point.longitude(),
+                        zoom = result.zoom
+                    )
+                    locationPreferences.hasAskedPermission = true
+
                     mapViewportState.flyTo(
                         CameraOptions.Builder()
                             .center(result.point)
                             .zoom(result.zoom)
                             .build(),
-                        MapAnimationOptions.mapAnimationOptions {
-                            duration(900)
-                        }
+                        MapAnimationOptions.mapAnimationOptions { duration(900) }
                     )
                 }
-            },
-            onDismiss = {
-                showManualLocationDialog = false
             }
         )
     }
