@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.chaima.truekeo.R
 enum class ProductStatus {
     AVAILABLE,
@@ -37,7 +38,7 @@ data class MyProduct(
     val status: ProductStatus
 )
 @Composable
-fun MyProductsScreen() {
+fun MyProductsScreen(navController: NavController) {
 
     var searchQuery by remember { mutableStateOf("") }
 
@@ -107,6 +108,9 @@ fun MyProductsScreen() {
                 MyProductItem(
                     product = product,
                     onClick = {
+                        navController.navigate(
+                            "product_details/${product.name}"
+                        )
                     }
                 )
             }
