@@ -25,6 +25,7 @@ import androidx.navigation.NavController
 import com.chaima.truekeo.data.AuthContainer
 import com.chaima.truekeo.screens.MessageScreen
 import com.chaima.truekeo.screens.EditProfileScreen
+import com.chaima.truekeo.screens.EditTruekeScreen
 import com.chaima.truekeo.screens.MessagesTab
 import com.chaima.truekeo.screens.MyProductsScreen
 import com.chaima.truekeo.screens.ProfileTab
@@ -67,7 +68,9 @@ fun MainScaffold(rootNavController: NavController) {
                 MyTruekesTab(navController = navController)
             }
 
-            composable(NavBarRoutes.CreateTrueke.route) { CreateTruekeTab() }
+            composable(NavBarRoutes.CreateTrueke.route) {
+                CreateTruekeTab(navController = navController)
+            }
             composable(NavBarRoutes.CreateProduct.route) { CreateProductTab() }
 
             composable(
@@ -81,6 +84,18 @@ fun MainScaffold(rootNavController: NavController) {
                 )
             }
 
+            /*composable(
+                route = NavBarRoutes.EditTrueke.route,
+                arguments = listOf(navArgument("truekeId") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val truekeId = backStackEntry.arguments?.getString("truekeId")!!
+                EditTruekeScreen(
+                    truekeId = truekeId,
+                    onDone = { navController.popBackStack() },
+                    onBack = { navController.popBackStack() }
+                )
+            }*/
+            
             composable(NavBarRoutes.Messages.route) {
                 MessagesTab(
                     onMessageClick = { conversationId ->

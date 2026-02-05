@@ -14,6 +14,9 @@ sealed class NavBarRoutes(val route: String) {
     object TruekeDetails : Routes("trueke_details/{truekeId}") {
         fun create(truekeId: String) = "trueke_details/$truekeId"
     }
+    /*object EditTrueke : NavBarRoutes("edit_trueke/{truekeId}") {
+        fun create(truekeId: String) = "edit_trueke/$truekeId"
+    }*/
     object CreateTrueke : Routes("create_trueke")
     object CreateProduct : Routes("create_product")
     object Messages : NavBarRoutes("messages")

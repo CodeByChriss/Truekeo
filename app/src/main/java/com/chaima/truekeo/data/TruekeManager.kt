@@ -24,6 +24,41 @@ class TruekeManager {
     private val db = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
 
+    suspend fun getMyTruekes(): List<Trueke> {
+        return try {
+            val uid = auth.currentUser?.uid ?: return emptyList()
+
+            val hostSnap = db.collection("truekes")
+                .whereEqualTo("hostUserId", uid)
+                .get().await()
+
+            val takerSnap = db.collection("truekes")
+                .whereEqualTo("takerUserId", uid)
+                .get().await()
+
+            val hostTruekes = hostSnap.toObjects(Trueke::class.java)
+            val takerTruekes = takerSnap.toObjects(Trueke::class.java)
+
+            val merged = (hostTruekes + takerTruekes).distinctBy { it.id }
+
+            hydrateTruekes(merged)
+        } catch (e: Exception) {
+            Log.e("TruekeManager", "Error getTruekesWhereUserIsInvolved: ${e.message}", e)
+            emptyList()
+        }
+    }
+
+    suspend fun getTruekeById(truekeId: String): Trueke? {
+        return try {
+            val doc = db.collection("truekes").document(truekeId).get().await()
+            val trueke = doc.toObject(Trueke::class.java) ?: return null
+            hydrateTrueke(trueke)
+        } catch (e: Exception) {
+            Log.e("TruekeManager", "Error getTruekeById: ${e.message}")
+            null
+        }
+    }
+
     suspend fun createTrueke(
         title: String,
         description: String?,
@@ -57,38 +92,42 @@ class TruekeManager {
         }
     }
 
-    suspend fun getMyTruekes(): List<Trueke> {
+    suspend fun updateTrueke(
+        truekeId: String,
+        newTitle: String,
+        newDescription: String?,
+        newLat: Double,
+        newLng: Double,
+        newHostItemId: String
+    ): Result<Unit> {
         return try {
-            val uid = auth.currentUser?.uid ?: return emptyList()
+            val uid = auth.currentUser?.uid ?: return Result.failure(Exception("No autenticado"))
 
-            val hostSnap = db.collection("truekes")
-                .whereEqualTo("hostUserId", uid)
-                .get().await()
+            val ref = db.collection("truekes").document(truekeId)
+            val snap = ref.get().await()
 
-            val takerSnap = db.collection("truekes")
-                .whereEqualTo("takerUserId", uid)
-                .get().await()
+            val status = snap.getString("status")
+            val hostUserId = snap.getString("hostUserId") // o como lo guardes tú
 
-            val hostTruekes = hostSnap.toObjects(Trueke::class.java)
-            val takerTruekes = takerSnap.toObjects(Trueke::class.java)
+            if (hostUserId != uid) {
+                return Result.failure(Exception("No puedes editar un trueke que no es tuyo"))
+            }
+            if (status != TruekeStatus.OPEN.name) {
+                return Result.failure(Exception("Solo se puede editar si está OPEN"))
+            }
 
-            val merged = (hostTruekes + takerTruekes).distinctBy { it.id }
+            val updates = mapOf(
+                "title" to newTitle.trim(),
+                "description" to newDescription?.trim(),
+                "location.lat" to newLat,
+                "location.lng" to newLng,
+                "updatedAt" to System.currentTimeMillis()
+            )
 
-            hydrateTruekes(merged)
+            ref.update(updates).await()
+            Result.success(Unit)
         } catch (e: Exception) {
-            Log.e("TruekeManager", "Error getTruekesWhereUserIsInvolved: ${e.message}", e)
-            emptyList()
-        }
-    }
-
-    suspend fun getTruekeById(truekeId: String): Trueke? {
-        return try {
-            val doc = db.collection("truekes").document(truekeId).get().await()
-            val trueke = doc.toObject(Trueke::class.java) ?: return null
-            hydrateTrueke(trueke)
-        } catch (e: Exception) {
-            Log.e("TruekeManager", "Error getTruekeById: ${e.message}")
-            null
+            Result.failure(e)
         }
     }
 

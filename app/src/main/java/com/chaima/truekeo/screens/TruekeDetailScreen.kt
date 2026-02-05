@@ -215,28 +215,30 @@ fun ReservedTruekeLayout(
 
         Spacer(Modifier.height(2.dp))
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(6.dp)
-        ) {
-            Text(
-                text = "Truekeado con",
-                style = MaterialTheme.typography.bodyMedium,
-                fontFamily = FontFamily(Font(R.font.saira_regular))
-            )
-
+        trueke.takerUser?.let { takerUser ->
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(3.dp)
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
-                UserAvatarImage(trueke.takerUser!!, size = 24.dp)
-
                 Text(
-                    text = "@${trueke.takerUser.username}",
+                    text = "Truekeado con",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Black,
-                    fontFamily = FontFamily(Font(R.font.saira_medium))
+                    fontFamily = FontFamily(Font(R.font.saira_regular))
                 )
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(3.dp)
+                ) {
+                    UserAvatarImage(takerUser, size = 24.dp)
+
+                    Text(
+                        text = "@${takerUser.username}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.Black,
+                        fontFamily = FontFamily(Font(R.font.saira_medium))
+                    )
+                }
             }
         }
 
@@ -351,28 +353,30 @@ fun CompletedTruekeLayout(
 
             Spacer(Modifier.height(2.dp))
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
-            ) {
-                Text(
-                    text = "Truekeado con",
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontFamily = FontFamily(Font(R.font.saira_regular))
-                )
-
+            trueke.takerUser?.let { takerUser ->
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(3.dp)
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
-                    UserAvatarImage(trueke.takerUser!!, size = 24.dp)
-
                     Text(
-                        text = "@${trueke.takerUser.username}",
+                        text = "Truekeado con",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = Color.Black,
-                        fontFamily = FontFamily(Font(R.font.saira_medium))
+                        fontFamily = FontFamily(Font(R.font.saira_regular))
                     )
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(3.dp)
+                    ) {
+                        UserAvatarImage(takerUser, size = 24.dp)
+
+                        Text(
+                            text = "@${takerUser.username}",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Color.Black,
+                            fontFamily = FontFamily(Font(R.font.saira_medium))
+                        )
+                    }
                 }
             }
 

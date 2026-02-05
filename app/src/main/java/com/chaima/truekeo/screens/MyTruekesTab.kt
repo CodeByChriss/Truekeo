@@ -1,6 +1,5 @@
 package com.chaima.truekeo.screens
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -69,6 +68,10 @@ fun MyTruekesTab(navController: NavController) {
         isLoading = true
         truekes = truekeManager.getMyTruekes()
             .filter { it.status != TruekeStatus.CANCELLED }
+            .sortedByDescending { t ->
+                val u = t.updatedAt
+                if (u > 0L) u else t.createdAt
+            }
         isLoading = false
     }
 

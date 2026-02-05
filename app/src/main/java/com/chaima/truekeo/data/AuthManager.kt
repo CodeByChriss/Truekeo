@@ -239,5 +239,9 @@ class AuthManager {
     fun logout(){
         auth.signOut()
         userProfile = null
+        // Limpiar preferencias de ubicación
+        /*val locationPrefs = LocationPreferences(context)
+        locationPrefs.clearManualLocation()
+        locationPrefs.clearAll()*/
     }
 }
