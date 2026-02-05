@@ -32,7 +32,6 @@ enum class ProductStatus {
 
 data class MyProduct(
     val name: String,
-    val subtitle: String,
     val description: String,
     val imageRes: Int,
     val status: ProductStatus
@@ -45,22 +44,19 @@ fun MyProductsScreen(navController: NavController) {
     val products = remember {
         listOf(
             MyProduct(
-                name = "Guitarra Clásica",
-                subtitle = "Guitarra Gibson 233E",
+                name = "Guitarra Gibson 233E",
                 description = "Guitarra Gibson 233E en excelente estado",
                 imageRes = R.drawable.guitarra,
                 status = ProductStatus.AVAILABLE
             ),
             MyProduct(
-                name = "iPhone 12",
-                subtitle = "128GB Negro",
+                name = "iPhone12 256GB Negro",
                 description = "Sin golpes, batería al 90%",
                 imageRes = R.drawable.phone,
                 status = ProductStatus.RESERVED
             ),
             MyProduct(
-                name = "Bicicleta MTB",
-                subtitle = "Rockrider 520",
+                name = "Bicicleta MTB Rockrider 520",
                 description = "Usada pero bien cuidada",
                 imageRes = R.drawable.bici,
                 status = ProductStatus.EXCHANGED
@@ -134,7 +130,7 @@ fun MyProductItem(
                 shape = RoundedCornerShape(12.dp)
             )
             .background(Color(0xFFF7F7F7))
-            .clickable { onClick() }   // 👈 AQUÍ
+            .clickable { onClick() }
             .padding(8.dp)
     ) {
 
@@ -149,8 +145,6 @@ fun MyProductItem(
                 .padding(start = 4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-
-            // IMAGEN
             Image(
                 painter = painterResource(id = product.imageRes),
                 contentDescription = product.name,
@@ -162,16 +156,12 @@ fun MyProductItem(
             Spacer(modifier = Modifier.width(12.dp))
 
             Column {
+                Spacer(modifier = Modifier.height(14.dp))
+
                 Text(
                     text = product.name,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
-                )
-
-                Text(
-                    text = product.subtitle,
-                    fontSize = 14.sp,
-                    color = Color.Gray
                 )
 
                 Text(
@@ -204,7 +194,7 @@ fun ProductStatusBadge(
     ) {
         Text(
             text = text,
-            fontSize = 12.sp,
+            fontSize = 10.sp,
             color = Color.White
         )
     }
