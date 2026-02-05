@@ -87,6 +87,11 @@
     <string name="my_truekes">Mis truekes</string>
     <!-- pestaña de mensajes -->
     <string name="my_messages">Mis mensajes</string>
+    <string name="delete_conversation">Eliminar conversación</string>
+    <string name="remove_conversation">¡Eliminar conversación!</string>
+    <string name="remove_conversation_text">¿Estás seguro de que quieres eliminar esta conversación? Esta acción no se puede deshacer.</string>
+    <string name="yes_delete">Sí, eleminar</string>
+    <string name="no">No</string>
     <!-- estados del trueke -->
     <string name="trueke_state_open">Pendiente</string>
     <string name="trueke_state_reserved">Reservado</string>

@@ -45,11 +45,13 @@ fun MainScaffold(rootNavController: NavController) {
 
     Scaffold(
         bottomBar = {
-            BottomNavBar(
-                navController = navController,
-                onFabToggle = { fabExpanded = !fabExpanded },
-                onFabClose = { fabExpanded = false }
-            )
+            if (currentRoute != null && currentRoute != "${NavBarRoutes.Message.route}/{conversationId}") {
+                BottomNavBar(
+                    navController = navController,
+                    onFabToggle = { fabExpanded = !fabExpanded },
+                    onFabClose = { fabExpanded = false }
+                )
+            }
         }
     ) { padding ->
         NavHost(
@@ -57,9 +59,11 @@ fun MainScaffold(rootNavController: NavController) {
             startDestination = NavBarRoutes.Home.route,
             modifier = Modifier.padding(padding)
         ) {
-            composable(NavBarRoutes.Home.route) { HomeTab({conversationId ->
-                navController.navigate("${NavBarRoutes.Message.route}/$conversationId")
-            }) }
+            composable(NavBarRoutes.Home.route) {
+                HomeTab({ conversationId ->
+                    navController.navigate("${NavBarRoutes.Message.route}/$conversationId")
+                })
+            }
             composable(NavBarRoutes.MyTruekes.route) {
                 MyTruekesTab(navController = navController)
             }
@@ -110,7 +114,7 @@ fun MainScaffold(rootNavController: NavController) {
                     onBack = { navController.popBackStack() }
                 )
             }
-            
+
             composable(NavBarRoutes.Profile.route) {
                 ProfileTab(
                     onMyTruekesClick = {
