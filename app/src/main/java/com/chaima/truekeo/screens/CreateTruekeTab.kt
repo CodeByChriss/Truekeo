@@ -184,7 +184,7 @@ fun CreateTruekeTab(
                             value = locationText,
                             onValueChange = { locationText = it },
                             onLocationSelected = { locationData ->
-                                locationText = locationData.name
+                                locationText = locationData.address
                                 locationCoordinates = locationData.coordinates
                             },
                             modifier = Modifier.fillMaxWidth(),

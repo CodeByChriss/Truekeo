@@ -20,6 +20,7 @@ import com.chaima.truekeo.models.Trueke
 import com.chaima.truekeo.components.TruekeSheetContent
 import com.chaima.truekeo.data.LocationManager
 import com.chaima.truekeo.data.LocationPreferences
+import com.chaima.truekeo.data.TruekeContainer
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraBoundsOptions
 import com.mapbox.maps.CameraOptions
@@ -41,6 +42,10 @@ fun HomeTab(openConversation: (String) -> Unit) {
     // Managers y preferencias
     val locationManager = remember { LocationManager(context) }
     val locationPreferences = remember { LocationPreferences(context) }
+    val truekeManager = remember { TruekeContainer.truekeManager }
+
+    var truekes by remember { mutableStateOf<List<Trueke>>(emptyList()) }
+    var loadingTruekes by remember { mutableStateOf(false) }
 
     // Estado del mapa
     val mapViewportState = rememberMapViewportState {
@@ -133,6 +138,12 @@ fun HomeTab(openConversation: (String) -> Unit) {
         }
     }
 
+    LaunchedEffect(Unit) {
+        loadingTruekes = true
+        truekes = truekeManager.getOpenTruekesFromOthers()
+        loadingTruekes = false
+    }
+
     // Función para centrar el marcador teniendo en cuenta el sheet
     fun centerMarker(trueke: Trueke) {
         val loc = trueke.location
@@ -182,8 +193,7 @@ fun HomeTab(openConversation: (String) -> Unit) {
             )
         }
 
-        /*truekes
-            .filter { it.location != null }
+        truekes
             .forEach { trueke ->
                 val loc = trueke.location
 
@@ -198,7 +208,7 @@ fun HomeTab(openConversation: (String) -> Unit) {
                         true
                     }
                 )
-            }*/
+            }
     }
 
     // Diálogo de ubicación manual (solo cuando se rechaza el permiso)

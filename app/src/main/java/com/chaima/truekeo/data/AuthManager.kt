@@ -1,5 +1,6 @@
 package com.chaima.truekeo.data
 
+import android.content.Context
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
@@ -236,12 +237,10 @@ class AuthManager {
         }
     }
 
-    fun logout(){
+    fun logout(context: Context){
         auth.signOut()
         userProfile = null
         // Limpiar preferencias de ubicación
-        /*val locationPrefs = LocationPreferences(context)
-        locationPrefs.clearManualLocation()
-        locationPrefs.clearAll()*/
+        LocationPreferences(context).clearAllBlocking()
     }
 }

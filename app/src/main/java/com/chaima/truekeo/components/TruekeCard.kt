@@ -52,9 +52,12 @@ import com.chaima.truekeo.utils.prefixedTimeAgo
 @Composable
 fun TruekeCard(
     trueke: Trueke,
+    currentUserId: String?,
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
+    val isHost = currentUserId != null && trueke.hostUserId == currentUserId
+
     // area interactiva completa sin márgenes
     Box(
         modifier = modifier
@@ -81,13 +84,15 @@ fun TruekeCard(
 
                     TruekeStatus.RESERVED -> {
                         ReservedTruekeLayout(
-                            trueke = trueke
+                            trueke = trueke,
+                            isHost = isHost
                         )
                     }
 
                     TruekeStatus.COMPLETED -> {
                         CompletedTruekeLayout(
-                            trueke = trueke
+                            trueke = trueke,
+                            isHost = isHost
                         )
                     }
 
@@ -203,8 +208,17 @@ private fun OpenTruekeLayout(
 
 @Composable
 private fun ReservedTruekeLayout(
-    trueke: Trueke
+    trueke: Trueke,
+    isHost: Boolean
 ) {
+    val otherUser = if (isHost) trueke.takerUser else trueke.hostUser
+
+    val takerItem = trueke.takerItem
+    if (takerItem == null) return
+
+    val leftItem = if (isHost) trueke.hostItem else takerItem
+    val rightItem = if (isHost) takerItem else trueke.hostItem
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -223,7 +237,7 @@ private fun ReservedTruekeLayout(
             Spacer(Modifier.width(3.dp))
 
             Text(
-                text = "@${trueke.takerUser?.username}",
+                text = "@${otherUser?.username ?: "?"}",
                 fontSize = 16.sp,
                 color = Color.Black,
                 fontFamily = FontFamily(Font(R.font.saira_medium))
@@ -233,12 +247,11 @@ private fun ReservedTruekeLayout(
         Spacer(Modifier.height(10.dp))
 
         ExchangeLayout(
-            leftItem = trueke.hostItem,
-            rightItem = trueke.takerItem!!,
+            leftItem = leftItem,
+            rightItem = rightItem,
         )
     }
 }
-
 
 // Intercambio entre dos usuarios
 @Composable
@@ -334,8 +347,17 @@ private fun ExchangeItemBlock(
 
 @Composable
 private fun CompletedTruekeLayout(
-    trueke: Trueke
+    trueke: Trueke,
+    isHost: Boolean
 ) {
+    val otherUser = if (isHost) trueke.takerUser else trueke.hostUser
+
+    val takerItem = trueke.takerItem
+    if (takerItem == null) return
+
+    val topItem = if (isHost) trueke.hostItem else takerItem
+    val bottomItem = if (isHost) takerItem else trueke.hostItem
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -360,8 +382,8 @@ private fun CompletedTruekeLayout(
                         .background(Color(0xFFF2F2F2))
                 ) {
                     AsyncImage(
-                        model = trueke.takerItem?.imageUrls?.first(),
-                        contentDescription = "@${trueke.takerUser?.username}",
+                        model = topItem.imageUrls.first(),
+                        contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxSize()
                     )
@@ -376,8 +398,8 @@ private fun CompletedTruekeLayout(
                         .background(Color(0xFFF2F2F2))
                 ) {
                     AsyncImage(
-                        model = trueke.hostItem.imageUrls.first(),
-                        contentDescription = "@${trueke.hostUser.username}",
+                        model = bottomItem.imageUrls.first(),
+                        contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxSize()
                     )
@@ -454,7 +476,7 @@ private fun CompletedTruekeLayout(
                     Spacer(Modifier.width(3.dp))
 
                     Text(
-                        text = "@${trueke.takerUser?.username}",
+                        text = "@${otherUser?.username ?: "?"}",
                         fontSize = 14.sp,
                         color = Color.Black,
                         fontFamily = FontFamily(Font(R.font.saira_medium))
