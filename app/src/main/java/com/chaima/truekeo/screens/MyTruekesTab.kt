@@ -53,13 +53,14 @@ fun MyTruekesTab(navController: NavController) {
     val authManager = remember { AuthContainer.authManager }
     val truekeManager = remember { TruekeContainer.truekeManager }
 
+    val currentUserId = authManager.userProfile?.id
+
     var truekes by remember { mutableStateOf(emptyList<Trueke>()) }
     var isLoading by remember { mutableStateOf(true) }
 
     // Cargar truekes al entrar (y cuando cambie el usuario)
     LaunchedEffect(authManager.userProfile?.id) {
-        val uid = authManager.userProfile?.id
-        if (uid == null) {
+        if (currentUserId == null) {
             truekes = emptyList()
             isLoading = false
             return@LaunchedEffect
@@ -185,6 +186,7 @@ fun MyTruekesTab(navController: NavController) {
                                     itemsIndexed(filtered) { index, trueke ->
                                         TruekeCard(
                                             trueke = trueke,
+                                            currentUserId = currentUserId,
                                             onClick = {
                                                 navController.navigate(
                                                     NavBarRoutes.TruekeDetails.create(trueke.id)

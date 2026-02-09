@@ -14,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavType
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
@@ -36,6 +37,7 @@ import com.chaima.truekeo.screens.TruekeDetailsScreen
 @Composable
 fun MainScaffold(rootNavController: NavController) {
     val authManager = AuthContainer.authManager
+    val context = LocalContext.current
 
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
@@ -154,9 +156,14 @@ fun MainScaffold(rootNavController: NavController) {
                         }
                     },
                     onLogoutClick = {
-                        authManager.logout()
+                        authManager.logout(context)
+
+                        // limpia el backstack del nav interno
+                        navController.popBackStack(navController.graph.startDestinationId, inclusive = false)
+
                         rootNavController.navigate(Routes.AuthGraph.route) {
                             popUpTo(Routes.Main.route) { inclusive = true }
+                            launchSingleTop = true
                         }
                     }
                 )

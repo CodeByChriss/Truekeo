@@ -59,6 +59,62 @@ class TruekeManager {
         }
     }
 
+    suspend fun getOpenTruekesFromOthers(): List<Trueke> {
+        return try {
+            val uid = auth.currentUser?.uid ?: return emptyList()
+
+            val snap = db.collection("truekes")
+                .whereEqualTo("status", TruekeStatus.OPEN.name)
+                .get()
+                .await()
+
+            val truekes = snap.toObjects(Trueke::class.java)
+                .filter { it.hostUserId != uid }
+
+            hydrateTruekes(truekes)
+        } catch (e: Exception) {
+            Log.e("TruekeManager", "Error getOpenTruekesFromOthers: ${e.message}", e)
+            emptyList()
+        }
+    }
+
+    /*suspend fun getNearbyOpenTruekesFromOthers(
+        userLat: Double,
+        userLng: Double,
+        radiusKm: Double = 10.0,
+        maxCandidates: Long = 300,   // cuántos trae de Firestore antes de filtrar
+    ): List<Trueke> {
+        return try {
+            val uid = auth.currentUser?.uid ?: return emptyList()
+
+            // 1) Traemos candidatos OPEN (limit para no traer infinito)
+            val snap = db.collection("truekes")
+                .whereEqualTo("status", TruekeStatus.OPEN.name)
+                .whereNotEqualTo("hostUserId", uid)
+                .orderBy("hostUserId")   // OBLIGATORIO
+                .limit(maxCandidates)       // <-- aplica tu límite
+                .get()
+                .await()
+
+            val candidates = snap.toObjects(Trueke::class.java)
+
+            // Calcula distancia 1 vez
+            val filteredAndSorted = candidates
+                .map { trueke ->
+                    val d = haversineKm(userLat, userLng, trueke.location.lat, trueke.location.lng)
+                    trueke to d
+                }
+                .filter { (_, d) -> d <= radiusKm }
+                .sortedBy { (_, d) -> d }
+                .map { (trueke, _) -> trueke }
+
+            hydrateTruekes(filteredAndSorted)
+        } catch (e: Exception) {
+            Log.e("TruekeManager", "Error getNearbyOpenTruekesFromOthers: ${e.message}", e)
+            emptyList()
+        }
+    }*/
+
     suspend fun createTrueke(
         title: String,
         description: String?,
@@ -259,5 +315,21 @@ class TruekeManager {
             ownerId = doc.getString("ownerId") ?: "",
             status = status
         )
+    }
+
+    // Distancia en km entre 2 puntos
+    private fun haversineKm(
+        lat1: Double, lon1: Double,
+        lat2: Double, lon2: Double
+    ): Double {
+        val R = 6371.0
+        val dLat = Math.toRadians(lat2 - lat1)
+        val dLon = Math.toRadians(lon2 - lon1)
+        val a =
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                    Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+                    Math.sin(dLon / 2) * Math.sin(dLon / 2)
+        val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+        return R * c
     }
 }
