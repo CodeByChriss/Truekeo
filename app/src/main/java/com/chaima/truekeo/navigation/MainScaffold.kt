@@ -31,6 +31,7 @@ import com.chaima.truekeo.screens.MessagesTab
 import com.chaima.truekeo.screens.MyProductsScreen
 import com.chaima.truekeo.screens.ProfileTab
 import com.chaima.truekeo.screens.MyTruekesTab
+import com.chaima.truekeo.screens.ProductDetailsScreen
 import com.chaima.truekeo.screens.TruekeDetailsScreen
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -168,10 +169,40 @@ fun MainScaffold(rootNavController: NavController) {
                     }
                 )
             }
-            composable(NavBarRoutes.MyProducts.route) { MyProductsScreen() }
+            composable(NavBarRoutes.MyProducts.route) {
+                MyProductsScreen(navController)
+            }
+
+
+            composable(
+                route = "product_details/{productName}",
+                arguments = listOf(
+                    navArgument("productName") { type = NavType.StringType }
+                )
+            ) { backStackEntry ->
+
+                val productName =
+                    backStackEntry.arguments?.getString("productName") ?: ""
+
+                ProductDetailsScreen(
+                    productName = productName,
+                    onBack = { navController.popBackStack() }
+                )
+            }
+
+
 
             composable(NavBarRoutes.EditProfile.route) {
                 EditProfileScreen(
+                    onCloseClick = {
+                        navController.navigate(NavBarRoutes.Profile.route) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
                     onSaveChangesClick = {
                         navController.navigate(NavBarRoutes.Profile.route) {
                             popUpTo(navController.graph.startDestinationId) {
@@ -183,6 +214,7 @@ fun MainScaffold(rootNavController: NavController) {
                     }
                 )
             }
+
         }
 
         FabOverlayActions(

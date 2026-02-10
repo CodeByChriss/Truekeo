@@ -10,9 +10,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,26 +26,30 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat.getString
 import coil3.compose.AsyncImage
 import com.chaima.truekeo.R
 import com.chaima.truekeo.data.AuthContainer
 import com.chaima.truekeo.data.ImageStorageManager
+import com.chaima.truekeo.models.User
 import kotlinx.coroutines.launch
 
 @Composable
-fun EditProfileScreen(onSaveChangesClick: () -> Unit) {
+fun EditProfileScreen(
+    onCloseClick: () -> Unit,
+    onSaveChangesClick: () -> Unit
+) {
     val authManager = AuthContainer.authManager
     val user = authManager.userProfile
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
-    // Para evitar realizar más de una vez la misma llamada
     var isLoading by remember { mutableStateOf(false) }
+    var showDialog by remember { mutableStateOf(false) }
 
-    var name by remember { mutableStateOf(user?.firstAndLastName.toString()) }
-    var username by remember { mutableStateOf(user?.username.toString()) }
+    var name by remember { mutableStateOf(user?.firstAndLastName ?: "") }
+    var username by remember { mutableStateOf(user?.username ?: "") }
     var itemImageUri by remember { mutableStateOf<Uri?>(null) }
+
     val pickItemImageLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri ->
@@ -59,14 +64,27 @@ fun EditProfileScreen(onSaveChangesClick: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         item {
-            Text(
-                text = stringResource(R.string.edit_profile),
-                fontSize = 32.sp,
-                fontFamily = FontFamily(Font(R.font.saira_medium)),
-                color = MaterialTheme.colorScheme.primary,
+            Row(
                 modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Start
-            )
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.edit_profile),
+                    fontSize = 32.sp,
+                    fontFamily = FontFamily(Font(R.font.saira_medium)),
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.weight(1f),
+                    textAlign = TextAlign.Start
+                )
+
+                Icon(
+                    imageVector = Icons.Filled.Close,
+                    contentDescription = "Close",
+                    modifier = Modifier
+                        .size(28.dp)
+                        .clickable { showDialog = true }
+                )
+            }
 
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -77,9 +95,7 @@ fun EditProfileScreen(onSaveChangesClick: () -> Unit) {
                 modifier = Modifier
                     .size(140.dp)
                     .clip(CircleShape)
-                    .clickable {
-                        pickItemImageLauncher.launch("image/*")
-                    }
+                    .clickable { pickItemImageLauncher.launch("image/*") }
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -88,10 +104,9 @@ fun EditProfileScreen(onSaveChangesClick: () -> Unit) {
                 text = stringResource(R.string.change_picture),
                 fontSize = 16.sp,
                 color = Color(0xFF5EC1A9),
-                modifier = Modifier.clickable {
-                    pickItemImageLauncher.launch("image/*")
-                }
+                modifier = Modifier.clickable { pickItemImageLauncher.launch("image/*") }
             )
+
             Spacer(modifier = Modifier.height(16.dp))
 
             OutlinedTextField(
@@ -118,61 +133,21 @@ fun EditProfileScreen(onSaveChangesClick: () -> Unit) {
 
             Button(
                 onClick = {
-                    if (!isLoading) { // Comprobamos si ya hay una llamada en proceso para no hacer de más
+                    if (!isLoading) {
                         isLoading = true
-                        // primeros comprobamos si hay cambios para evitar llamadas a la base de datos innecesarias
-                        var changed = false
-                        if (username != user?.username.toString()) changed = true
-                        else if (name != user?.firstAndLastName.toString()) changed = true
-                        else if (itemImageUri != null) changed = true
-                        if (changed) {
-                            scope.launch {
-                                // Si lo que ha cambiado es la imagen,la comprimimos y
-                                // la subimos a Supabase para unicamente guardar la URL en Firebase
-                                var finalImageUrl = user?.avatarUrl.toString()
-                                if (itemImageUri != null) {
-                                    val storageManager = ImageStorageManager(context)
-                                    finalImageUrl = storageManager.uploadProfilePhoto(
-                                        user?.id.toString(),
-                                        itemImageUri!!
-                                    )
-                                }
-
-                                val result = authManager.updateUserProfile(
-                                    uid = user?.id.toString(),
-                                    newUsername = username,
-                                    newFullName = name,
-                                    newAvatarUrl = finalImageUrl
-                                )
-
-                                result.onSuccess { available ->
-                                    if (available) {
-                                        Toast.makeText(
-                                            context,
-                                            getString(context, R.string.profile_updated),
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    } else {
-                                        Toast.makeText(
-                                            context,
-                                            getString(context, R.string.username_already_exits),
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    }
-                                }.onFailure {
-                                    Toast.makeText(
-                                        context,
-                                        getString(context, R.string.error_unknown),
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                                onSaveChangesClick()
+                        saveProfile(
+                            user = user,
+                            name = name,
+                            username = username,
+                            itemImageUri = itemImageUri,
+                            context = context,
+                            scope = scope,
+                            authManager = authManager,
+                            onComplete = {
                                 isLoading = false
+                                onSaveChangesClick()
                             }
-                        } else {
-                            onSaveChangesClick()
-                            isLoading = false
-                        }
+                        )
                     }
                 },
                 modifier = Modifier
@@ -184,7 +159,10 @@ fun EditProfileScreen(onSaveChangesClick: () -> Unit) {
                 )
             ) {
                 if (isLoading) {
-                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
                         CircularProgressIndicator(color = Color.White)
                     }
                 } else {
@@ -197,5 +175,96 @@ fun EditProfileScreen(onSaveChangesClick: () -> Unit) {
             }
         }
     }
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text(text = stringResource(R.string.unsaved_changes)) },
+            text = { Text(text = stringResource(R.string.save_changes_question)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    showDialog = false
+                    if (!isLoading) {
+                        isLoading = true
+                        saveProfile(
+                            user = user,
+                            name = name,
+                            username = username,
+                            itemImageUri = itemImageUri,
+                            context = context,
+                            scope = scope,
+                            authManager = authManager,
+                            onComplete = {
+                                isLoading = false
+                                onCloseClick()
+                            }
+                        )
+                    }
+                }) {
+                    Text(stringResource(R.string.save))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    showDialog = false
+                    onCloseClick()
+                }) {
+                    Text(stringResource(R.string.discard))
+                }
+            }
+        )
+    }
 }
 
+private fun saveProfile(
+    user: User?,
+    name: String,
+    username: String,
+    itemImageUri: Uri?,
+    context: android.content.Context,
+    scope: kotlinx.coroutines.CoroutineScope,
+    authManager: com.chaima.truekeo.data.AuthManager,
+    onComplete: () -> Unit
+) {
+    scope.launch {
+        var finalImageUrl = user?.avatarUrl ?: ""
+
+        if (itemImageUri != null) {
+            val storageManager = ImageStorageManager(context)
+            finalImageUrl = storageManager.uploadProfilePhoto(
+                user?.id ?: "",
+                itemImageUri
+            )
+        }
+
+        val result = authManager.updateUserProfile(
+            uid = user?.id ?: "",
+            newUsername = username,
+            newFullName = name,
+            newAvatarUrl = finalImageUrl
+        )
+
+        result.onSuccess { available ->
+            if (available) {
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.profile_updated),
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.username_already_exits),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }.onFailure {
+            Toast.makeText(
+                context,
+                context.getString(R.string.error_unknown),
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+        onComplete()
+    }
+}

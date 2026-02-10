@@ -3,6 +3,7 @@ package com.chaima.truekeo.screens
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -21,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.chaima.truekeo.R
 enum class ProductStatus {
     AVAILABLE,
@@ -30,35 +32,31 @@ enum class ProductStatus {
 
 data class MyProduct(
     val name: String,
-    val subtitle: String,
     val description: String,
     val imageRes: Int,
     val status: ProductStatus
 )
 @Composable
-fun MyProductsScreen() {
+fun MyProductsScreen(navController: NavController) {
 
     var searchQuery by remember { mutableStateOf("") }
 
     val products = remember {
         listOf(
             MyProduct(
-                name = "Guitarra Clásica",
-                subtitle = "Guitarra Gibson 233E",
+                name = "Guitarra Gibson 233E",
                 description = "Guitarra Gibson 233E en excelente estado",
                 imageRes = R.drawable.guitarra,
                 status = ProductStatus.AVAILABLE
             ),
             MyProduct(
-                name = "iPhone 12",
-                subtitle = "128GB Negro",
+                name = "iPhone12 256GB Negro",
                 description = "Sin golpes, batería al 90%",
                 imageRes = R.drawable.phone,
                 status = ProductStatus.RESERVED
             ),
             MyProduct(
-                name = "Bicicleta MTB",
-                subtitle = "Rockrider 520",
+                name = "Bicicleta MTB Rockrider 520",
                 description = "Usada pero bien cuidada",
                 imageRes = R.drawable.bici,
                 status = ProductStatus.EXCHANGED
@@ -103,15 +101,24 @@ fun MyProductsScreen() {
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             items(filteredProducts) { product ->
-                MyProductItem(product)
+                MyProductItem(
+                    product = product,
+                    onClick = {
+                        navController.navigate(
+                            "product_details/${product.name}"
+                        )
+                    }
+                )
             }
         }
     }
 }
 
 @Composable
-fun MyProductItem(product: MyProduct) {
-
+fun MyProductItem(
+    product: MyProduct,
+    onClick: () -> Unit
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -123,8 +130,8 @@ fun MyProductItem(product: MyProduct) {
                 shape = RoundedCornerShape(12.dp)
             )
             .background(Color(0xFFF7F7F7))
+            .clickable { onClick() }
             .padding(8.dp)
-
     ) {
 
         ProductStatusBadge(
@@ -138,8 +145,6 @@ fun MyProductItem(product: MyProduct) {
                 .padding(start = 4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-
-            // IMAGEN
             Image(
                 painter = painterResource(id = product.imageRes),
                 contentDescription = product.name,
@@ -151,16 +156,12 @@ fun MyProductItem(product: MyProduct) {
             Spacer(modifier = Modifier.width(12.dp))
 
             Column {
+                Spacer(modifier = Modifier.height(14.dp))
+
                 Text(
                     text = product.name,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
-                )
-
-                Text(
-                    text = product.subtitle,
-                    fontSize = 14.sp,
-                    color = Color.Gray
                 )
 
                 Text(
@@ -193,9 +194,8 @@ fun ProductStatusBadge(
     ) {
         Text(
             text = text,
-            fontSize = 12.sp,
+            fontSize = 10.sp,
             color = Color.White
         )
     }
 }
-
