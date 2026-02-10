@@ -42,6 +42,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.chaima.truekeo.R
+import com.chaima.truekeo.components.BrandField
 import com.chaima.truekeo.components.ImageSelectorGrid
 import com.chaima.truekeo.data.AuthContainer
 import com.chaima.truekeo.data.ImageStorageManager
@@ -55,13 +56,10 @@ import java.util.Locale
 @Composable
 fun CreateProductTab() {
     val focusManager = LocalFocusManager.current
-    val scrollState = rememberScrollState()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
     val itemManager = remember { ItemContainer.itemManager }
-    val imageStorage = remember { ImageStorageManager(context) }
-    val authManager = remember { AuthContainer.authManager }
 
     var name by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
@@ -118,7 +116,7 @@ fun CreateProductTab() {
                 name = name,
                 details = description.ifBlank { null },
                 imageUris = imageUris,
-                brand = null,
+                brand = brand.ifBlank { null },
                 condition = condition,
                 context = context
             )
@@ -150,7 +148,6 @@ fun CreateProductTab() {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .verticalScroll(scrollState)
                     .imePadding(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -223,12 +220,10 @@ fun CreateProductTab() {
 
                         Spacer(Modifier.height(7.dp))
 
-                        OutlinedTextField(
+                        BrandField(
                             value = brand,
                             onValueChange = { brand = it },
-                            label = { Text(stringResource(R.string.product_brand)) },
-                            singleLine = true,
-                            shape = RoundedCornerShape(8.dp),
+                            label = stringResource(R.string.product_brand),
                             modifier = Modifier.fillMaxWidth()
                         )
                     }
@@ -285,7 +280,9 @@ private fun ItemConditionDropdown(
         )
         ExposedDropdownMenu(
             expanded = expanded,
-            onDismissRequest = { expanded = false }
+            onDismissRequest = { expanded = false },
+            containerColor = Color.White,
+            tonalElevation = 0.dp
         ) {
             ItemCondition.entries.forEach { condition ->
                 DropdownMenuItem(
