@@ -16,7 +16,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
@@ -68,6 +70,7 @@ fun ItemSelectorCard(
                     AsyncImage(
                         model = image,
                         contentDescription = null,
+                        contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxSize()
                     )
                 }
@@ -144,7 +147,7 @@ private fun ProductSelectionDialog(
                 ) {
                     Text(
                         modifier = Modifier.padding(start = 8.dp),
-                        text = "Selecciona un producto",
+                        text = stringResource(R.string.select_a_product),
                         style = MaterialTheme.typography.titleLarge,
                         fontFamily = FontFamily(Font(R.font.saira_medium))
                     )
@@ -223,6 +226,7 @@ private fun ProductItemRow(
                 AsyncImage(
                     model = image,
                     contentDescription = null,
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
                 )
             }

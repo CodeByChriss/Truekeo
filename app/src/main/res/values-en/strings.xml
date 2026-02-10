@@ -45,10 +45,11 @@
     <string name="details">Details</string>
     <string name="location">Location</string>
     <string name="product_to_trueke">Product to trueke</string>
-    <string name="product_name">Product name</string>
-    <string name="product_description">Product description</string>
-    <string name="product_state">Product condition</string>
+    <string name="product_name">Name</string>
+    <string name="product_description">Description</string>
+    <string name="product_state">Condition</string>
 
+    <string name="product_brand">Brand</string>
     <string name="product_state_new">New</string>
     <string name="product_state_like_new">Like new</string>
     <string name="product_state_good">Good</string>
@@ -78,6 +79,11 @@
     <string name="my_truekes">My truekes</string>
 
     <string name="my_messages">My messages</string>
+    <string name="delete_conversation">Delete conversation</string>
+    <string name="remove_conversation">Delete conversation!</string>
+    <string name="remove_conversation_text">Are you sure you want to delete this conversation? This action cannot be undone.</string>
+    <string name="yes_delete">Yes, delete</string>
+    <string name="no">No</string>
     <string name="trueke_state_open">Pending</string>
     <string name="trueke_state_reserved">Reserved</string>
     <string name="trueke_state_completed">Completed</string>
@@ -105,4 +111,8 @@
     <string name="no_conversation">You have no conversations</string>
     <string name="write">Send a message</string>
     <string name="unsaved_changes">Unsaved changes</string>
+    <string name="product_availability_available">Available</string>
+    <string name="product_availability_reserved">Reserved</string>
+    <string name="product_availability_exchanged">Exchanged</string>
+    <string name="select_a_product">Select a product</string>
 </resources>

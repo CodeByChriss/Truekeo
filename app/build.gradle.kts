@@ -15,7 +15,7 @@ android {
         minSdk = 24
         targetSdk = 36
         versionCode = 1
-        versionName = "1.0"
+        versionName = "0.5"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -81,6 +81,8 @@ dependencies {
     // Credenciales
     implementation("androidx.credentials:credentials:1.3.0")
     implementation("androidx.credentials:credentials-play-services-auth:1.3.0")
+
+    implementation("com.google.android.gms:play-services-location:21.1.0")
 
     // +Iconos de material
     implementation("androidx.compose.material:material-icons-extended")

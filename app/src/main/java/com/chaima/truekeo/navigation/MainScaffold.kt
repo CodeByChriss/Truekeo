@@ -14,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavType
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
@@ -25,6 +26,7 @@ import androidx.navigation.NavController
 import com.chaima.truekeo.data.AuthContainer
 import com.chaima.truekeo.screens.MessageScreen
 import com.chaima.truekeo.screens.EditProfileScreen
+import com.chaima.truekeo.screens.EditTruekeScreen
 import com.chaima.truekeo.screens.MessagesTab
 import com.chaima.truekeo.screens.MyProductsScreen
 import com.chaima.truekeo.screens.ProfileTab
@@ -36,6 +38,7 @@ import com.chaima.truekeo.screens.TruekeDetailsScreen
 @Composable
 fun MainScaffold(rootNavController: NavController) {
     val authManager = AuthContainer.authManager
+    val context = LocalContext.current
 
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
@@ -45,11 +48,13 @@ fun MainScaffold(rootNavController: NavController) {
 
     Scaffold(
         bottomBar = {
-            BottomNavBar(
-                navController = navController,
-                onFabToggle = { fabExpanded = !fabExpanded },
-                onFabClose = { fabExpanded = false }
-            )
+            if (currentRoute != null && currentRoute != "${NavBarRoutes.Message.route}/{conversationId}") {
+                BottomNavBar(
+                    navController = navController,
+                    onFabToggle = { fabExpanded = !fabExpanded },
+                    onFabClose = { fabExpanded = false }
+                )
+            }
         }
     ) { padding ->
         NavHost(
@@ -57,14 +62,18 @@ fun MainScaffold(rootNavController: NavController) {
             startDestination = NavBarRoutes.Home.route,
             modifier = Modifier.padding(padding)
         ) {
-            composable(NavBarRoutes.Home.route) { HomeTab({conversationId ->
-                navController.navigate("${NavBarRoutes.Message.route}/$conversationId")
-            }) }
+            composable(NavBarRoutes.Home.route) {
+                HomeTab({ conversationId ->
+                    navController.navigate("${NavBarRoutes.Message.route}/$conversationId")
+                })
+            }
             composable(NavBarRoutes.MyTruekes.route) {
                 MyTruekesTab(navController = navController)
             }
 
-            composable(NavBarRoutes.CreateTrueke.route) { CreateTruekeTab() }
+            composable(NavBarRoutes.CreateTrueke.route) {
+                CreateTruekeTab(navController = navController)
+            }
             composable(NavBarRoutes.CreateProduct.route) { CreateProductTab() }
 
             composable(
@@ -78,6 +87,18 @@ fun MainScaffold(rootNavController: NavController) {
                 )
             }
 
+            /*composable(
+                route = NavBarRoutes.EditTrueke.route,
+                arguments = listOf(navArgument("truekeId") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val truekeId = backStackEntry.arguments?.getString("truekeId")!!
+                EditTruekeScreen(
+                    truekeId = truekeId,
+                    onDone = { navController.popBackStack() },
+                    onBack = { navController.popBackStack() }
+                )
+            }*/
+            
             composable(NavBarRoutes.Messages.route) {
                 MessagesTab(
                     onMessageClick = { conversationId ->
@@ -136,9 +157,14 @@ fun MainScaffold(rootNavController: NavController) {
                         }
                     },
                     onLogoutClick = {
-                        authManager.logout()
+                        authManager.logout(context)
+
+                        // limpia el backstack del nav interno
+                        navController.popBackStack(navController.graph.startDestinationId, inclusive = false)
+
                         rootNavController.navigate(Routes.AuthGraph.route) {
                             popUpTo(Routes.Main.route) { inclusive = true }
+                            launchSingleTop = true
                         }
                     }
                 )

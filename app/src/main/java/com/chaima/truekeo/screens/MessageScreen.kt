@@ -15,11 +15,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -45,6 +47,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
@@ -77,17 +80,35 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
     var chatMessages by remember { mutableStateOf(emptyList<ChatMessage>()) }
     var textState by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(true) }
+    val listState = rememberLazyListState()
+    var showDeleteDialog by remember { mutableStateOf(false) }
 
-    // Recogemos la conversación
-    LaunchedEffect(Unit) {
+    // Cargamos los datos se la conversación con los mensajes y todo
+    LaunchedEffect(conversationId) {
         conversation = chatManager.getConversationById(conversationId, user?.id ?: "error")
-        if(conversation == null){
-            onBack()
-            return@LaunchedEffect
-        }else{
+        if (conversation == null) {
+            onBack() // si ha habido algún error se vuelve atrás
+        } else {
             chatMessages = conversation!!.messages
         }
         isLoading = false
+    }
+
+    // nos quedamos escuchamos para posibles nuevos mensajes
+    LaunchedEffect(conversationId) {
+        chatManager.getMessagesFlow(conversationId, user?.id ?: "error")
+            .collect { updatedMessages ->
+                chatMessages = updatedMessages
+            }
+    }
+
+    // hacemos scroll al usuario al ultimo mensaje que haya
+    // y ponemos el contador de mensajes sin leer a 0
+    LaunchedEffect(chatMessages.size) {
+        if (chatMessages.isNotEmpty()) {
+            listState.animateScrollToItem(chatMessages.size - 1)
+            chatManager.markAsRead(conversationId, user?.id ?: "error")
+        }
     }
 
     TruekeoTheme {
@@ -128,7 +149,18 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
                         },
                         colors = TopAppBarDefaults.topAppBarColors(
                             containerColor = Color.White
-                        )
+                        ),
+                        actions = {
+                            IconButton(onClick = {
+                                scope.launch { showDeleteDialog = true }
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Default.Delete,
+                                    contentDescription = stringResource(R.string.delete_conversation),
+                                    tint = Color.Red
+                                )
+                            }
+                        }
                     )
                 },
                 bottomBar = {
@@ -168,11 +200,16 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
 
                             IconButton(
                                 onClick = {
+                                    val messageToSend = textState
+                                    textState = ""
                                     scope.launch {
                                         chatManager.sendMessage(
                                             conversation!!.id,
                                             user?.id ?: "error",
-                                            textState
+                                            messageToSend,
+                                            conversation!!.participants.firstOrNull {
+                                                it != (user?.id ?: "error")
+                                            } ?: "error"
                                         )
                                     }
                                 },
@@ -195,6 +232,7 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
                 }
             ) { innerPadding ->
                 LazyColumn(
+                    state = listState,
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(innerPadding)
@@ -208,12 +246,50 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
                 }
             }
         }
+
+        // El diálogo de eliminar conversación
+        if (showDeleteDialog) {
+            androidx.compose.material3.AlertDialog(
+                onDismissRequest = { showDeleteDialog = false },
+                icon = { Icon(Icons.Default.Delete, contentDescription = null) },
+                title = {
+                    Text(
+                        text = stringResource(R.string.remove_conversation),
+                        fontFamily = FontFamily(Font(R.font.saira_medium))
+                    )
+                },
+                text = {
+                    Text(stringResource(R.string.remove_conversation_text))
+                },
+                confirmButton = {
+                    androidx.compose.material3.TextButton(
+                        onClick = {
+                            showDeleteDialog = false
+                            scope.launch {
+                                val success = chatManager.deleteConversation(conversationId)
+                                if (success) onBack()
+                            }
+                        }
+                    ) {
+                        Text(stringResource(R.string.yes_delete), color = Color.Red)
+                    }
+                },
+                dismissButton = {
+                    androidx.compose.material3.TextButton(
+                        onClick = { showDeleteDialog = false }
+                    ) {
+                        Text(stringResource(R.string.no))
+                    }
+                }
+            )
+        }
     }
 }
 
 @Composable
 fun ChatBubble(message: ChatMessage) {
     val alignment = if (message.isFromMe) Alignment.CenterEnd else Alignment.CenterStart
+    val columnAlignment = if (message.isFromMe) Alignment.End else Alignment.Start
     val bgColor = if (message.isFromMe) MaterialTheme.colorScheme.primary else Color.White
     val textColor = if (message.isFromMe) Color.White else Color.Black
     val shape = if (message.isFromMe) {
@@ -223,7 +299,7 @@ fun ChatBubble(message: ChatMessage) {
     }
 
     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = alignment) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(horizontalAlignment = columnAlignment) {
             Surface(
                 color = bgColor,
                 shape = shape,
@@ -236,7 +312,7 @@ fun ChatBubble(message: ChatMessage) {
                 )
             }
             Text(
-                text = formatTimestamp(message.timestamp),
+                text = formatTimestamp(message.getLongTimestamp()),
                 style = MaterialTheme.typography.labelSmall,
                 color = Color.Gray,
                 modifier = Modifier.padding(top = 2.dp)

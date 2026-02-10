@@ -34,20 +34,36 @@ suspend fun resolvePlaceName(
     val task = searchEngine.search(
         options,
         object : SearchCallback {
-            override fun onResults(
-                results: List<SearchResult>,
-                responseInfo: ResponseInfo
-            ) {
+            override fun onResults(results: List<SearchResult>, responseInfo: ResponseInfo) {
                 val r = results.firstOrNull()
-
                 val a = r?.address
-                val label = listOfNotNull(
-                    r?.name,
-                    a?.postcode,
-                    a?.place
-                ).joinToString(", ")
 
-                cont.resume(label)
+                val label = buildString {
+                    // Calle + número
+                    a?.street?.let { street ->
+                        append(street)
+                        a.houseNumber?.let { hn -> append(" $hn") }
+                    }
+
+                    // Si no hay calle, usa el name/description
+                    if (isEmpty()) {
+                        append(r?.descriptionText ?: r?.name ?: "")
+                    }
+
+                    // CP
+                    a?.postcode?.let {
+                        if (isNotEmpty()) append(", ")
+                        append(it)
+                    }
+
+                    // Ciudad
+                    a?.place?.let {
+                        if (isNotEmpty()) append(", ")
+                        append(it)
+                    }
+                }
+
+                cont.resume(label.trim())
             }
 
             override fun onError(e: Exception) {
