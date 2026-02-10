@@ -3,15 +3,11 @@ package com.chaima.truekeo.screens
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
-import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
@@ -19,20 +15,16 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import com.chaima.truekeo.R
+import com.chaima.truekeo.components.ImageSelectorGrid
+import com.chaima.truekeo.models.ItemStatus
 
 @Composable
 fun ProductDetailsScreen(
@@ -41,15 +33,29 @@ fun ProductDetailsScreen(
 ) {
     var title by remember { mutableStateOf(productName) }
     var description by remember { mutableStateOf("") }
-    var status by remember { mutableStateOf(ProductStatus.AVAILABLE) }
+    var status by remember { mutableStateOf(ItemStatus.AVAILABLE) }
 
-    var itemImageUri by remember { mutableStateOf<Uri?>(null) }
+    var imageUris by remember { mutableStateOf<List<Uri>>(emptyList()) }
+    var imageSlotToEdit by remember { mutableStateOf<Int?>(null) }
 
-    val pickItemImageLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
-    ) { uri ->
-        if (uri != null) itemImageUri = uri
-    }
+    val imagePickerLauncher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.GetContent(),
+            onResult = { uri: Uri? ->
+                if (uri != null && imageSlotToEdit != null) {
+                    val slot = imageSlotToEdit!!
+
+                    imageUris =
+                        if (slot < imageUris.size) {
+                            imageUris.toMutableList().also { it[slot] = uri }
+                        } else {
+                            imageUris + uri
+                        }
+
+                    imageSlotToEdit = null
+                }
+            }
+        )
 
     Column(
         modifier = Modifier
@@ -64,7 +70,7 @@ fun ProductDetailsScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = onBack) {
-                Icon(Icons.Rounded.ArrowBack, null)
+                Icon(Icons.Rounded.ArrowBack, contentDescription = null)
             }
 
             Spacer(modifier = Modifier.width(8.dp))
@@ -84,33 +90,23 @@ fun ProductDetailsScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
 
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .border(1.dp, Color.LightGray, RoundedCornerShape(12.dp))
-                    .clickable {
-                        pickItemImageLauncher.launch("image/*")
-                    },
-                contentAlignment = Alignment.Center
-            ) {
-                Image(
-                    painter = painterResource(R.drawable.guitarra),
-                    contentDescription = "Imagen del producto",
-                    modifier = Modifier.fillMaxSize()
-                )
-
-                Icon(
-                    imageVector = Icons.Rounded.Edit,
-                    contentDescription = null,
-                    tint = Color.White
-                )
-            }
+            ImageSelectorGrid(
+                images = imageUris,
+                maxImages = 5,
+                onAddImage = { slot: Int ->
+                    imageSlotToEdit = slot
+                    imagePickerLauncher.launch("image/*")
+                },
+                onRemoveImage = { index: Int ->
+                    imageUris = imageUris.toMutableList().also {
+                        it.removeAt(index)
+                    }
+                }
+            )
 
             OutlinedTextField(
                 value = title,
-                onValueChange = { title = it },
+                onValueChange = { newValue: String -> title = newValue },
                 label = { Text("Título") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
@@ -118,7 +114,7 @@ fun ProductDetailsScreen(
 
             OutlinedTextField(
                 value = description,
-                onValueChange = { description = it },
+                onValueChange = { newValue: String -> description = newValue },
                 label = { Text("Descripción") },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -131,16 +127,16 @@ fun ProductDetailsScreen(
             )
 
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                ProductStatus.entries.forEach { productStatus ->
+                ItemStatus.entries.forEach { itemStatus: ItemStatus ->
                     FilterChip(
-                        selected = status == productStatus,
-                        onClick = { status = productStatus },
+                        selected = status == itemStatus,
+                        onClick = { status = itemStatus },
                         label = {
                             Text(
-                                when (productStatus) {
-                                    ProductStatus.AVAILABLE -> "Disponible"
-                                    ProductStatus.RESERVED -> "Reservado"
-                                    ProductStatus.EXCHANGED -> "Intercambiado"
+                                when (itemStatus) {
+                                    ItemStatus.AVAILABLE -> "Disponible"
+                                    ItemStatus.RESERVED -> "Reservado"
+                                    ItemStatus.EXCHANGED -> "Intercambiado"
                                 }
                             )
                         }
