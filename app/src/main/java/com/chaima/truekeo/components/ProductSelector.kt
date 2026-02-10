@@ -106,25 +106,30 @@ fun ItemSelectorCard(
 
     // Dialog para seleccionar producto
     if (showDialog) {
-        ProductSelectionDialog(
+        ItemSelectorDialog(
             items = items,
             selectedItem = selectedItem,
             onDismiss = { showDialog = false },
             onItemSelected = { item ->
                 onItemSelected(item)
                 showDialog = false
-            }
+            },
+            showConfirmButton = false
         )
     }
 }
 
 @Composable
-private fun ProductSelectionDialog(
+fun ItemSelectorDialog(
     items: List<Item>,
     selectedItem: Item?,
     onDismiss: () -> Unit,
-    onItemSelected: (Item) -> Unit
+    onItemSelected: ((Item) -> Unit)? = null,
+    onConfirm: ((Item?) -> Unit)? = null,
+    showConfirmButton: Boolean = false,
 ) {
+    var currentSelection by remember(selectedItem) { mutableStateOf(selectedItem) }
+
     Dialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(usePlatformDefaultWidth = false)
@@ -171,9 +176,58 @@ private fun ProductSelectionDialog(
                     items(items) { item ->
                         ProductItemRow(
                             item = item,
-                            isSelected = item.id == selectedItem?.id,
-                            onClick = { onItemSelected(item) }
+                            isSelected = item.id == currentSelection?.id,
+                            onClick = {
+                                if (showConfirmButton) {
+                                    // solo actualiza la selección
+                                    currentSelection = item
+                                } else {
+                                    // ejecuta callback y cierra
+                                    onItemSelected?.invoke(item)
+                                }
+                            }
                         )
+                    }
+                }
+
+                // Botón de confirmar (opcional)
+                if (showConfirmButton) {
+                    Divider()
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        OutlinedButton(
+                            onClick = onDismiss,
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(48.dp),
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Text(
+                                text = "Cancelar",
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontFamily = FontFamily(Font(R.font.saira_medium))
+                            )
+                        }
+
+                        Button(
+                            onClick = { onConfirm?.invoke(currentSelection) },
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(48.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            enabled = currentSelection != null
+                        ) {
+                            Text(
+                                text = "Confirmar",
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontFamily = FontFamily(Font(R.font.saira_medium))
+                            )
+                        }
                     }
                 }
             }

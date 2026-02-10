@@ -63,7 +63,7 @@ fun TruekeSheetContent(
     trueke: Trueke,
     modifier: Modifier = Modifier,
     onConversationClicked: (String) -> Unit,
-    onProposeClicked: (truekeId: String) -> Unit
+    onRequestPropose: () -> Unit
 ) {
     val scrollState = rememberScrollState()
     val user = AuthContainer.authManager.userProfile
@@ -94,10 +94,6 @@ fun TruekeSheetContent(
                 Toast.makeText(context, getString(context,R.string.cant_start_conversation_with_you), Toast.LENGTH_SHORT).show()
             }
         }
-    }
-
-    fun handleProposeClick() {
-        onProposeClicked(trueke.id)
     }
 
     Column(
@@ -142,7 +138,7 @@ fun TruekeSheetContent(
             }
 
             Button(
-                onClick = { handleProposeClick() },
+                onClick = onRequestPropose,
                 modifier = Modifier
                     .weight(1f)
                     .height(52.dp),
