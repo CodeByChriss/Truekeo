@@ -24,8 +24,15 @@ object BrandData {
         "ZTE",
         "Alcatel",
         "BlackBerry",
+        "Fairphone",
+        "Asus ROG",
+        "Redmi",
+        "Poco",
+        "Infinix",
+        "Tecno",
+        "Meizu",
 
-        // Informática / Ordenadores
+        // Informática / Ordenadores / Componentes
         "HP",
         "Lenovo",
         "Asus",
@@ -45,6 +52,14 @@ object BrandData {
         "Western Digital",
         "Seagate",
         "Sandisk",
+        "Crucial",
+        "ASRock",
+        "NZXT",
+        "Thermaltake",
+        "Be Quiet!",
+        "Cooler Master",
+        "Alienware",
+        "Framework",
 
         // Gaming / Consolas
         "PlayStation",
@@ -52,6 +67,42 @@ object BrandData {
         "Nintendo",
         "Valve",
         "Steam Deck",
+
+        // Consolas / Retro
+        "Atari",
+        "SEGA",
+        "SNK",
+        "Neo Geo",
+        "Commodore",
+        "Amiga",
+        "Intellivision",
+        "ColecoVision",
+
+        // Gaming PC / Ecosistema
+        "Alienware",
+        "Asus ROG",
+        "MSI Gaming",
+        "Predator",
+        "NZXT",
+        "CyberPowerPC",
+        "iBuyPower",
+        "Origin PC",
+
+        // Periféricos gaming
+        "Razer",
+        "Logitech G",
+        "SteelSeries",
+        "Corsair",
+        "HyperX",
+        "Roccat",
+        "Cooler Master",
+        "Trust Gaming",
+        "Redragon",
+        "Glorious",
+        "Keychron",
+        "Akko",
+        "Ducky",
+        "Xtrfy",
 
         // Fotografía / Vídeo
         "Canon",
@@ -63,6 +114,10 @@ object BrandData {
         "Leica",
         "GoPro",
         "DJI",
+        "Insta360",
+        "Sigma",
+        "Tamron",
+        "Hasselblad",
 
         // Audio
         "Bose",
@@ -74,6 +129,11 @@ object BrandData {
         "Bang & Olufsen",
         "Sonos",
         "Skullcandy",
+        "Audio-Technica",
+        "Shure",
+        "Beyerdynamic",
+        "Edifier",
+        "Anker Soundcore",
 
         // Wearables
         "Garmin",
@@ -81,8 +141,10 @@ object BrandData {
         "Amazfit",
         "Withings",
         "Polar",
+        "Suunto",
+        "Whoop",
 
-        // Electrodomésticos
+        // Electrodomésticos / Hogar
         "Bosch",
         "Siemens",
         "Philips",
@@ -95,6 +157,13 @@ object BrandData {
         "Electrolux",
         "Candy",
         "Beko",
+        "AEG",
+        "Indesit",
+        "Cecotec",
+        "Orbegozo",
+        "Ufesa",
+        "Krups",
+        "Delonghi",
 
         // Automoción / Accesorios
         "BMW",
@@ -109,8 +178,16 @@ object BrandData {
         "Tesla",
         "Hyundai",
         "Kia",
+        "Mazda",
+        "Volvo",
+        "Skoda",
+        "Dacia",
+        "Opel",
+        "Honda",
+        "Yamaha",
+        "Kawasaki",
 
-        // Moda / Ropa
+        // Moda / Ropa general
         "Nike",
         "Adidas",
         "Puma",
@@ -128,6 +205,42 @@ object BrandData {
         "Lacoste",
         "Ralph Lauren",
         "Jordan",
+        "Stradivarius",
+        "Mango",
+        "Massimo Dutti",
+        "Springfield",
+        "C&A",
+        "Primark",
+        "Lefties",
+        "Kiabi",
+        "Desigual",
+        "Cortefiel",
+        "Oysho",
+        "Women’secret",
+        "Jack & Jones",
+        "Only",
+        "Vero Moda",
+        "Pepe Jeans",
+        "Benetton",
+        "Guess",
+        "Dockers",
+        "Diesel",
+        "Superdry",
+        "Gant",
+        "Scalpers",
+        "Hackett",
+        "Carhartt",
+        "Patagonia",
+        "The North Face",
+        "Columbia",
+        "Helly Hansen",
+        "Champion",
+        "Fila",
+        "Kappa",
+        "Umbro",
+        "Quiksilver",
+        "Billabong",
+        "Rip Curl",
 
         // Calzado
         "Converse",
@@ -135,6 +248,32 @@ object BrandData {
         "Dr. Martens",
         "Timberland",
         "Skechers",
+        "Birkenstock",
+        "Havaianas",
+        "Salomon",
+        "Merrell",
+        "Asics",
+        "Mizuno",
+        "Hoka",
+        "Brooks",
+        "Saucony",
+
+        // Lujo / Premium
+        "Gucci",
+        "Prada",
+        "Louis Vuitton",
+        "Chanel",
+        "Dior",
+        "Versace",
+        "Fendi",
+        "Givenchy",
+        "Balenciaga",
+        "Saint Laurent",
+        "Loewe",
+        "Hermès",
+        "Bottega Veneta",
+        "Moncler",
+        "Canada Goose",
 
         // Belleza / Cuidado personal
         "L'Oréal",
@@ -145,6 +284,13 @@ object BrandData {
         "Clinique",
         "MAC",
         "Sephora",
+        "The Ordinary",
+        "Kiehl's",
+        "Neutrogena",
+        "La Roche-Posay",
+        "Vichy",
+        "CeraVe",
+        "Avène",
 
         // Otros / General
         "Ikea",
@@ -154,7 +300,19 @@ object BrandData {
         "Mattel",
         "Funko",
         "Dyson",
-        "Xiaomi Home"
+        "Xiaomi Home",
+        "Muji",
+        "Flying Tiger",
+        "Miniso",
+        "AliExpress",
+        "Amazon Basics",
+        "Shein",
+
+        // Genéricos útiles para UX
+        "Sin marca",
+        "Otra",
+        "Marca local",
+        "Artesanal"
     )
 
     fun search(query: String, limit: Int = 8): List<String> {

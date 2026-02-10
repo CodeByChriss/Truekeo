@@ -34,7 +34,9 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, MapboxExperimental::class)
 @Composable
-fun HomeTab(openConversation: (String) -> Unit) {
+fun HomeTab(
+    openConversation: (String) -> Unit
+) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
@@ -141,6 +143,10 @@ fun HomeTab(openConversation: (String) -> Unit) {
         loadingTruekes = true
         truekes = truekeManager.getOpenTruekesFromOthers()
         loadingTruekes = false
+    }
+
+    fun handlePropose(truekeId: String) {
+
     }
 
     // Función para centrar el marcador teniendo en cuenta el sheet
@@ -274,6 +280,9 @@ fun HomeTab(openConversation: (String) -> Unit) {
                         .padding(bottom = 24.dp),
                     onConversationClicked = { conversationId ->
                         openConversation(conversationId)
+                    },
+                    onProposeClicked = { truekeId ->
+                        handlePropose(truekeId)
                     }
                 )
             }
