@@ -28,8 +28,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.chaima.truekeo.R
-import com.chaima.truekeo.data.AuthContainer
-import com.chaima.truekeo.data.ImageStorageManager
+import com.chaima.truekeo.managers.AuthContainer
+import com.chaima.truekeo.managers.ImageStorageManager
 import com.chaima.truekeo.models.User
 import kotlinx.coroutines.launch
 
@@ -223,7 +223,7 @@ private fun saveProfile(
     itemImageUri: Uri?,
     context: android.content.Context,
     scope: kotlinx.coroutines.CoroutineScope,
-    authManager: com.chaima.truekeo.data.AuthManager,
+    authManager: com.chaima.truekeo.managers.AuthManager,
     onComplete: () -> Unit
 ) {
     scope.launch {

@@ -24,8 +24,8 @@ import androidx.compose.ui.unit.sp
 import com.chaima.truekeo.R
 import com.chaima.truekeo.components.ItemSelectorCard
 import com.chaima.truekeo.components.LocationSearchField
-import com.chaima.truekeo.data.ItemContainer
-import com.chaima.truekeo.data.TruekeContainer
+import com.chaima.truekeo.managers.ItemContainer
+import com.chaima.truekeo.managers.TruekeContainer
 import com.chaima.truekeo.models.GeoPoint
 import com.chaima.truekeo.models.Item
 import com.chaima.truekeo.ui.theme.TruekeoTheme

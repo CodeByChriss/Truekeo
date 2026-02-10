@@ -40,8 +40,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.chaima.truekeo.R
 import com.chaima.truekeo.components.TruekeCard
-import com.chaima.truekeo.data.AuthContainer
-import com.chaima.truekeo.data.TruekeContainer
+import com.chaima.truekeo.managers.AuthContainer
+import com.chaima.truekeo.managers.TruekeContainer
 import com.chaima.truekeo.models.Trueke
 import com.chaima.truekeo.models.TruekeStatus
 import com.chaima.truekeo.navigation.NavBarRoutes

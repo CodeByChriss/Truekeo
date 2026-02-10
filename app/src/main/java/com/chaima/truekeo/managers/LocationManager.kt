@@ -1,4 +1,4 @@
-package com.chaima.truekeo.data
+package com.chaima.truekeo.managers
 
 import android.Manifest
 import android.annotation.SuppressLint

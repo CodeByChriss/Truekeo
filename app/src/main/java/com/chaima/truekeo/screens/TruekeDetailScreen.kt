@@ -34,19 +34,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.chaima.truekeo.R
 import com.chaima.truekeo.components.ItemImageBox
 import com.chaima.truekeo.components.UserAvatarImage
-import com.chaima.truekeo.data.AuthContainer
-import com.chaima.truekeo.data.TruekeContainer
+import com.chaima.truekeo.managers.AuthContainer
+import com.chaima.truekeo.managers.TruekeContainer
 import com.chaima.truekeo.models.Item
 import com.chaima.truekeo.models.Trueke
 import com.chaima.truekeo.models.TruekeStatus
 import com.chaima.truekeo.ui.theme.TruekeoTheme
 import com.chaima.truekeo.utils.resolvePlaceName
-import com.mapbox.maps.extension.style.expressions.dsl.generated.color
 import java.util.Locale
 
 @Composable

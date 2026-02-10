@@ -1,4 +1,4 @@
-package com.chaima.truekeo.data
+package com.chaima.truekeo.managers
 
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.storage.Storage

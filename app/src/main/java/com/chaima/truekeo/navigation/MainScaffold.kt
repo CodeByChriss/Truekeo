@@ -23,10 +23,9 @@ import com.chaima.truekeo.screens.CreateProductTab
 import com.chaima.truekeo.screens.HomeTab
 import com.chaima.truekeo.screens.CreateTruekeTab
 import androidx.navigation.NavController
-import com.chaima.truekeo.data.AuthContainer
+import com.chaima.truekeo.managers.AuthContainer
 import com.chaima.truekeo.screens.MessageScreen
 import com.chaima.truekeo.screens.EditProfileScreen
-import com.chaima.truekeo.screens.EditTruekeScreen
 import com.chaima.truekeo.screens.MessagesTab
 import com.chaima.truekeo.screens.MyProductsScreen
 import com.chaima.truekeo.screens.ProfileTab

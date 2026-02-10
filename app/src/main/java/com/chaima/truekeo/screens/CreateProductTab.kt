@@ -13,9 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -44,9 +42,7 @@ import androidx.compose.ui.unit.sp
 import com.chaima.truekeo.R
 import com.chaima.truekeo.components.BrandField
 import com.chaima.truekeo.components.ImageSelectorGrid
-import com.chaima.truekeo.data.AuthContainer
-import com.chaima.truekeo.data.ImageStorageManager
-import com.chaima.truekeo.data.ItemContainer
+import com.chaima.truekeo.managers.ItemContainer
 import com.chaima.truekeo.models.ItemCondition
 import com.chaima.truekeo.ui.theme.TruekeoTheme
 import com.chaima.truekeo.utils.FormErrorText
