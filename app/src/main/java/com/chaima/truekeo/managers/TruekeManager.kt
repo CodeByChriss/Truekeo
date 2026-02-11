@@ -5,7 +5,9 @@ import com.chaima.truekeo.models.GeoPoint
 import com.chaima.truekeo.models.Item
 import com.chaima.truekeo.models.ItemCondition
 import com.chaima.truekeo.models.ItemStatus
+import com.chaima.truekeo.models.OfferStatus
 import com.chaima.truekeo.models.Trueke
+import com.chaima.truekeo.models.TruekeOffer
 import com.chaima.truekeo.models.TruekeStatus
 import com.chaima.truekeo.models.User
 import com.google.firebase.auth.FirebaseAuth
@@ -200,6 +202,55 @@ class TruekeManager {
             Result.success(Unit)
         } catch (e: Exception) {
             Log.e("TruekeManager", "Error update status: ${e.message}")
+            Result.failure(e)
+        }
+    }
+
+    suspend fun proposeToTrueke(
+        truekeId: String,
+        offeredItemId: String
+    ): Result<Unit> {
+        return try {
+            val uid = auth.currentUser?.uid
+                ?: return Result.failure(Exception("No autenticado"))
+
+            val truekeRef = db.collection("truekes").document(truekeId)
+            val truekeSnap = truekeRef.get().await()
+
+            if (!truekeSnap.exists()) {
+                return Result.failure(Exception("Trueke no existe"))
+            }
+
+            val status = truekeSnap.getString("status")
+            val hostUserId = truekeSnap.getString("hostUserId")
+
+            if (status != TruekeStatus.OPEN.name) {
+                return Result.failure(Exception("El trueke no está abierto"))
+            }
+
+            if (hostUserId == uid) {
+                return Result.failure(Exception("No puedes proponerte a ti mismo"))
+            }
+
+            // Crear oferta
+            val offerRef = db.collection("trueke_offers").document()
+            val now = System.currentTimeMillis()
+
+            val offer = TruekeOffer(
+                id = offerRef.id,
+                truekeId = truekeId,
+                proposerUserId = uid,
+                offeredItemId = offeredItemId,
+                status = OfferStatus.PENDING,
+                createdAt = now,
+                updatedAt = now
+            )
+
+            offerRef.set(offer).await()
+
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Log.e("TruekeManager", "Error proposing to trueke: ${e.message}", e)
             Result.failure(e)
         }
     }

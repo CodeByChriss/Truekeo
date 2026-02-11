@@ -22,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -58,6 +59,9 @@ import com.chaima.truekeo.managers.AuthContainer
 import com.chaima.truekeo.managers.ChatContainer
 import com.chaima.truekeo.models.ChatMessage
 import com.chaima.truekeo.models.Conversation
+import com.chaima.truekeo.models.Item
+import com.chaima.truekeo.models.MessageType
+import com.chaima.truekeo.models.OfferStatus
 import com.chaima.truekeo.ui.theme.TruekeoTheme
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -241,7 +245,11 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(chatMessages) { msg ->
-                        ChatBubble(msg)
+                        if(msg.type == MessageType.TRUEKE) {
+                            TruekeBubble(msg, Item(), Item())
+                        }else{
+                            ChatBubble(msg)
+                        }
                     }
                 }
             }
@@ -317,6 +325,54 @@ fun ChatBubble(message: ChatMessage) {
                 color = Color.Gray,
                 modifier = Modifier.padding(top = 2.dp)
             )
+        }
+    }
+}
+
+@Composable
+fun TruekeBubble(message: ChatMessage, originalItem: Item, truekeItem: Item) {
+    val trueke = message.truekeOffer ?: return // Si no hay un trueke, volvemos sin mostrar nada
+
+    Surface(
+        modifier = Modifier.fillMaxWidth().padding(8.dp),
+        shape = RoundedCornerShape(16.dp),
+        color = Color.White,
+        shadowElevation = 4.dp
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text("Propuesta de Trueke")
+
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Tu producto
+                ProductThumbnail(trueke.myProductImageUrl, trueke.myProductName)
+
+                Icon(Icons.Default.SwapHoriz, contentDescription = null)
+
+                // Su producto
+                ProductThumbnail(trueke.otherProductImageUrl, trueke.otherProductName)
+            }
+
+            if (proposal.status == "PENDING") {
+                if (!message.isFromMe) { // Solo el que recibe puede aceptar/rechazar
+                    Row(Modifier.fillMaxWidth()) {
+                        Button(onClick = onAccept, Modifier.weight(1f)) { Text("Aceptar") }
+                        Spacer(Modifier.width(8.dp))
+                        OutlinedButton(onClick = onReject, Modifier.weight(1f)) { Text("Rechazar") }
+                    }
+                } else {
+                    Text("Esperando respuesta...", style = MaterialTheme.typography.bodySmall)
+                }
+            } else {
+                // Mostrar "Aceptado" o "Rechazado" con un color
+                Text(
+                    text = if (trueke.status == OfferStatus.ACCEPTED) "¡Trueke Aceptado!" else "Trueke Rechazado",
+                    color = if (trueke.status == OfferStatus.ACCEPTED) Color.Green else Color.Red
+                )
+            }
         }
     }
 }
