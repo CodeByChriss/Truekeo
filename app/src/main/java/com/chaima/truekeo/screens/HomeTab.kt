@@ -1,6 +1,7 @@
 package com.chaima.truekeo.screens
 
 import android.Manifest
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
@@ -14,12 +15,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import com.chaima.truekeo.components.ItemSelectorDialog
 import com.chaima.truekeo.components.ManualLocationDialog
 import com.chaima.truekeo.models.Trueke
 import com.chaima.truekeo.components.TruekeSheetContent
+import com.chaima.truekeo.managers.ItemContainer
+import com.chaima.truekeo.managers.ItemManager
 import com.chaima.truekeo.managers.LocationManager
 import com.chaima.truekeo.managers.LocationPreferences
 import com.chaima.truekeo.managers.TruekeContainer
+import com.chaima.truekeo.models.Item
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraBoundsOptions
 import com.mapbox.maps.CameraOptions
@@ -34,7 +39,9 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, MapboxExperimental::class)
 @Composable
-fun HomeTab(openConversation: (String) -> Unit) {
+fun HomeTab(
+    openConversation: (String) -> Unit
+) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
@@ -42,6 +49,7 @@ fun HomeTab(openConversation: (String) -> Unit) {
     val locationManager = remember { LocationManager(context) }
     val locationPreferences = remember { LocationPreferences(context) }
     val truekeManager = remember { TruekeContainer.truekeManager }
+    val itemManager = remember { ItemContainer.itemManager }
 
     var truekes by remember { mutableStateOf<List<Trueke>>(emptyList()) }
     var loadingTruekes by remember { mutableStateOf(false) }
@@ -59,6 +67,10 @@ fun HomeTab(openConversation: (String) -> Unit) {
     var selectedTrueke by remember { mutableStateOf<Trueke?>(null) }
     var showSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var showItemDialog by remember { mutableStateOf(false) }
+
+    var userItems by remember { mutableStateOf<List<Item>>(emptyList()) }
+    var loadingUserItems by remember { mutableStateOf(false) }
 
     // Altura máxima del sheet
     val maxSheetHeight = 500.dp
@@ -141,6 +153,29 @@ fun HomeTab(openConversation: (String) -> Unit) {
         loadingTruekes = true
         truekes = truekeManager.getOpenTruekesFromOthers()
         loadingTruekes = false
+    }
+
+    fun handlePropose(
+        truekeId: String,
+        itemId: String
+    ) {
+        scope.launch {
+            val result = truekeManager.proposeToTrueke(
+                truekeId = truekeId,
+                offeredItemId = itemId
+            )
+
+            result.onSuccess {
+                // cerrar UI
+                showItemDialog = false
+                showSheet = false
+                selectedTrueke = null
+            }.onFailure { error ->
+                // feedback al usuario
+                Log.e("HomeTab", error.message ?: "Error proposing")
+                // aquí luego snackbar / toast
+            }
+        }
     }
 
     // Función para centrar el marcador teniendo en cuenta el sheet
@@ -274,9 +309,36 @@ fun HomeTab(openConversation: (String) -> Unit) {
                         .padding(bottom = 24.dp),
                     onConversationClicked = { conversationId ->
                         openConversation(conversationId)
+                    },
+                    onRequestPropose = {
+                        scope.launch {
+                            loadingUserItems = true
+                            userItems = itemManager.getMyAvailableItems()
+                            loadingUserItems = false
+                            showItemDialog = true
+                        }
                     }
                 )
             }
         }
+    }
+
+    if (showItemDialog && selectedTrueke != null) {
+        ItemSelectorDialog(
+            items = userItems,
+            selectedItem = null,
+            showConfirmButton = true,
+            onDismiss = {
+                showItemDialog = false
+            },
+            onConfirm = { item ->
+                item?.let {
+                    handlePropose(
+                        truekeId = selectedTrueke!!.id,
+                        itemId = it.id
+                    )
+                }
+            }
+        )
     }
 }

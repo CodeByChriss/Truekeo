@@ -59,7 +59,12 @@ import kotlinx.coroutines.launch
 
 // Contenido del bottom sheet que muestra los detalles del trueke seleccionado
 @Composable
-fun TruekeSheetContent(trueke: Trueke, modifier: Modifier = Modifier, onConversationClicked: (String) -> Unit) {
+fun TruekeSheetContent(
+    trueke: Trueke,
+    modifier: Modifier = Modifier,
+    onConversationClicked: (String) -> Unit,
+    onRequestPropose: () -> Unit
+) {
     val scrollState = rememberScrollState()
     val user = AuthContainer.authManager.userProfile
     val chatManager = ChatContainer.chatManager
@@ -67,6 +72,29 @@ fun TruekeSheetContent(trueke: Trueke, modifier: Modifier = Modifier, onConversa
     var isLoading by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
+
+    fun handleChatClick() {
+        if (!isLoading) {
+            val hostUserId = trueke.hostUser.id
+            if (user?.id != hostUserId) {
+                scope.launch {
+                    isLoading = true
+                    val conversationId = chatManager.startOrGetConversation(
+                        user?.id ?: "error",
+                        hostUserId
+                    )
+                    if(conversationId == null){
+                        Toast.makeText(context, getString(context,R.string.error_starting_conversation), Toast.LENGTH_SHORT).show()
+                    }else{
+                        onConversationClicked(conversationId)
+                    }
+                    isLoading = false
+                }
+            }else{
+                Toast.makeText(context, getString(context,R.string.cant_start_conversation_with_you), Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     Column(
         modifier = modifier.verticalScroll(scrollState),
@@ -90,28 +118,7 @@ fun TruekeSheetContent(trueke: Trueke, modifier: Modifier = Modifier, onConversa
             modifier = Modifier.fillMaxWidth()
         ) {
             OutlinedButton(
-                onClick = {
-                    if (!isLoading) {
-                        val hostUserId = trueke.hostUser.id
-                        if (user?.id != hostUserId) {
-                            scope.launch {
-                                isLoading = true
-                                val conversationId = chatManager.startOrGetConversation(
-                                    user?.id ?: "error",
-                                    hostUserId
-                                )
-                                if(conversationId == null){
-                                    Toast.makeText(context, getString(context,R.string.error_starting_conversation), Toast.LENGTH_SHORT).show()
-                                }else{
-                                    onConversationClicked(conversationId)
-                                }
-                                isLoading = false
-                            }
-                        }else{
-                            Toast.makeText(context, getString(context,R.string.cant_start_conversation_with_you), Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                },
+                onClick = { handleChatClick() },
                 modifier = Modifier
                     .weight(1f)
                     .height(52.dp),
@@ -131,7 +138,7 @@ fun TruekeSheetContent(trueke: Trueke, modifier: Modifier = Modifier, onConversa
             }
 
             Button(
-                onClick = { /* aceptar */ },
+                onClick = onRequestPropose,
                 modifier = Modifier
                     .weight(1f)
                     .height(52.dp),
@@ -139,7 +146,7 @@ fun TruekeSheetContent(trueke: Trueke, modifier: Modifier = Modifier, onConversa
                 enabled = trueke.status == TruekeStatus.OPEN
             ) {
                 Text(
-                    text = stringResource(R.string.accept),
+                    text = stringResource(R.string.propose),
                     style = MaterialTheme.typography.bodyLarge,
                     fontFamily = FontFamily(Font(R.font.saira_medium))
                 )

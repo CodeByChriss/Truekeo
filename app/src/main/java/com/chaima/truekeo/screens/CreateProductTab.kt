@@ -45,6 +45,7 @@ import com.chaima.truekeo.components.ImageSelectorGrid
 import com.chaima.truekeo.managers.ItemContainer
 import com.chaima.truekeo.models.ItemCondition
 import com.chaima.truekeo.ui.theme.TruekeoTheme
+import com.chaima.truekeo.utils.BrandData
 import com.chaima.truekeo.utils.FormErrorText
 import kotlinx.coroutines.launch
 import java.util.Locale
@@ -82,11 +83,15 @@ fun CreateProductTab() {
 
     val nameOk = name.trim().isNotEmpty()
     val imagesOk = imageUris.isNotEmpty()
+    val brandOk = brand.isBlank() || BrandData.knownBrands.any {
+        it.equals(brand, ignoreCase = true)
+    }
 
     val showNameError = triedSubmit && !nameOk
     val showImagesError = triedSubmit && !imagesOk
+    val showBrandError = triedSubmit && !brandOk
 
-    val formOk = nameOk && imagesOk
+    val formOk = nameOk && imagesOk && brandOk
 
     var isCreating by remember { mutableStateOf(false) }
 
@@ -221,6 +226,10 @@ fun CreateProductTab() {
                             onValueChange = { brand = it },
                             label = stringResource(R.string.product_brand),
                             modifier = Modifier.fillMaxWidth()
+                        )
+                        FormErrorText(
+                            showError = showBrandError,
+                            message = "Selecciona una marca valida"
                         )
                     }
                 }
