@@ -51,7 +51,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.getString
 import coil3.compose.AsyncImage
 import com.chaima.truekeo.R
@@ -245,9 +248,9 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(chatMessages) { msg ->
-                        if(msg.type == MessageType.TRUEKE) {
+                        if (msg.type == MessageType.TRUEKE) {
                             TruekeBubble(msg, Item(), Item())
-                        }else{
+                        } else {
                             ChatBubble(msg)
                         }
                     }
@@ -332,48 +335,110 @@ fun ChatBubble(message: ChatMessage) {
 @Composable
 fun TruekeBubble(message: ChatMessage, originalItem: Item, truekeItem: Item) {
     val trueke = message.truekeOffer ?: return // Si no hay un trueke, volvemos sin mostrar nada
+    val isPending = trueke.status == OfferStatus.PENDING
 
     Surface(
-        modifier = Modifier.fillMaxWidth().padding(8.dp),
+        modifier = Modifier
+            .fillMaxWidth(0.9f)
+            .padding(8.dp),
         shape = RoundedCornerShape(16.dp),
         color = Color.White,
-        shadowElevation = 4.dp
+        tonalElevation = 4.dp,
+        shadowElevation = 2.dp
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text("Propuesta de Trueke")
+        Column(
+            modifier = Modifier.padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "Propuesta de Trueke",
+                fontFamily = FontFamily(Font(R.font.saira_semibold)),
+                color = MaterialTheme.colorScheme.primary
+            )
 
             Row(
-                modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 12.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Tu producto
-                ProductThumbnail(trueke.myProductImageUrl, trueke.myProductName)
+                // Producto propuesto (El tuyo si tú enviaste la propuesta)
+                ProductItem(originalItem.imageUrls.firstOrNull() ?: "", originalItem.name)
 
-                Icon(Icons.Default.SwapHoriz, contentDescription = null)
+                Icon(
+                    imageVector = Icons.Default.SwapHoriz,
+                    contentDescription = "intercambio",
+                    tint = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier.size(32.dp)
+                )
 
-                // Su producto
-                ProductThumbnail(trueke.otherProductImageUrl, trueke.otherProductName)
+                // Producto objetivo
+                ProductItem(truekeItem.imageUrls.firstOrNull() ?: "", truekeItem.name)
             }
 
-            if (proposal.status == "PENDING") {
-                if (!message.isFromMe) { // Solo el que recibe puede aceptar/rechazar
-                    Row(Modifier.fillMaxWidth()) {
-                        Button(onClick = onAccept, Modifier.weight(1f)) { Text("Aceptar") }
-                        Spacer(Modifier.width(8.dp))
-                        OutlinedButton(onClick = onReject, Modifier.weight(1f)) { Text("Rechazar") }
+            if (isPending) {
+                if (!message.isFromMe) { // Solo el creador del trueke ve los botones
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        androidx.compose.material3.Button(
+                            onClick = {},
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text("Aceptar", color = Color.White)
+                        }
+                        androidx.compose.material3.OutlinedButton(
+                            onClick = {},
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text("Rechazar", color = Color.Red)
+                        }
                     }
                 } else {
-                    Text("Esperando respuesta...", style = MaterialTheme.typography.bodySmall)
+                    Text(
+                        text = "Esperando respuesta...",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.Gray
+                    )
                 }
             } else {
-                // Mostrar "Aceptado" o "Rechazado" con un color
+                val statusText = when (trueke.status) {
+                    OfferStatus.ACCEPTED -> "¡Trueke Aceptado!"
+                    OfferStatus.REJECTED -> "Trueke Rechazado"
+                    OfferStatus.CANCELLED -> "Trueke Cancelado"
+                    else -> ""
+                }
+                val statusColor =
+                    if (trueke.status == OfferStatus.ACCEPTED) Color(0xFF4CAF50) else Color.Red
+
                 Text(
-                    text = if (trueke.status == OfferStatus.ACCEPTED) "¡Trueke Aceptado!" else "Trueke Rechazado",
-                    color = if (trueke.status == OfferStatus.ACCEPTED) Color.Green else Color.Red
+                    text = statusText,
+                    color = statusColor,
+                    fontFamily = FontFamily(Font(R.font.saira_medium))
                 )
             }
         }
+    }
+}
+
+@Composable
+fun ProductItem(imageUrl: String, name: String) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.width(80.dp)) {
+        AsyncImage(
+            model = imageUrl,
+            contentDescription = name,
+            modifier = Modifier.size(60.dp).clip(RoundedCornerShape(8.dp)),
+            contentScale = ContentScale.Crop
+        )
+        Text(
+            text = name,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            fontSize = 12.sp,
+            textAlign = TextAlign.Center
+        )
     }
 }
 

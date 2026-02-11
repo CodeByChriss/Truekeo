@@ -1,8 +1,13 @@
 package com.chaima.truekeo.managers
 
 import android.util.Log
+import androidx.core.content.ContextCompat.getString
+import com.chaima.truekeo.R
 import com.chaima.truekeo.models.ChatMessage
 import com.chaima.truekeo.models.Conversation
+import com.chaima.truekeo.models.Item
+import com.chaima.truekeo.models.MessageType
+import com.chaima.truekeo.models.OfferStatus
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.coroutines.channels.awaitClose
@@ -205,6 +210,51 @@ class ChatManager {
         } catch (e: Exception) {
             Log.e("ChatManager", "Error al eliminar conversación: ${e.message}")
             false
+        }
+    }
+
+    suspend fun sendTruekeOffer(
+        truekeId: String, // id del trueke seleccionado en el mapa
+        myUid: String,
+        otherUid: String,
+        myProduct: Item,      // Item (producto) seleccionado para proponer el trueke
+        truekeMessage: String
+    ): String? {
+        return try {
+            val conversationId = startOrGetConversation(myUid, otherUid) ?: return null
+
+            val offerData = mapOf(
+                "id" to java.util.UUID.randomUUID().toString(),
+                "truekeId" to truekeId,
+                "proposerUserId" to myUid,
+                "offeredItemId" to myProduct.id,
+                "status" to OfferStatus.PENDING,
+                "createdAt" to System.currentTimeMillis(),
+                "updatedAt" to System.currentTimeMillis()
+            )
+
+            val messageData = mapOf(
+                "senderId" to myUid,
+                "text" to truekeMessage,
+                "type" to MessageType.TRUEKE,
+                "truekeOffer" to offerData
+            )
+
+            db.collection("conversations")
+                .document(conversationId)
+                .collection("messages")
+                .add(messageData)
+                .await()
+
+            db.collection("conversations").document(conversationId).update(
+                "last_message", truekeMessage,
+                "unread_count.$otherUid", com.google.firebase.firestore.FieldValue.increment(1)
+            ).await()
+
+            conversationId
+        } catch (e: Exception) {
+            Log.e("ChatManager", "Error al enviar propuesta: ${e.message}")
+            null
         }
     }
 }

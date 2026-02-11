@@ -127,5 +127,6 @@
     <string name="product_availability_reserved">Reservado</string>
     <string name="product_availability_exchanged">Intercambiado</string>
     <string name="select_a_product">Selecciona un producto</string>
+    <string name="trueke_proposal">¡Propuesta de Trueke!</string>
 
 </resources>
