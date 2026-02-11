@@ -41,7 +41,7 @@
     <string name="product_status_label">Estado</string>
     <string name="uploaded_by">Subido por</string>
     <string name="write">Escribir</string>
-    <string name="accept">Aceptar</string>
+    <string name="propose">Proponer</string>
     <string name="cant_start_conversation_with_you">No puedes empezar una conversación contigo mismo</string>
     <string name="error_starting_conversation">Error al empezar la conversación</string>
     <!-- pestaña de crear trueke -->

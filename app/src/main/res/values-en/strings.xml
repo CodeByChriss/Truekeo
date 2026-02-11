@@ -37,7 +37,7 @@
     <string name="product_status_label">Condition</string>
     <string name="uploaded_by">Uploaded by</string>
 
-    <string name="accept">Accept</string>
+    <string name="propose">Propose</string>
     <string name="cant_start_conversation_with_you">You can\'t start a conversation with yourself</string>
     <string name="error_starting_conversation">Error starting conversation</string>
     <string name="create_trueke">Create trueke</string>
