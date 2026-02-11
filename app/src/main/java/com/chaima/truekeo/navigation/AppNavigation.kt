@@ -17,7 +17,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
-import com.chaima.truekeo.data.AuthContainer
+import com.chaima.truekeo.managers.AuthContainer
 import com.chaima.truekeo.screens.SplashScreen
 import com.chaima.truekeo.screens.LoginScreen
 import com.chaima.truekeo.screens.SignupScreen

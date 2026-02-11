@@ -1,4 +1,4 @@
-package com.chaima.truekeo.data
+package com.chaima.truekeo.managers
 
 import android.content.Context
 import android.net.Uri
@@ -55,12 +55,12 @@ class ItemManager {
 
     // Crea un nuevo producto subiendo sus imágenes a Supabase y guarda el item en Firestore
     suspend fun createItem(
-        context: Context,
         name: String,
         details: String?,
         imageUris: List<Uri>,
         brand: String?,
-        condition: ItemCondition
+        condition: ItemCondition,
+        context: Context,
     ): Result<String> {
         return try {
             val uid = auth.currentUser?.uid

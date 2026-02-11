@@ -1,6 +1,7 @@
 package com.chaima.truekeo.screens
 
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -12,9 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -41,10 +40,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.chaima.truekeo.R
+import com.chaima.truekeo.components.BrandField
 import com.chaima.truekeo.components.ImageSelectorGrid
-import com.chaima.truekeo.data.AuthContainer
-import com.chaima.truekeo.data.ImageStorageManager
-import com.chaima.truekeo.data.ItemContainer
+import com.chaima.truekeo.managers.ItemContainer
 import com.chaima.truekeo.models.ItemCondition
 import com.chaima.truekeo.ui.theme.TruekeoTheme
 import com.chaima.truekeo.utils.FormErrorText
@@ -54,17 +52,15 @@ import java.util.Locale
 @Composable
 fun CreateProductTab() {
     val focusManager = LocalFocusManager.current
-    val scrollState = rememberScrollState()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
     val itemManager = remember { ItemContainer.itemManager }
-    val imageStorage = remember { ImageStorageManager(context) }
-    val authManager = remember { AuthContainer.authManager }
 
     var name by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     var condition by remember { mutableStateOf(ItemCondition.GOOD) }
+    var brand by remember { mutableStateOf("") }
     var imageUris by remember { mutableStateOf<List<Uri>>(emptyList()) }
     var currentImageSlot by remember { mutableStateOf(0) }
 
@@ -82,10 +78,6 @@ fun CreateProductTab() {
         }
     }
 
-    var isCreating by remember { mutableStateOf(false) }
-    var submitError by remember { mutableStateOf<String?>(null) }
-    var createdOk by remember { mutableStateOf(false) }
-
     var triedSubmit by remember { mutableStateOf(false) }
 
     val nameOk = name.trim().isNotEmpty()
@@ -96,39 +88,48 @@ fun CreateProductTab() {
 
     val formOk = nameOk && imagesOk
 
+    var isCreating by remember { mutableStateOf(false) }
+
+    fun resetForm() {
+        name = ""
+        description = ""
+        condition = ItemCondition.GOOD
+        imageUris = emptyList()
+        triedSubmit = false
+    }
+
     fun handleSubmit() {
         triedSubmit = true
-        submitError = null
-        createdOk = false
         focusManager.clearFocus()
 
         if (!formOk) return
+        if (isCreating) return
+
+        isCreating = true
 
         scope.launch {
-            isCreating = true
-            try {
-                val res = itemManager.createItem(
-                    context = context,
-                    name = name,
-                    details = description.ifBlank { null },
-                    imageUris = imageUris,
-                    brand = null,
-                    condition = condition
-                )
+            val res = itemManager.createItem(
+                name = name,
+                details = description.ifBlank { null },
+                imageUris = imageUris,
+                brand = brand.ifBlank { null },
+                condition = condition,
+                context = context
+            )
 
-                res.getOrThrow()
+            isCreating = false
 
-                createdOk = true
-                name = ""
-                description = ""
-                condition = ItemCondition.GOOD
-                imageUris = emptyList()
-                triedSubmit = false
+            res.onSuccess { productId ->
+                Toast.makeText(context, "Producto creado ✅", Toast.LENGTH_SHORT).show()
 
-            } catch (e: Exception) {
-                submitError = e.message ?: "Error creando el producto"
-            } finally {
-                isCreating = false
+                // resetear formulario
+                resetForm()
+            }.onFailure { e ->
+                Toast.makeText(
+                    context,
+                    e.message ?: "Error creando el producto",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
@@ -143,7 +144,6 @@ fun CreateProductTab() {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .verticalScroll(scrollState)
                     .imePadding(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -213,6 +213,15 @@ fun CreateProductTab() {
                             onValueChange = { condition = it },
                             modifier = Modifier.fillMaxWidth()
                         )
+
+                        Spacer(Modifier.height(7.dp))
+
+                        BrandField(
+                            value = brand,
+                            onValueChange = { brand = it },
+                            label = stringResource(R.string.product_brand),
+                            modifier = Modifier.fillMaxWidth()
+                        )
                     }
                 }
 
@@ -267,7 +276,9 @@ private fun ItemConditionDropdown(
         )
         ExposedDropdownMenu(
             expanded = expanded,
-            onDismissRequest = { expanded = false }
+            onDismissRequest = { expanded = false },
+            containerColor = Color.White,
+            tonalElevation = 0.dp
         ) {
             ItemCondition.entries.forEach { condition ->
                 DropdownMenuItem(

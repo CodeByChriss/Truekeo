@@ -50,9 +50,10 @@
     <string name="details">Detalles</string>
     <string name="location">Ubicación</string>
     <string name="product_to_trueke">Producto a truekear</string>
-    <string name="product_name">Nombre del producto</string>
-    <string name="product_description">Descripción del producto</string>
-    <string name="product_state">Estado del producto</string>
+    <string name="product_name">Nombre</string>
+    <string name="product_description">Descripción</string>
+    <string name="product_state">Estado</string>
+    <string name="product_brand">Marca</string>
     <!-- estados del producto -->
     <string name="product_state_new">Nuevo</string>
     <string name="product_state_like_new">Como nuevo</string>
@@ -79,6 +80,9 @@
     <string name="edit_profile">Editar perfil</string>
     <string name="change_picture">Cambia tu foto de perfil</string>
     <string name="save">Guardar</string>
+    <string name="unsaved_changes">Cambios sin guardar</string>
+    <string name="save_changes_question">¿Quieres guardar los cambios antes de salir?</string>
+    <string name="discard">Descartar</string>
     <!-- MisProductos-->
     <string name="search_product">Busca un producto…</string>
 
@@ -122,5 +126,6 @@
     <string name="product_availability_available">Disponible</string>
     <string name="product_availability_reserved">Reservado</string>
     <string name="product_availability_exchanged">Intercambiado</string>
+    <string name="select_a_product">Selecciona un producto</string>
 
 </resources>

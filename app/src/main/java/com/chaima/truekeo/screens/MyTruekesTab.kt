@@ -40,8 +40,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.chaima.truekeo.R
 import com.chaima.truekeo.components.TruekeCard
-import com.chaima.truekeo.data.AuthContainer
-import com.chaima.truekeo.data.TruekeContainer
+import com.chaima.truekeo.managers.AuthContainer
+import com.chaima.truekeo.managers.TruekeContainer
 import com.chaima.truekeo.models.Trueke
 import com.chaima.truekeo.models.TruekeStatus
 import com.chaima.truekeo.navigation.NavBarRoutes
@@ -53,13 +53,14 @@ fun MyTruekesTab(navController: NavController) {
     val authManager = remember { AuthContainer.authManager }
     val truekeManager = remember { TruekeContainer.truekeManager }
 
+    val currentUserId = authManager.userProfile?.id
+
     var truekes by remember { mutableStateOf(emptyList<Trueke>()) }
     var isLoading by remember { mutableStateOf(true) }
 
     // Cargar truekes al entrar (y cuando cambie el usuario)
     LaunchedEffect(authManager.userProfile?.id) {
-        val uid = authManager.userProfile?.id
-        if (uid == null) {
+        if (currentUserId == null) {
             truekes = emptyList()
             isLoading = false
             return@LaunchedEffect
@@ -185,6 +186,7 @@ fun MyTruekesTab(navController: NavController) {
                                     itemsIndexed(filtered) { index, trueke ->
                                         TruekeCard(
                                             trueke = trueke,
+                                            currentUserId = currentUserId,
                                             onClick = {
                                                 navController.navigate(
                                                     NavBarRoutes.TruekeDetails.create(trueke.id)

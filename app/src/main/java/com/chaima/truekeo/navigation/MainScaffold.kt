@@ -14,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavType
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
@@ -22,20 +23,21 @@ import com.chaima.truekeo.screens.CreateProductTab
 import com.chaima.truekeo.screens.HomeTab
 import com.chaima.truekeo.screens.CreateTruekeTab
 import androidx.navigation.NavController
-import com.chaima.truekeo.data.AuthContainer
+import com.chaima.truekeo.managers.AuthContainer
 import com.chaima.truekeo.screens.MessageScreen
 import com.chaima.truekeo.screens.EditProfileScreen
-import com.chaima.truekeo.screens.EditTruekeScreen
 import com.chaima.truekeo.screens.MessagesTab
 import com.chaima.truekeo.screens.MyProductsScreen
 import com.chaima.truekeo.screens.ProfileTab
 import com.chaima.truekeo.screens.MyTruekesTab
+import com.chaima.truekeo.screens.ProductDetailsScreen
 import com.chaima.truekeo.screens.TruekeDetailsScreen
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MainScaffold(rootNavController: NavController) {
     val authManager = AuthContainer.authManager
+    val context = LocalContext.current
 
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
@@ -154,17 +156,52 @@ fun MainScaffold(rootNavController: NavController) {
                         }
                     },
                     onLogoutClick = {
-                        authManager.logout()
+                        authManager.logout(context)
+
+                        // limpia el backstack del nav interno
+                        navController.popBackStack(navController.graph.startDestinationId, inclusive = false)
+
                         rootNavController.navigate(Routes.AuthGraph.route) {
                             popUpTo(Routes.Main.route) { inclusive = true }
+                            launchSingleTop = true
                         }
                     }
                 )
             }
-            composable(NavBarRoutes.MyProducts.route) { MyProductsScreen() }
+            composable(NavBarRoutes.MyProducts.route) {
+                MyProductsScreen(navController)
+            }
+
+
+            composable(
+                route = "product_details/{productName}",
+                arguments = listOf(
+                    navArgument("productName") { type = NavType.StringType }
+                )
+            ) { backStackEntry ->
+
+                val productName =
+                    backStackEntry.arguments?.getString("productName") ?: ""
+
+                ProductDetailsScreen(
+                    productName = productName,
+                    onBack = { navController.popBackStack() }
+                )
+            }
+
+
 
             composable(NavBarRoutes.EditProfile.route) {
                 EditProfileScreen(
+                    onCloseClick = {
+                        navController.navigate(NavBarRoutes.Profile.route) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
                     onSaveChangesClick = {
                         navController.navigate(NavBarRoutes.Profile.route) {
                             popUpTo(navController.graph.startDestinationId) {
@@ -176,6 +213,7 @@ fun MainScaffold(rootNavController: NavController) {
                     }
                 )
             }
+
         }
 
         FabOverlayActions(

@@ -54,8 +54,8 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.getString
 import coil3.compose.AsyncImage
 import com.chaima.truekeo.R
-import com.chaima.truekeo.data.AuthContainer
-import com.chaima.truekeo.data.ChatContainer
+import com.chaima.truekeo.managers.AuthContainer
+import com.chaima.truekeo.managers.ChatContainer
 import com.chaima.truekeo.models.ChatMessage
 import com.chaima.truekeo.models.Conversation
 import com.chaima.truekeo.ui.theme.TruekeoTheme

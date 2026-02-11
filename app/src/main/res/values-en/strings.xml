@@ -45,10 +45,11 @@
     <string name="details">Details</string>
     <string name="location">Location</string>
     <string name="product_to_trueke">Product to trueke</string>
-    <string name="product_name">Product name</string>
-    <string name="product_description">Product description</string>
-    <string name="product_state">Product condition</string>
+    <string name="product_name">Name</string>
+    <string name="product_description">Description</string>
+    <string name="product_state">Condition</string>
 
+    <string name="product_brand">Brand</string>
     <string name="product_state_new">New</string>
     <string name="product_state_like_new">Like new</string>
     <string name="product_state_good">Good</string>
@@ -71,7 +72,9 @@
     <string name="save">Save changes</string>
     <string name="my_trueks">My truekes</string>
     <string name="my_products">My products</string>
-    <string name="search_product">Search a product...</string>
+    <string name="save_changes_question">Do you want to save changes before leaving?</string>
+    <string name="discard">Discard</string>
+    <string name="search_product">Search a product…</string>
 
     <string name="my_truekes">My truekes</string>
 
@@ -103,11 +106,13 @@
     <string name="empty_reserved_truekes">You have no reserved trades</string>
     <string name="empty_completed_truekes">You have no completed trades</string>
     <string name="send">Send</string>
-    <string name="write_message_here">Write a message here...</string>
+    <string name="write_message_here">Write a message here…</string>
     <string name="go_back">Go back</string>
     <string name="no_conversation">You have no conversations</string>
     <string name="write">Send a message</string>
+    <string name="unsaved_changes">Unsaved changes</string>
     <string name="product_availability_available">Available</string>
     <string name="product_availability_reserved">Reserved</string>
     <string name="product_availability_exchanged">Exchanged</string>
+    <string name="select_a_product">Select a product</string>
 </resources>

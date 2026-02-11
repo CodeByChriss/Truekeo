@@ -1,5 +1,6 @@
 package com.chaima.truekeo.screens
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -33,12 +34,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.chaima.truekeo.R
 import com.chaima.truekeo.components.ItemImageBox
 import com.chaima.truekeo.components.UserAvatarImage
-import com.chaima.truekeo.data.TruekeContainer
+import com.chaima.truekeo.managers.AuthContainer
+import com.chaima.truekeo.managers.TruekeContainer
 import com.chaima.truekeo.models.Item
 import com.chaima.truekeo.models.Trueke
 import com.chaima.truekeo.models.TruekeStatus
@@ -52,6 +53,9 @@ fun TruekeDetailsScreen(
     onBack: () -> Unit
 ) {
     val truekeManager = remember { TruekeContainer.truekeManager }
+    val authManager = remember { AuthContainer.authManager }
+
+    val currentUserId = authManager.userProfile?.id
 
     var trueke by remember { mutableStateOf<Trueke?>(null) }
     var loading by remember { mutableStateOf(true) }
@@ -81,8 +85,11 @@ fun TruekeDetailsScreen(
         }
 
         else -> {
+            val isHost = currentUserId != null && trueke!!.hostUserId == currentUserId
+
             TruekeDetailsContent(
                 trueke = trueke!!,
+                isHost = isHost,
                 onBack = onBack
             )
         }
@@ -94,6 +101,7 @@ fun TruekeDetailsScreen(
 @Composable
 fun TruekeDetailsContent(
     trueke: Trueke,
+    isHost: Boolean,
     onBack: () -> Unit
 ) {
     TruekeoTheme(dynamicColor = false) {
@@ -125,10 +133,10 @@ fun TruekeDetailsContent(
                     OpenTruekeLayout(trueke, Modifier.padding(padding))
 
                 TruekeStatus.RESERVED ->
-                    ReservedTruekeLayout(trueke, Modifier.padding(padding))
+                    ReservedTruekeLayout(trueke, isHost, Modifier.padding(padding))
 
                 TruekeStatus.COMPLETED ->
-                    CompletedTruekeLayout(trueke, Modifier.padding(padding))
+                    CompletedTruekeLayout(trueke, isHost, Modifier.padding(padding))
 
                 TruekeStatus.CANCELLED -> {}
             }
@@ -192,8 +200,16 @@ fun OpenTruekeLayout(
 @Composable
 fun ReservedTruekeLayout(
     trueke: Trueke,
+    isHost: Boolean,
     modifier: Modifier = Modifier
 ) {
+    val takerItem = requireNotNull(trueke.takerItem) { "takerItem debe existir en RESERVED" }
+
+    val myOfferItem = if (isHost) trueke.hostItem else takerItem
+    val myReceiveItem = if (isHost) takerItem else trueke.hostItem
+
+    val otherUser = if (isHost) trueke.takerUser else trueke.hostUser
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -215,7 +231,7 @@ fun ReservedTruekeLayout(
 
         Spacer(Modifier.height(2.dp))
 
-        trueke.takerUser?.let { takerUser ->
+        otherUser?.let { u ->
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
@@ -230,10 +246,10 @@ fun ReservedTruekeLayout(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(3.dp)
                 ) {
-                    UserAvatarImage(takerUser, size = 24.dp)
+                    UserAvatarImage(u, size = 24.dp)
 
                     Text(
-                        text = "@${takerUser.username}",
+                        text = "@${u.username}",
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color.Black,
                         fontFamily = FontFamily(Font(R.font.saira_medium))
@@ -252,7 +268,7 @@ fun ReservedTruekeLayout(
         )
         Spacer(Modifier.height(4.dp))
 
-        ItemCard(item = trueke.hostItem)
+        ItemCard(item = myOfferItem)
 
         Spacer(Modifier.height(16.dp))
 
@@ -276,36 +292,63 @@ fun ReservedTruekeLayout(
         )
         Spacer(Modifier.height(4.dp))
 
-        ItemCard(item = trueke.takerItem!!)
+        ItemCard(item = myReceiveItem)
 
         Spacer(Modifier.height(24.dp))
 
         // Botones de acción
-        Button(
-            onClick = { /* TODO: Marcar como completado */ },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(52.dp),
-            shape = RoundedCornerShape(12.dp)
-        ) {
-            Text(
-                text = "Marcar como completado".uppercase(Locale.getDefault()),
-                style = MaterialTheme.typography.bodyLarge,
-                fontFamily = FontFamily(Font(R.font.saira_medium))
-            )
+        if (isHost) {
+            Button(
+                onClick = { /* TODO: Marcar como completado */ },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text(
+                    text = "Marcar como completado".uppercase(Locale.getDefault()),
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontFamily = FontFamily(Font(R.font.saira_medium))
+                )
+            }
+
+            Spacer(Modifier.height(12.dp))
+
+            OutlinedButton(
+                onClick = { /* TODO: Cancelar trueke */ },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp),
+                shape = RoundedCornerShape(12.dp),
+                border = BorderStroke(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            ) {
+                Text(
+                    text = "Cancelar trueke".uppercase(Locale.getDefault()),
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontFamily = FontFamily(Font(R.font.saira_medium))
+                )
+            }
+
+            Spacer(Modifier.height(12.dp))
         }
 
-        Spacer(Modifier.height(12.dp))
-
+        // Siempre sale el boton de escribir (host o no host)
         OutlinedButton(
-            onClick = { /* TODO: Cancelar trueke */ },
+            onClick = { /* TODO: Escribir */ },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(52.dp),
-            shape = RoundedCornerShape(12.dp)
+            shape = RoundedCornerShape(12.dp),
+            border = BorderStroke(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.primary
+            )
         ) {
             Text(
-                text = "Cancelar trueke".uppercase(Locale.getDefault()),
+                text = "Escribir".uppercase(Locale.getDefault()),
                 style = MaterialTheme.typography.bodyLarge,
                 fontFamily = FontFamily(Font(R.font.saira_medium))
             )
@@ -316,8 +359,16 @@ fun ReservedTruekeLayout(
 @Composable
 fun CompletedTruekeLayout(
     trueke: Trueke,
+    isHost: Boolean,
     modifier: Modifier = Modifier
 ) {
+    val takerItem = requireNotNull(trueke.takerItem) { "takerItem debe existir en RESERVED" }
+
+    val myOfferItem = if (isHost) trueke.hostItem else takerItem
+    val myReceiveItem = if (isHost) takerItem else trueke.hostItem
+
+    val otherUser = if (isHost) trueke.takerUser else trueke.hostUser
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -353,7 +404,7 @@ fun CompletedTruekeLayout(
 
             Spacer(Modifier.height(2.dp))
 
-            trueke.takerUser?.let { takerUser ->
+            otherUser?.let { u ->
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
@@ -368,10 +419,10 @@ fun CompletedTruekeLayout(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(3.dp)
                     ) {
-                        UserAvatarImage(takerUser, size = 24.dp)
+                        UserAvatarImage(u, size = 24.dp)
 
                         Text(
-                            text = "@${takerUser.username}",
+                            text = "@${u.username}",
                             style = MaterialTheme.typography.bodyMedium,
                             color = Color.Black,
                             fontFamily = FontFamily(Font(R.font.saira_medium))
@@ -390,7 +441,7 @@ fun CompletedTruekeLayout(
             )
             Spacer(Modifier.height(4.dp))
 
-            ItemCard(item = trueke.hostItem)
+            ItemCard(item = myOfferItem)
 
             Spacer(Modifier.height(16.dp))
 
@@ -414,7 +465,7 @@ fun CompletedTruekeLayout(
             )
             Spacer(Modifier.height(4.dp))
 
-            ItemCard(item = trueke.takerItem!!)
+            ItemCard(item = myReceiveItem)
         }
     }
 }
@@ -513,8 +564,6 @@ fun ItemCard(
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontFamily = FontFamily(Font(R.font.saira_regular)),
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
                 )
             }
 

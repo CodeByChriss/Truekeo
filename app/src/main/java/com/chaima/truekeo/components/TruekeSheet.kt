@@ -46,8 +46,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.getString
 import com.chaima.truekeo.R
-import com.chaima.truekeo.data.AuthContainer
-import com.chaima.truekeo.data.ChatContainer
+import com.chaima.truekeo.managers.AuthContainer
+import com.chaima.truekeo.managers.ChatContainer
 import com.chaima.truekeo.utils.resolvePlaceName
 import com.chaima.truekeo.models.Item
 import com.chaima.truekeo.models.Trueke
