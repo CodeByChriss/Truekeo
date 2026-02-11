@@ -115,5 +115,12 @@
     <string name="product_availability_reserved">Reserved</string>
     <string name="product_availability_exchanged">Exchanged</string>
     <string name="select_a_product">Select a product</string>
-    <string name="trueke_proposal">Trueke proposal!</string>
+    <string name="trueke_proposal">Trueke proposal</string>
+    <string name="error_loading">Error loading</string>
+    <string name="accept">Accept</string>
+    <string name="reject">Reject</string>
+    <string name="waiting_response">Waiting for response…</string>
+    <string name="trueke_accepted">Trueke accepted!</string>
+    <string name="trueke_rejected">Trueke rejected</string>
+    <string name="trueke_cancelled">Trueke cancelled</string>
 </resources>

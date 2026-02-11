@@ -9,11 +9,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
@@ -23,11 +25,13 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.SwapHoriz
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -52,7 +56,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.getString
@@ -60,11 +63,14 @@ import coil3.compose.AsyncImage
 import com.chaima.truekeo.R
 import com.chaima.truekeo.managers.AuthContainer
 import com.chaima.truekeo.managers.ChatContainer
+import com.chaima.truekeo.managers.ItemContainer
+import com.chaima.truekeo.managers.TruekeContainer
 import com.chaima.truekeo.models.ChatMessage
 import com.chaima.truekeo.models.Conversation
 import com.chaima.truekeo.models.Item
 import com.chaima.truekeo.models.MessageType
 import com.chaima.truekeo.models.OfferStatus
+import com.chaima.truekeo.models.Trueke
 import com.chaima.truekeo.ui.theme.TruekeoTheme
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -249,7 +255,7 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
                 ) {
                     items(chatMessages) { msg ->
                         if (msg.type == MessageType.TRUEKE) {
-                            TruekeBubble(msg, Item(), Item())
+                            TruekeBubble(msg, {}, {}, listState, chatMessages.size -1)
                         } else {
                             ChatBubble(msg)
                         }
@@ -333,91 +339,135 @@ fun ChatBubble(message: ChatMessage) {
 }
 
 @Composable
-fun TruekeBubble(message: ChatMessage, originalItem: Item, truekeItem: Item) {
-    val trueke = message.truekeOffer ?: return // Si no hay un trueke, volvemos sin mostrar nada
-    val isPending = trueke.status == OfferStatus.PENDING
+fun TruekeBubble(
+    message: ChatMessage,
+    onAccept: () -> Unit,
+    onReject: () -> Unit,
+    listState: LazyListState,
+    cntChatMessages: Int
+) {
+    val trueke = message.truekeOffer ?: return
+    val itemManager = remember { ItemContainer.itemManager }
+    val truekeManager = remember { TruekeContainer.truekeManager }
 
-    Surface(
+    var proposerItem by remember { mutableStateOf<Item?>(null) }
+    var truekeData by remember { mutableStateOf<Trueke?>(null) }
+    var targetItem by remember { mutableStateOf<Item?>(null) }
+    var isLoading by remember { mutableStateOf(true) }
+
+    LaunchedEffect(0) {
+        isLoading = true
+        proposerItem = itemManager.getItemById(trueke.offeredItemId)
+        truekeData = truekeManager.getTruekeById(trueke.truekeId)
+        targetItem = itemManager.getItemById(truekeData?.hostItemId ?: "ERROR")
+        isLoading = false
+        listState.animateScrollToItem(cntChatMessages)
+    }
+
+    // Uso un box para que cubra todo el ancho de la pantalla
+    Box(
         modifier = Modifier
-            .fillMaxWidth(0.9f)
-            .padding(8.dp),
-        shape = RoundedCornerShape(16.dp),
-        color = Color.White,
-        tonalElevation = 4.dp,
-        shadowElevation = 2.dp
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        contentAlignment = Alignment.Center
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+        Surface(
+            modifier = Modifier.fillMaxWidth(0.85f), // Lo estrecho un poco para que sea más estético
+            shape = RoundedCornerShape(20.dp),
+            color = MaterialTheme.colorScheme.background,
+            tonalElevation = 4.dp,
+            shadowElevation = 3.dp
         ) {
-            Text(
-                text = "Propuesta de Trueke",
-                fontFamily = FontFamily(Font(R.font.saira_semibold)),
-                color = MaterialTheme.colorScheme.primary
-            )
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 12.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // Producto propuesto (El tuyo si tú enviaste la propuesta)
-                ProductItem(originalItem.imageUrls.firstOrNull() ?: "", originalItem.name)
-
-                Icon(
-                    imageVector = Icons.Default.SwapHoriz,
-                    contentDescription = "intercambio",
-                    tint = MaterialTheme.colorScheme.secondary,
-                    modifier = Modifier.size(32.dp)
-                )
-
-                // Producto objetivo
-                ProductItem(truekeItem.imageUrls.firstOrNull() ?: "", truekeItem.name)
-            }
-
-            if (isPending) {
-                if (!message.isFromMe) { // Solo el creador del trueke ve los botones
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        androidx.compose.material3.Button(
-                            onClick = {},
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text("Aceptar", color = Color.White)
-                        }
-                        androidx.compose.material3.OutlinedButton(
-                            onClick = {},
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text("Rechazar", color = Color.Red)
-                        }
-                    }
-                } else {
-                    Text(
-                        text = "Esperando respuesta...",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Color.Gray
-                    )
+            if (isLoading) {
+                Box(Modifier.padding(32.dp), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(modifier = Modifier.size(28.dp), strokeWidth = 3.dp)
                 }
             } else {
-                val statusText = when (trueke.status) {
-                    OfferStatus.ACCEPTED -> "¡Trueke Aceptado!"
-                    OfferStatus.REJECTED -> "Trueke Rechazado"
-                    OfferStatus.CANCELLED -> "Trueke Cancelado"
-                    else -> ""
-                }
-                val statusColor =
-                    if (trueke.status == OfferStatus.ACCEPTED) Color(0xFF4CAF50) else Color.Red
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = stringResource(R.string.trueke_proposal),
+                        style = MaterialTheme.typography.labelLarge,
+                        fontFamily = FontFamily(Font(R.font.saira_semibold)),
+                        color = MaterialTheme.colorScheme.primary,
+                        letterSpacing = 1.sp
+                    )
 
-                Text(
-                    text = statusText,
-                    color = statusColor,
-                    fontFamily = FontFamily(Font(R.font.saira_medium))
-                )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 16.dp),
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.Top // Alineo arriba para que nombres largos no muevan las imágenes
+                    ) {
+                        ProductItem(
+                            imageUrl = proposerItem?.imageUrls?.firstOrNull() ?: "",
+                            name = proposerItem?.name ?: stringResource(R.string.error_loading)
+                        )
+
+                        Icon(
+                            imageVector = Icons.Default.SwapHoriz,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.secondary,
+                            modifier = Modifier
+                                .padding(top = 12.dp)
+                                .size(32.dp)
+                        )
+
+                        ProductItem(
+                            imageUrl = targetItem?.imageUrls?.firstOrNull() ?: "",
+                            name = targetItem?.name ?: stringResource(R.string.error_loading)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    if (trueke.status == OfferStatus.PENDING) {
+                        if (!message.isFromMe) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                            ) {
+                                Button(
+                                    onClick = onAccept,
+                                    modifier = Modifier.weight(1f),
+                                    shape = RoundedCornerShape(12.dp)
+                                ) {
+                                    Text(stringResource(R.string.accept), fontFamily = FontFamily(Font(R.font.saira_medium)))
+                                }
+                                OutlinedButton(
+                                    onClick = onReject,
+                                    modifier = Modifier.weight(1f),
+                                    shape = RoundedCornerShape(12.dp)
+                                ) {
+                                    Text(stringResource(R.string.reject), color = Color.Red, fontFamily = FontFamily(Font(R.font.saira_medium)))
+                                }
+                            }
+                        } else {
+                            Text(
+                                text = stringResource(R.string.waiting_response),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = Color.Gray,
+                                fontFamily = FontFamily(Font(R.font.saira_regular))
+                            )
+                        }
+                    } else {
+                        val (statusLabel, statusColor) = when (trueke.status) {
+                            OfferStatus.ACCEPTED -> stringResource(R.string.trueke_accepted) to Color(0xFF4CAF50)
+                            OfferStatus.REJECTED -> stringResource(R.string.trueke_rejected) to Color.Red
+                            OfferStatus.CANCELLED -> stringResource(R.string.trueke_cancelled) to Color.Gray
+                            else -> "" to Color.Black
+                        }
+                        Text(
+                            text = statusLabel,
+                            color = statusColor,
+                            style = MaterialTheme.typography.titleMedium,
+                            fontFamily = FontFamily(Font(R.font.saira_bold))
+                        )
+                    }
+                }
             }
         }
     }
@@ -425,19 +475,26 @@ fun TruekeBubble(message: ChatMessage, originalItem: Item, truekeItem: Item) {
 
 @Composable
 fun ProductItem(imageUrl: String, name: String) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.width(80.dp)) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.width(100.dp) // Un poco más ancho para dar espacio al texto
+    ) {
         AsyncImage(
             model = imageUrl,
             contentDescription = name,
-            modifier = Modifier.size(60.dp).clip(RoundedCornerShape(8.dp)),
+            modifier = Modifier
+                .size(70.dp)
+                .clip(RoundedCornerShape(12.dp)),
             contentScale = ContentScale.Crop
         )
+        Spacer(modifier = Modifier.height(6.dp))
         Text(
             text = name,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            fontSize = 12.sp,
-            textAlign = TextAlign.Center
+            fontSize = 13.sp,
+            lineHeight = 16.sp,
+            fontFamily = FontFamily(Font(R.font.saira_regular)),
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
         )
     }
 }

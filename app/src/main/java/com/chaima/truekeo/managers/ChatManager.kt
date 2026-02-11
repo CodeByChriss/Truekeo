@@ -1,19 +1,19 @@
 package com.chaima.truekeo.managers
 
 import android.util.Log
-import androidx.core.content.ContextCompat.getString
-import com.chaima.truekeo.R
 import com.chaima.truekeo.models.ChatMessage
 import com.chaima.truekeo.models.Conversation
 import com.chaima.truekeo.models.Item
 import com.chaima.truekeo.models.MessageType
 import com.chaima.truekeo.models.OfferStatus
+import com.chaima.truekeo.models.TruekeOffer
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
+import java.util.UUID
 
 // Creamos una única instancia del ChatManager para toda la aplicación y asi evitamos errores
 object ChatContainer {
@@ -223,27 +223,27 @@ class ChatManager {
         return try {
             val conversationId = startOrGetConversation(myUid, otherUid) ?: return null
 
-            val offerData = mapOf(
-                "id" to java.util.UUID.randomUUID().toString(),
-                "truekeId" to truekeId,
-                "proposerUserId" to myUid,
-                "offeredItemId" to myProduct.id,
-                "status" to OfferStatus.PENDING,
-                "createdAt" to System.currentTimeMillis(),
-                "updatedAt" to System.currentTimeMillis()
+            val offerData = TruekeOffer(
+                id = UUID.randomUUID().toString(),
+                truekeId = truekeId,
+                proposerUserId = myUid,
+                offeredItemId = myProduct.id,
+                status = OfferStatus.PENDING,
+                createdAt = System.currentTimeMillis(),
+                updatedAt = System.currentTimeMillis()
             )
 
-            val messageData = mapOf(
-                "senderId" to myUid,
-                "text" to truekeMessage,
-                "type" to MessageType.TRUEKE,
-                "truekeOffer" to offerData
+            val message = ChatMessage(
+                senderId = myUid,
+                text = truekeMessage,
+                type = MessageType.TRUEKE,
+                truekeOffer = offerData
             )
 
             db.collection("conversations")
                 .document(conversationId)
                 .collection("messages")
-                .add(messageData)
+                .add(message)
                 .await()
 
             db.collection("conversations").document(conversationId).update(
@@ -255,6 +255,26 @@ class ChatManager {
         } catch (e: Exception) {
             Log.e("ChatManager", "Error al enviar propuesta: ${e.message}")
             null
+        }
+    }
+
+    suspend fun updateOfferStatus(conversationId: String, message: ChatMessage, newStatus: OfferStatus) {
+        try {
+            val query = db.collection("conversations")
+                .document(conversationId)
+                .collection("messages")
+                .whereEqualTo("timestamp", message.timestamp)
+                .get()
+                .await()
+
+            val docRef = query.documents.firstOrNull()?.reference
+            docRef?.update(
+                "truekeOffer.status", newStatus.name,
+                "truekeOffer.updatedAt", System.currentTimeMillis()
+            )?.await()
+
+        } catch (e: Exception) {
+            Log.e("ChatManager", "Error al actualizar oferta: ${e.message}")
         }
     }
 }
