@@ -452,8 +452,6 @@ fun CompletedTruekeLayout(
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
-        Spacer(Modifier.height(12.dp))
-
         CompletedBanner()
 
         Spacer(Modifier.height(16.dp))
