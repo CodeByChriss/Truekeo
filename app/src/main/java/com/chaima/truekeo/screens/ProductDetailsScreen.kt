@@ -96,7 +96,7 @@ fun ProductDetailsScreen(
                 contentAlignment = Alignment.Center
             ) {
                 Image(
-                    painter = painterResource(R.drawable.guitarra),
+                    painter = painterResource(R.drawable.phone),
                     contentDescription = "Imagen del producto",
                     modifier = Modifier.fillMaxSize()
                 )

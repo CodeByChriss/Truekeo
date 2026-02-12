@@ -1,5 +1,6 @@
 package com.chaima.truekeo.screens
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -244,26 +245,26 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
                         }
                     }
                 }
-            ) { innerPadding ->
+            ) { padding ->
                 LazyColumn(
                     state = listState,
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(innerPadding)
+                        .padding(padding)
                         .background(Color(0xFFF5F5F5)),
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    contentPadding = PaddingValues(24.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     items(chatMessages) { msg ->
                         if (msg.type == MessageType.TRUEKE) {
                             TruekeBubble(
                                 msg,
-                                { truekeId, truekeItemId ->
+                                { truekeId, truekeTakerUserId, truekeTakerItemId ->
                                     scope.launch {
                                         // actualizamos el trueke (el del mapa)
                                         val truekeManager = TruekeContainer.truekeManager
                                         truekeManager.reserveTrueke(truekeId,
-                                            user?.id ?: "ERROR", truekeItemId)
+                                            truekeTakerUserId, truekeTakerItemId)
                                         // actualizamos la propuesta de trueke
                                         chatManager.updateOfferStatus(
                                             conversationId,
@@ -350,9 +351,9 @@ fun ChatBubble(message: ChatMessage) {
     val bgColor = if (message.isFromMe) MaterialTheme.colorScheme.primary else Color.White
     val textColor = if (message.isFromMe) Color.White else Color.Black
     val shape = if (message.isFromMe) {
-        RoundedCornerShape(16.dp, 16.dp, 0.dp, 16.dp)
+        RoundedCornerShape(8.dp, 8.dp, 0.dp, 8.dp)
     } else {
-        RoundedCornerShape(16.dp, 16.dp, 16.dp, 0.dp)
+        RoundedCornerShape(8.dp, 8.dp, 8.dp, 0.dp)
     }
 
     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = alignment) {
@@ -364,7 +365,7 @@ fun ChatBubble(message: ChatMessage) {
             ) {
                 Text(
                     text = message.text,
-                    modifier = Modifier.padding(12.dp),
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
                     color = textColor
                 )
             }
@@ -381,13 +382,13 @@ fun ChatBubble(message: ChatMessage) {
 @Composable
 fun TruekeBubble(
     message: ChatMessage,
-    onAccept: (truekeId: String, truekeItemId: String) -> Unit,
+    onAccept: (truekeId: String, truekeTakerUserId: String, truekeTakerItemId: String) -> Unit,
     onReject: () -> Unit,
     onTruekeReserved: () -> Unit,
     listState: LazyListState,
     cntChatMessages: Int
 ) {
-    val trueke = message.truekeOffer ?: return
+    val truekeOffer = message.truekeOffer ?: return
     val itemManager = remember { ItemContainer.itemManager }
     val truekeManager = remember { TruekeContainer.truekeManager }
 
@@ -398,32 +399,39 @@ fun TruekeBubble(
     var isAcceptLoading by remember { mutableStateOf(false) }
     var isRejectLoading by remember { mutableStateOf(false) }
 
-    LaunchedEffect(0) {
+    LaunchedEffect(truekeOffer.truekeId, truekeOffer.offeredItemId) {
         isLoading = true
-        truekeData = truekeManager.getTruekeById(trueke.truekeId)
-        if((trueke.status != OfferStatus.ACCEPTED || trueke.status != OfferStatus.REJECTED) && truekeData?.status == TruekeStatus.RESERVED){
+        proposerItem = null
+        targetItem = null
+        truekeData = null
+
+        truekeData = truekeManager.getTruekeById(truekeOffer.truekeId)
+
+        if (
+            truekeOffer.status != OfferStatus.ACCEPTED &&
+            truekeOffer.status != OfferStatus.REJECTED &&
+            truekeData?.status == TruekeStatus.RESERVED
+        ) {
             onTruekeReserved()
         }
-        targetItem = itemManager.getItemById(truekeData?.hostItemId ?: "ERROR")
-        proposerItem = itemManager.getItemById(trueke.offeredItemId)
+
+        targetItem = itemManager.getItemById(truekeData?.hostItemId ?: "")
+        proposerItem = itemManager.getItemById(truekeOffer.offeredItemId)
+
         isLoading = false
-        // debemos volver a indicar que se llava abajo del todo porque el tamaño del TruekeBubble cambia al cargar las imágenes
         listState.animateScrollToItem(cntChatMessages)
     }
 
     // Uso un box para que cubra todo el ancho de la pantalla
     Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .fillMaxWidth(),
         contentAlignment = Alignment.Center
     ) {
         Surface(
-            modifier = Modifier.fillMaxWidth(0.85f), // Lo estrecho un poco para que sea más estético
-            shape = RoundedCornerShape(20.dp),
-            color = MaterialTheme.colorScheme.background,
-            tonalElevation = 4.dp,
-            shadowElevation = 3.dp
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp),
+            color = Color.White,
         ) {
             if (isLoading) {
                 Box(Modifier.padding(32.dp), contentAlignment = Alignment.Center) {
@@ -450,7 +458,7 @@ fun TruekeBubble(
                         verticalAlignment = Alignment.Top // Alineo arriba para que nombres largos no muevan las imágenes
                     ) {
                         ProductItem(
-                            imageUrl = proposerItem?.imageUrls?.firstOrNull() ?: "",
+                            imageUrl = proposerItem?.imageUrls?.first() ?: "",
                             name = proposerItem?.name ?: stringResource(R.string.error_loading)
                         )
 
@@ -464,14 +472,14 @@ fun TruekeBubble(
                         )
 
                         ProductItem(
-                            imageUrl = targetItem?.imageUrls?.firstOrNull() ?: "",
+                            imageUrl = targetItem?.imageUrls?.first() ?: "",
                             name = targetItem?.name ?: stringResource(R.string.error_loading)
                         )
                     }
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    if (trueke.status == OfferStatus.PENDING) {
+                    if (truekeOffer.status == OfferStatus.PENDING) {
                         if (!message.isFromMe) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
@@ -481,7 +489,7 @@ fun TruekeBubble(
                                     onClick = {
                                         if (!isAcceptLoading) {
                                             isAcceptLoading = true
-                                            onAccept(truekeData?.id ?: "ERROR", proposerItem?.id ?: "ERROR")
+                                            onAccept(truekeData?.id ?: "ERROR", truekeOffer.proposerUserId, proposerItem?.id ?: "ERROR")
                                             isAcceptLoading = false
                                         }
                                     },
@@ -532,7 +540,7 @@ fun TruekeBubble(
                             )
                         }
                     } else {
-                        val (statusLabel, statusColor) = when (trueke.status) {
+                        val (statusLabel, statusColor) = when (truekeOffer.status) {
                             OfferStatus.ACCEPTED -> stringResource(R.string.trueke_accepted) to Color(
                                 0xFF4CAF50
                             )
@@ -568,7 +576,9 @@ fun ProductItem(imageUrl: String, name: String) {
                 .clip(RoundedCornerShape(12.dp)),
             contentScale = ContentScale.Crop
         )
+
         Spacer(modifier = Modifier.height(6.dp))
+
         Text(
             text = name,
             fontSize = 13.sp,

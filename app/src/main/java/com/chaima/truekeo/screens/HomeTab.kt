@@ -184,7 +184,7 @@ fun HomeTab(
 
             if(resultId != null){
                 // abrimos la conversación
-                openConversation(resultId)
+                onOpenConversation(resultId)
             }else{
                 // feedback al usuario
                 Log.e("HomeTab", "Error proposing")
