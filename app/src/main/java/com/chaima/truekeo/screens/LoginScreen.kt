@@ -315,8 +315,8 @@ fun LoginScreen(onGoToSignup: () -> Unit, onLogin: () -> Unit) {
                     shape = RoundedCornerShape(8.dp),
                     border = BorderStroke(1.dp, Color.LightGray),
                     colors = ButtonDefaults.outlinedButtonColors(
-                        containerColor = MaterialTheme.colorScheme.onSurface,
-                        contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        contentColor = MaterialTheme.colorScheme.primary
                     )
                 ) {
                     if (isLoading) {
@@ -337,7 +337,7 @@ fun LoginScreen(onGoToSignup: () -> Unit, onLogin: () -> Unit) {
                             Text(
                                 text = getString(context, R.string.continue_with_google),
                                 fontFamily = FontFamily(Font(R.font.saira_regular)),
-                                color = Color.Black
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }

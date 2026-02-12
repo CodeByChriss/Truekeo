@@ -255,7 +255,29 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
                 ) {
                     items(chatMessages) { msg ->
                         if (msg.type == MessageType.TRUEKE) {
-                            TruekeBubble(msg, {}, {}, listState, chatMessages.size -1)
+                            TruekeBubble(
+                                msg,
+                                {
+                                    scope.launch {
+                                        chatManager.updateOfferStatus(
+                                            conversationId,
+                                            msg,
+                                            OfferStatus.ACCEPTED
+                                        )
+                                    }
+                                },
+                                {
+                                    scope.launch {
+                                        chatManager.updateOfferStatus(
+                                            conversationId,
+                                            msg,
+                                            OfferStatus.REJECTED
+                                        )
+                                    }
+                                },
+                                listState,
+                                chatMessages.size - 1
+                            )
                         } else {
                             ChatBubble(msg)
                         }
@@ -354,6 +376,8 @@ fun TruekeBubble(
     var truekeData by remember { mutableStateOf<Trueke?>(null) }
     var targetItem by remember { mutableStateOf<Item?>(null) }
     var isLoading by remember { mutableStateOf(true) }
+    var isAcceptLoading by remember { mutableStateOf(false) }
+    var isRejectLoading by remember { mutableStateOf(false) }
 
     LaunchedEffect(0) {
         isLoading = true
@@ -361,6 +385,7 @@ fun TruekeBubble(
         truekeData = truekeManager.getTruekeById(trueke.truekeId)
         targetItem = itemManager.getItemById(truekeData?.hostItemId ?: "ERROR")
         isLoading = false
+        // debemos volver a indicar que se llava abajo del todo porque el tamaño del TruekeBubble cambia al cargar las imágenes
         listState.animateScrollToItem(cntChatMessages)
     }
 
@@ -431,18 +456,49 @@ fun TruekeBubble(
                                 horizontalArrangement = Arrangement.spacedBy(12.dp)
                             ) {
                                 Button(
-                                    onClick = onAccept,
+                                    onClick = {
+                                        if (!isAcceptLoading) {
+                                            isAcceptLoading = true
+                                            onAccept()
+                                            isAcceptLoading = false
+                                        }
+                                    },
                                     modifier = Modifier.weight(1f),
                                     shape = RoundedCornerShape(12.dp)
                                 ) {
-                                    Text(stringResource(R.string.accept), fontFamily = FontFamily(Font(R.font.saira_medium)))
+                                    if (isAcceptLoading) {
+                                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                            CircularProgressIndicator(color = Color.White)
+                                        }
+                                    } else {
+                                        Text(
+                                            stringResource(R.string.accept),
+                                            fontFamily = FontFamily(Font(R.font.saira_medium))
+                                        )
+                                    }
                                 }
                                 OutlinedButton(
-                                    onClick = onReject,
+                                    onClick = {
+                                        if (!isRejectLoading) {
+                                            isRejectLoading = true
+                                            onReject()
+                                            isRejectLoading = false
+                                        }
+                                    },
                                     modifier = Modifier.weight(1f),
                                     shape = RoundedCornerShape(12.dp)
                                 ) {
-                                    Text(stringResource(R.string.reject), color = Color.Red, fontFamily = FontFamily(Font(R.font.saira_medium)))
+                                    if (isRejectLoading) {
+                                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                            CircularProgressIndicator(color = Color.White)
+                                        }
+                                    } else {
+                                        Text(
+                                            stringResource(R.string.reject),
+                                            color = Color.Red,
+                                            fontFamily = FontFamily(Font(R.font.saira_medium))
+                                        )
+                                    }
                                 }
                             }
                         } else {
@@ -455,7 +511,10 @@ fun TruekeBubble(
                         }
                     } else {
                         val (statusLabel, statusColor) = when (trueke.status) {
-                            OfferStatus.ACCEPTED -> stringResource(R.string.trueke_accepted) to Color(0xFF4CAF50)
+                            OfferStatus.ACCEPTED -> stringResource(R.string.trueke_accepted) to Color(
+                                0xFF4CAF50
+                            )
+
                             OfferStatus.REJECTED -> stringResource(R.string.trueke_rejected) to Color.Red
                             OfferStatus.CANCELLED -> stringResource(R.string.trueke_cancelled) to Color.Gray
                             else -> "" to Color.Black
