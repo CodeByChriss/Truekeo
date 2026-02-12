@@ -1,5 +1,6 @@
 package com.chaima.truekeo.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +27,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,22 +37,26 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.getString
 import com.chaima.truekeo.R
 import com.chaima.truekeo.components.ItemImageBox
 import com.chaima.truekeo.components.UserAvatarImage
 import com.chaima.truekeo.managers.AuthContainer
+import com.chaima.truekeo.managers.ChatContainer
 import com.chaima.truekeo.managers.TruekeContainer
 import com.chaima.truekeo.models.Item
 import com.chaima.truekeo.models.Trueke
 import com.chaima.truekeo.models.TruekeStatus
 import com.chaima.truekeo.ui.theme.TruekeoTheme
 import com.chaima.truekeo.utils.resolvePlaceName
+import kotlinx.coroutines.launch
 import java.util.Locale
 
 @Composable
 fun TruekeDetailsScreen(
     truekeId: String,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onOpenConversation: (String) -> Unit
 ) {
     val truekeManager = remember { TruekeContainer.truekeManager }
     val authManager = remember { AuthContainer.authManager }
@@ -77,7 +83,9 @@ fun TruekeDetailsScreen(
 
         trueke == null -> {
             Box(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White),
                 contentAlignment = Alignment.Center
             ) {
                 Text("Trueke no encontrado")
@@ -90,7 +98,8 @@ fun TruekeDetailsScreen(
             TruekeDetailsContent(
                 trueke = trueke!!,
                 isHost = isHost,
-                onBack = onBack
+                onBack = onBack,
+                onOpenConversation = onOpenConversation,
             )
         }
     }
@@ -102,7 +111,8 @@ fun TruekeDetailsScreen(
 fun TruekeDetailsContent(
     trueke: Trueke,
     isHost: Boolean,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onOpenConversation: (String) -> Unit,
 ) {
     TruekeoTheme(dynamicColor = false) {
         Scaffold(
@@ -133,10 +143,20 @@ fun TruekeDetailsContent(
                     OpenTruekeLayout(trueke, Modifier.padding(padding))
 
                 TruekeStatus.RESERVED ->
-                    ReservedTruekeLayout(trueke, isHost, Modifier.padding(padding))
+                    ReservedTruekeLayout(
+                        trueke,
+                        isHost,
+                        onOpenConversation,
+                        Modifier.padding(padding)
+                    )
 
                 TruekeStatus.COMPLETED ->
-                    CompletedTruekeLayout(trueke, isHost, Modifier.padding(padding))
+                    CompletedTruekeLayout(
+                        trueke,
+                        isHost,
+                        onOpenConversation,
+                        Modifier.padding(padding)
+                    )
 
                 TruekeStatus.CANCELLED -> {}
             }
@@ -201,14 +221,43 @@ fun OpenTruekeLayout(
 fun ReservedTruekeLayout(
     trueke: Trueke,
     isHost: Boolean,
+    onOpenConversation: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val user = AuthContainer.authManager.userProfile
+    val chatManager = ChatContainer.chatManager
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+    var isLoading by remember { mutableStateOf(false) }
+
     val takerItem = requireNotNull(trueke.takerItem) { "takerItem debe existir en RESERVED" }
 
     val myOfferItem = if (isHost) trueke.hostItem else takerItem
     val myReceiveItem = if (isHost) takerItem else trueke.hostItem
 
     val otherUser = if (isHost) trueke.takerUser else trueke.hostUser
+
+    fun handleChatClick() {
+        if (isLoading) return
+        val myId = user?.id ?: return
+        val otherId = otherUser?.id ?: return
+
+        if (myId == otherId) {
+            Toast.makeText(context, getString(context, R.string.cant_start_conversation_with_you), Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        scope.launch {
+            isLoading = true
+            val conversationId = chatManager.startOrGetConversation(myId, otherId)
+            if (conversationId == null) {
+                Toast.makeText(context, getString(context, R.string.error_starting_conversation), Toast.LENGTH_SHORT).show()
+            } else {
+                onOpenConversation(conversationId)
+            }
+            isLoading = false
+        }
+    }
 
     Column(
         modifier = modifier
@@ -337,7 +386,7 @@ fun ReservedTruekeLayout(
 
         // Siempre sale el boton de escribir (host o no host)
         OutlinedButton(
-            onClick = { /* TODO: Escribir */ },
+            onClick = { handleChatClick() },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(52.dp),
@@ -360,14 +409,43 @@ fun ReservedTruekeLayout(
 fun CompletedTruekeLayout(
     trueke: Trueke,
     isHost: Boolean,
+    onOpenConversation: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val user = AuthContainer.authManager.userProfile
+    val chatManager = ChatContainer.chatManager
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+    var isLoading by remember { mutableStateOf(false) }
+
     val takerItem = requireNotNull(trueke.takerItem) { "takerItem debe existir en RESERVED" }
 
     val myOfferItem = if (isHost) trueke.hostItem else takerItem
     val myReceiveItem = if (isHost) takerItem else trueke.hostItem
 
     val otherUser = if (isHost) trueke.takerUser else trueke.hostUser
+
+    fun handleChatClick() {
+        if (isLoading) return
+        val myId = user?.id ?: return
+        val otherId = otherUser?.id ?: return
+
+        if (myId == otherId) {
+            Toast.makeText(context, getString(context, R.string.cant_start_conversation_with_you), Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        scope.launch {
+            isLoading = true
+            val conversationId = chatManager.startOrGetConversation(myId, otherId)
+            if (conversationId == null) {
+                Toast.makeText(context, getString(context, R.string.error_starting_conversation), Toast.LENGTH_SHORT).show()
+            } else {
+                onOpenConversation(conversationId)
+            }
+            isLoading = false
+        }
+    }
 
     Column(
         modifier = modifier
@@ -466,6 +544,26 @@ fun CompletedTruekeLayout(
             Spacer(Modifier.height(4.dp))
 
             ItemCard(item = myReceiveItem)
+
+            Spacer(Modifier.height(24.dp))
+
+            OutlinedButton(
+                onClick = { handleChatClick() },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp),
+                shape = RoundedCornerShape(12.dp),
+                border = BorderStroke(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            ) {
+                Text(
+                    text = "Escribir".uppercase(Locale.getDefault()),
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontFamily = FontFamily(Font(R.font.saira_medium))
+                )
+            }
         }
     }
 }
