@@ -54,6 +54,12 @@
     <string name="product_description">Descripción</string>
     <string name="product_state">Estado</string>
     <string name="product_brand">Marca</string>
+    <string name="no_products">No hay artículos</string>
+    <!-- ItemSelectorCard -->
+    <string name="select_product">Selecciona un producto</string>
+    <string name="click_select_product">Pulsa para elegir uno de tus productos</string>
+    <string name="cancel">Cancelar</string>
+    <string name="confirm">Confirmar</string>
     <!-- estados del producto -->
     <string name="product_state_new">Nuevo</string>
     <string name="product_state_like_new">Como nuevo</string>

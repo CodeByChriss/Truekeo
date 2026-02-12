@@ -76,7 +76,6 @@ fun TruekeCard(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(Color.Gray)
                 ) {
                     when (trueke.status) {
                         TruekeStatus.OPEN -> {
