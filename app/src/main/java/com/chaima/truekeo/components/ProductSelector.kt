@@ -130,6 +130,9 @@ fun ItemSelectorDialog(
 ) {
     var currentSelection by remember(selectedItem) { mutableStateOf(selectedItem) }
 
+    // Para evitar realizar más de una vez la misma llamada
+    var isLoading by remember { mutableStateOf(false) }
+
     Dialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(usePlatformDefaultWidth = false)
@@ -215,18 +218,30 @@ fun ItemSelectorDialog(
                         }
 
                         Button(
-                            onClick = { onConfirm?.invoke(currentSelection) },
+                            onClick = {
+                                if (!isLoading) {
+                                    isLoading = true
+                                    onConfirm?.invoke(currentSelection)
+                                    isLoading = false
+                                }
+                            },
                             modifier = Modifier
                                 .weight(1f)
                                 .height(48.dp),
                             shape = RoundedCornerShape(12.dp),
                             enabled = currentSelection != null
                         ) {
-                            Text(
-                                text = "Confirmar",
-                                style = MaterialTheme.typography.bodyLarge,
-                                fontFamily = FontFamily(Font(R.font.saira_medium))
-                            )
+                            if (isLoading) {
+                                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                    CircularProgressIndicator(color = Color.White)
+                                }
+                            } else {
+                                Text(
+                                    text = "Confirmar",
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    fontFamily = FontFamily(Font(R.font.saira_medium))
+                                )
+                            }
                         }
                     }
                 }

@@ -90,7 +90,7 @@ fun LoginScreen(onGoToSignup: () -> Unit, onLogin: () -> Unit) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.White),
+                .background(MaterialTheme.colorScheme.background),
             contentAlignment = Alignment.Center
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -203,7 +203,8 @@ fun LoginScreen(onGoToSignup: () -> Unit, onLogin: () -> Unit) {
                     Text(
                         text = getString(context, R.string.dont_have_account),
                         fontSize = 12.sp,
-                        fontFamily = FontFamily(Font(R.font.saira_regular))
+                        fontFamily = FontFamily(Font(R.font.saira_regular)),
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
                         text = getString(context, R.string.here),
@@ -222,8 +223,8 @@ fun LoginScreen(onGoToSignup: () -> Unit, onLogin: () -> Unit) {
                     text = getString(context, R.string.or),
                     fontSize = 16.sp,
                     fontFamily = FontFamily(Font(R.font.saira_regular)),
-                    color = Color.Black,
-                    modifier = Modifier.alpha(0.5f)
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.alpha(0.7f)
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -314,8 +315,8 @@ fun LoginScreen(onGoToSignup: () -> Unit, onLogin: () -> Unit) {
                     shape = RoundedCornerShape(8.dp),
                     border = BorderStroke(1.dp, Color.LightGray),
                     colors = ButtonDefaults.outlinedButtonColors(
-                        containerColor = Color(0xFFF2F2F2),
-                        contentColor = Color.Black
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        contentColor = MaterialTheme.colorScheme.primary
                     )
                 ) {
                     if (isLoading) {
@@ -336,7 +337,7 @@ fun LoginScreen(onGoToSignup: () -> Unit, onLogin: () -> Unit) {
                             Text(
                                 text = getString(context, R.string.continue_with_google),
                                 fontFamily = FontFamily(Font(R.font.saira_regular)),
-                                color = Color.Black
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }

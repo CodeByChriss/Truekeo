@@ -74,7 +74,7 @@ fun SignupScreen(onSignUp: () -> Unit, onBackToLogin: () -> Unit) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.White)
+                .background(MaterialTheme.colorScheme.background)
         ) {
             IconButton(
                 onClick = { onBackToLogin() },

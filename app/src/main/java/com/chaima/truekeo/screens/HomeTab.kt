@@ -15,10 +15,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
+import androidx.core.content.ContextCompat.getString
+import com.chaima.truekeo.R
 import com.chaima.truekeo.components.ItemSelectorDialog
 import com.chaima.truekeo.components.ManualLocationDialog
 import com.chaima.truekeo.models.Trueke
 import com.chaima.truekeo.components.TruekeSheetContent
+import com.chaima.truekeo.managers.AuthContainer
+import com.chaima.truekeo.managers.ChatContainer
 import com.chaima.truekeo.managers.ItemContainer
 import com.chaima.truekeo.managers.ItemManager
 import com.chaima.truekeo.managers.LocationManager
@@ -36,6 +41,7 @@ import com.mapbox.maps.extension.compose.annotation.Marker
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
 import com.mapbox.maps.plugin.animation.MapAnimationOptions
 import kotlinx.coroutines.launch
+import kotlin.String
 
 @OptIn(ExperimentalMaterial3Api::class, MapboxExperimental::class)
 @Composable
@@ -49,6 +55,7 @@ fun HomeTab(
     val locationManager = remember { LocationManager(context) }
     val locationPreferences = remember { LocationPreferences(context) }
     val truekeManager = remember { TruekeContainer.truekeManager }
+    val chatManager = remember { ChatContainer.chatManager }
     val itemManager = remember { ItemContainer.itemManager }
 
     var truekes by remember { mutableStateOf<List<Trueke>>(emptyList()) }
@@ -155,25 +162,32 @@ fun HomeTab(
         loadingTruekes = false
     }
 
-    fun handlePropose(
-        truekeId: String,
-        itemId: String
+    fun handlerPropose(
+        trueke: Trueke,
+        item: Item
     ) {
         scope.launch {
-            val result = truekeManager.proposeToTrueke(
-                truekeId = truekeId,
-                offeredItemId = itemId
+            val userID = AuthContainer.authManager.userProfile?.id ?: "ERROR"
+
+            val resultId = chatManager.sendTruekeOffer(
+                truekeId = trueke.id,
+                myUid = userID,
+                otherUid = trueke.hostUserId,
+                myProduct = item,
+                truekeMessage = getString(context, R.string.trueke_proposal)
             )
 
-            result.onSuccess {
-                // cerrar UI
-                showItemDialog = false
-                showSheet = false
-                selectedTrueke = null
-            }.onFailure { error ->
+            // cerramos la UI
+            showItemDialog = false
+            showSheet = false
+            selectedTrueke = null
+
+            if(resultId != null){
+                // abrimos la conversación
+                openConversation(resultId)
+            }else{
                 // feedback al usuario
-                Log.e("HomeTab", error.message ?: "Error proposing")
-                // aquí luego snackbar / toast
+                Log.e("HomeTab", "Error proposing")
             }
         }
     }
@@ -333,9 +347,9 @@ fun HomeTab(
             },
             onConfirm = { item ->
                 item?.let {
-                    handlePropose(
-                        truekeId = selectedTrueke!!.id,
-                        itemId = it.id
+                    handlerPropose(
+                        trueke = selectedTrueke!!,
+                        item = it
                     )
                 }
             }
