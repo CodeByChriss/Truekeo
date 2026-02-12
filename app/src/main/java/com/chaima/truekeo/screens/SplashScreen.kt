@@ -58,8 +58,8 @@ fun SplashScreen(
                 Text(
                     text = stringResource(R.string.app_name),
                     fontSize = 36.sp,
-                    fontFamily = FontFamily(Font(R.font.saira_medium)),
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.secondary,
+                    fontFamily = FontFamily(Font(R.font.saira_medium))
                 )
             }
         }
