@@ -89,7 +89,6 @@ fun BrandField(
         ExposedDropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
-            containerColor = Color.White,
             tonalElevation = 0.dp
         ) {
             Column(

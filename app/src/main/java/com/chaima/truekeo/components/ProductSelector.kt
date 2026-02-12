@@ -28,6 +28,7 @@ import androidx.compose.ui.window.DialogProperties
 import coil3.compose.AsyncImage
 import com.chaima.truekeo.R
 import com.chaima.truekeo.models.Item
+import com.chaima.truekeo.ui.theme.TruekeoTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -80,7 +81,7 @@ fun ItemSelectorCard(
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = selectedItem?.name ?: "Selecciona un producto",
+                    text = selectedItem?.name ?: stringResource(R.string.select_a_product),
                     style = MaterialTheme.typography.titleMedium,
                     fontFamily = FontFamily(Font(R.font.saira_medium)),
                     maxLines = 1,
@@ -89,17 +90,17 @@ fun ItemSelectorCard(
 
                 Text(
                     text = selectedItem?.condition?.displayName(context)
-                        ?: "Pulsa para elegir uno de tus productos",
+                        ?: stringResource(R.string.click_select_product),
                     style = MaterialTheme.typography.bodySmall,
                     fontFamily = FontFamily(Font(R.font.saira_regular)),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
 
             Icon(
                 imageVector = Icons.Rounded.ChevronRight,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                tint = MaterialTheme.colorScheme.onSurface
             )
         }
     }
@@ -133,114 +134,119 @@ fun ItemSelectorDialog(
     // Para evitar realizar más de una vez la misma llamada
     var isLoading by remember { mutableStateOf(false) }
 
-    Dialog(
-        onDismissRequest = onDismiss,
-        properties = DialogProperties(usePlatformDefaultWidth = false)
-    ) {
-        Surface(
-            modifier = Modifier
-                .fillMaxWidth(0.8f)
-                .heightIn(max = 500.dp),
-            shape = RoundedCornerShape(16.dp),
-            color = Color.White
+    TruekeoTheme(dynamicColor = false) {
+        Dialog(
+            onDismissRequest = onDismiss,
+            properties = DialogProperties(usePlatformDefaultWidth = false)
         ) {
-            Column {
-                // Header
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(12.dp, 8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        modifier = Modifier.padding(start = 8.dp),
-                        text = stringResource(R.string.select_a_product),
-                        style = MaterialTheme.typography.titleLarge,
-                        fontFamily = FontFamily(Font(R.font.saira_medium))
-                    )
-
-                    IconButton(onClick = onDismiss) {
-                        Icon(
-                            imageVector = Icons.Rounded.Close,
-                            contentDescription = "Cerrar"
-                        )
-                    }
-                }
-
-                Divider()
-
-                // Lista de productos
-                LazyColumn(
-                    modifier = Modifier.weight(1f, fill = false),
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    items(items) { item ->
-                        ProductItemRow(
-                            item = item,
-                            isSelected = item.id == currentSelection?.id,
-                            onClick = {
-                                if (showConfirmButton) {
-                                    // solo actualiza la selección
-                                    currentSelection = item
-                                } else {
-                                    // ejecuta callback y cierra
-                                    onItemSelected?.invoke(item)
-                                }
-                            }
-                        )
-                    }
-                }
-
-                // Botón de confirmar (opcional)
-                if (showConfirmButton) {
-                    Divider()
-
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth(0.8f)
+                    .heightIn(max = 500.dp),
+                shape = RoundedCornerShape(16.dp),
+                color = MaterialTheme.colorScheme.background
+            ) {
+                Column {
+                    // Header
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                            .padding(12.dp, 8.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        OutlinedButton(
-                            onClick = onDismiss,
-                            modifier = Modifier
-                                .weight(1f)
-                                .height(48.dp),
-                            shape = RoundedCornerShape(12.dp)
-                        ) {
-                            Text(
-                                text = "Cancelar",
-                                style = MaterialTheme.typography.bodyLarge,
-                                fontFamily = FontFamily(Font(R.font.saira_medium))
+                        Text(
+                            modifier = Modifier.padding(start = 8.dp),
+                            text = stringResource(R.string.select_a_product),
+                            style = MaterialTheme.typography.titleLarge,
+                            fontFamily = FontFamily(Font(R.font.saira_medium))
+                        )
+
+                        IconButton(onClick = onDismiss) {
+                            Icon(
+                                imageVector = Icons.Rounded.Close,
+                                contentDescription = stringResource(R.string.close)
                             )
                         }
+                    }
 
-                        Button(
-                            onClick = {
-                                if (!isLoading) {
-                                    isLoading = true
-                                    onConfirm?.invoke(currentSelection)
-                                    isLoading = false
+                    Divider()
+
+                    // Lista de productos
+                    LazyColumn(
+                        modifier = Modifier.weight(1f, fill = false),
+                        contentPadding = PaddingValues(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        items(items) { item ->
+                            ProductItemRow(
+                                item = item,
+                                isSelected = item.id == currentSelection?.id,
+                                onClick = {
+                                    if (showConfirmButton) {
+                                        // solo actualiza la selección
+                                        currentSelection = item
+                                    } else {
+                                        // ejecuta callback y cierra
+                                        onItemSelected?.invoke(item)
+                                    }
                                 }
-                            },
+                            )
+                        }
+                    }
+
+                    // Botón de confirmar (opcional)
+                    if (showConfirmButton) {
+                        Divider()
+
+                        Row(
                             modifier = Modifier
-                                .weight(1f)
-                                .height(48.dp),
-                            shape = RoundedCornerShape(12.dp),
-                            enabled = currentSelection != null
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            if (isLoading) {
-                                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                                    CircularProgressIndicator(color = Color.White)
-                                }
-                            } else {
+                            OutlinedButton(
+                                onClick = onDismiss,
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(48.dp),
+                                shape = RoundedCornerShape(12.dp)
+                            ) {
                                 Text(
-                                    text = "Confirmar",
+                                    text = stringResource(R.string.cancel),
                                     style = MaterialTheme.typography.bodyLarge,
                                     fontFamily = FontFamily(Font(R.font.saira_medium))
                                 )
+                            }
+
+                            Button(
+                                onClick = {
+                                    if (!isLoading) {
+                                        isLoading = true
+                                        onConfirm?.invoke(currentSelection)
+                                        isLoading = false
+                                    }
+                                },
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(48.dp),
+                                shape = RoundedCornerShape(12.dp),
+                                enabled = currentSelection != null
+                            ) {
+                                if (isLoading) {
+                                    Box(
+                                        Modifier.fillMaxSize(),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        CircularProgressIndicator(color = Color.White)
+                                    }
+                                } else {
+                                    Text(
+                                        text = stringResource(R.string.confirm),
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        fontFamily = FontFamily(Font(R.font.saira_medium))
+                                    )
+                                }
                             }
                         }
                     }
@@ -258,67 +264,69 @@ private fun ProductItemRow(
 ) {
     val context = LocalContext.current
 
-    OutlinedCard(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick),
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.outlinedCardColors(
-            containerColor = if (isSelected) {
-                MaterialTheme.colorScheme.tertiary.copy(alpha = 0.35f)
-            } else {
-                Color.White
-            }
-        ),
-        border = if (isSelected) {
-            BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
-        } else {
-            CardDefaults.outlinedCardBorder()
-        }
-    ) {
-        Row(
+    TruekeoTheme(dynamicColor = false) {
+        OutlinedCard(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Imagen del producto
-            val image = item.imageUrls.first()
-
-            Box(
-                modifier = Modifier
-                    .size(64.dp)
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(Color.Black.copy(alpha = 0.06f)),
-                contentAlignment = Alignment.Center
-            ) {
-                AsyncImage(
-                    model = image,
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
-                )
+                .clickable(onClick = onClick),
+            shape = RoundedCornerShape(12.dp),
+            colors = CardDefaults.outlinedCardColors(
+                containerColor = if (isSelected) {
+                    MaterialTheme.colorScheme.tertiary.copy(alpha = 0.35f)
+                } else {
+                    MaterialTheme.colorScheme.background
+                }
+            ),
+            border = if (isSelected) {
+                BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
+            } else {
+                CardDefaults.outlinedCardBorder()
             }
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Imagen del producto
+                val image = item.imageUrls.first()
 
-            Spacer(Modifier.width(12.dp))
+                Box(
+                    modifier = Modifier
+                        .size(64.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(Color.Black.copy(alpha = 0.06f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    AsyncImage(
+                        model = image,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
 
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = item.name,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontFamily = FontFamily(Font(R.font.saira_medium)),
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
+                Spacer(Modifier.width(12.dp))
 
-                Spacer(Modifier.height(4.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = item.name,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontFamily = FontFamily(Font(R.font.saira_medium)),
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
 
-                Text(
-                    text = item.condition.displayName(context),
-                    style = MaterialTheme.typography.bodySmall,
-                    fontFamily = FontFamily(Font(R.font.saira_regular)),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                    Spacer(Modifier.height(4.dp))
+
+                    Text(
+                        text = item.condition.displayName(context),
+                        style = MaterialTheme.typography.bodySmall,
+                        fontFamily = FontFamily(Font(R.font.saira_regular)),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
         }
     }
