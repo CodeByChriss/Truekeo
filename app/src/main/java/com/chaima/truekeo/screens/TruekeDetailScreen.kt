@@ -48,6 +48,7 @@ import com.chaima.truekeo.models.Item
 import com.chaima.truekeo.models.Trueke
 import com.chaima.truekeo.models.TruekeStatus
 import com.chaima.truekeo.ui.theme.TruekeoTheme
+import com.chaima.truekeo.utils.completedOn
 import com.chaima.truekeo.utils.resolvePlaceName
 import kotlinx.coroutines.launch
 import java.util.Locale
@@ -418,6 +419,8 @@ fun CompletedTruekeLayout(
     val context = LocalContext.current
     var isLoading by remember { mutableStateOf(false) }
 
+    val completedInstant = trueke.updatedAtInstant ?: trueke.createdAtInstant
+
     val takerItem = requireNotNull(trueke.takerItem) { "takerItem debe existir en RESERVED" }
 
     val myOfferItem = if (isHost) trueke.hostItem else takerItem
@@ -460,7 +463,7 @@ fun CompletedTruekeLayout(
             .padding(horizontal = 24.dp)
         ) {
             Text(
-                text = "Finalizado el ",
+                text = completedOn(context, completedInstant),
                 style = MaterialTheme.typography.bodyLarge,
                 fontFamily = FontFamily(Font(R.font.saira_regular))
             )
