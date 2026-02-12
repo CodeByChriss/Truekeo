@@ -53,6 +53,7 @@ import com.chaima.truekeo.models.Item
 import com.chaima.truekeo.models.Trueke
 import com.chaima.truekeo.models.TruekeStatus
 import com.chaima.truekeo.models.User
+import com.chaima.truekeo.ui.theme.TruekeoTheme
 import com.chaima.truekeo.utils.TimePrefix
 import com.chaima.truekeo.utils.prefixedTimeAgo
 import kotlinx.coroutines.launch
@@ -83,73 +84,83 @@ fun TruekeSheetContent(
                         user?.id ?: "error",
                         hostUserId
                     )
-                    if(conversationId == null){
-                        Toast.makeText(context, getString(context,R.string.error_starting_conversation), Toast.LENGTH_SHORT).show()
-                    }else{
+                    if (conversationId == null) {
+                        Toast.makeText(
+                            context,
+                            getString(context, R.string.error_starting_conversation),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
                         onConversationClicked(conversationId)
                     }
                     isLoading = false
                 }
-            }else{
-                Toast.makeText(context, getString(context,R.string.cant_start_conversation_with_you), Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(
+                    context,
+                    getString(context, R.string.cant_start_conversation_with_you),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
 
-    Column(
-        modifier = modifier.verticalScroll(scrollState),
-        verticalArrangement = Arrangement.spacedBy(20.dp)
-    ) {
-
-        TruekeInfoSection(trueke)
-
-        Divider()
-
-        TruekeHostItemSection(trueke.hostItem)
-
-        Divider()
-
-        UploadedByRow(trueke.hostUser)
-
-        Spacer(modifier = Modifier.height(0.dp))
-
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            modifier = Modifier.fillMaxWidth()
+    TruekeoTheme(dynamicColor = false) {
+        Column(
+            modifier = modifier.verticalScroll(scrollState),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            OutlinedButton(
-                onClick = { handleChatClick() },
-                modifier = Modifier
-                    .weight(1f)
-                    .height(52.dp),
-                shape = RoundedCornerShape(12.dp)
+
+            TruekeInfoSection(trueke)
+
+            Divider()
+
+            TruekeHostItemSection(trueke.hostItem)
+
+            Divider()
+
+            UploadedByRow(trueke.hostUser)
+
+            Spacer(modifier = Modifier.height(0.dp))
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.fillMaxWidth()
             ) {
-                if (isLoading) {
-                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator(color = Color.White)
+                OutlinedButton(
+                    onClick = { handleChatClick() },
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(52.dp),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    if (isLoading) {
+                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            CircularProgressIndicator(color = Color.White)
+                        }
+                    } else {
+                        Text(
+                            text = stringResource(R.string.write),
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontFamily = FontFamily(Font(R.font.saira_medium))
+                        )
                     }
-                } else {
+                }
+
+                Button(
+                    onClick = onRequestPropose,
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(52.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    enabled = trueke.status == TruekeStatus.OPEN
+                ) {
                     Text(
-                        text = stringResource(R.string.write),
+                        text = stringResource(R.string.propose),
                         style = MaterialTheme.typography.bodyLarge,
                         fontFamily = FontFamily(Font(R.font.saira_medium))
                     )
                 }
-            }
-
-            Button(
-                onClick = onRequestPropose,
-                modifier = Modifier
-                    .weight(1f)
-                    .height(52.dp),
-                shape = RoundedCornerShape(12.dp),
-                enabled = trueke.status == TruekeStatus.OPEN
-            ) {
-                Text(
-                    text = stringResource(R.string.propose),
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontFamily = FontFamily(Font(R.font.saira_medium))
-                )
             }
         }
     }
@@ -173,54 +184,56 @@ private fun TruekeInfoSection(trueke: Trueke) {
             ?: "${loc.lat}, ${loc.lng}"
     }
 
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Text(
-            text = trueke.title,
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.primary,
-            fontFamily = FontFamily(Font(R.font.saira_medium)),
-        )
-
-        if (!trueke.description.isNullOrBlank()) {
+    TruekeoTheme(dynamicColor = false) {
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text(
-                text = trueke.description,
-                style = MaterialTheme.typography.bodyMedium,
+                text = trueke.title,
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.primary,
+                fontFamily = FontFamily(Font(R.font.saira_medium)),
+            )
+
+            if (!trueke.description.isNullOrBlank()) {
+                Text(
+                    text = trueke.description,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontFamily = FontFamily(Font(R.font.saira_regular)),
+                )
+            }
+
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.LocationOn,
+                    contentDescription = "Ubicación",
+                    tint = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier
+                        .size(20.dp)
+                        .offset(x = (-3).dp)
+                )
+
+                Text(
+                    text = placeText,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.secondary,
+                    fontFamily = FontFamily(Font(R.font.saira_regular)),
+                )
+            }
+
+
+            Text(
+                text = prefixedTimeAgo(
+                    context = context,
+                    from = trueke.createdAtInstant,
+                    prefix = TimePrefix.PUBLISHED
+                ),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontFamily = FontFamily(Font(R.font.saira_regular)),
             )
         }
-
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.LocationOn,
-                contentDescription = "Ubicación",
-                tint = MaterialTheme.colorScheme.secondary,
-                modifier = Modifier
-                    .size(20.dp)
-                    .offset(x = (-3).dp)
-            )
-
-            Text(
-                text = placeText,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.secondary,
-                fontFamily = FontFamily(Font(R.font.saira_regular)),
-            )
-        }
-
-
-        Text(
-            text = prefixedTimeAgo(
-                context = context,
-                from = trueke.createdAtInstant,
-                prefix = TimePrefix.PUBLISHED
-            ),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontFamily = FontFamily(Font(R.font.saira_regular)),
-        )
     }
 }
 
@@ -229,43 +242,51 @@ private fun TruekeInfoSection(trueke: Trueke) {
 private fun TruekeHostItemSection(item: Item) {
     val context = LocalContext.current
 
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(
-            text = stringResource(R.string.product_offered),
-            style = MaterialTheme.typography.titleMedium,
-            fontFamily = FontFamily(Font(R.font.saira_medium)),
-        )
-
-        Column {
-            KeyValueRow(label = stringResource(R.string.product_name_label), value = item.name)
-            RowDivider(thickness = 0.5.dp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-
-            if (!item.details.isNullOrBlank()) {
-                KeyValueRow(
-                    label = stringResource(R.string.product_details_label),
-                    value = item.details,
-                    multiline = true
-                )
-                RowDivider(thickness = 0.5.dp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            }
-
-            if (!item.brand.isNullOrBlank()) {
-                KeyValueRow(
-                    label = stringResource(R.string.product_brand_label),
-                    value = item.brand,
-                    multiline = true
-                )
-                RowDivider(thickness = 0.5.dp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            }
-
-            KeyValueRow(
-                label = stringResource(R.string.product_status_label),
-                value = item.condition.displayName(context)
+    TruekeoTheme(dynamicColor = false) {
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(
+                text = stringResource(R.string.product_offered),
+                style = MaterialTheme.typography.titleMedium,
+                fontFamily = FontFamily(Font(R.font.saira_medium)),
             )
+
+            Column {
+                KeyValueRow(label = stringResource(R.string.product_name_label), value = item.name)
+                RowDivider(thickness = 0.5.dp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+
+                if (!item.details.isNullOrBlank()) {
+                    KeyValueRow(
+                        label = stringResource(R.string.product_details_label),
+                        value = item.details,
+                        multiline = true
+                    )
+                    RowDivider(
+                        thickness = 0.5.dp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+
+                if (!item.brand.isNullOrBlank()) {
+                    KeyValueRow(
+                        label = stringResource(R.string.product_brand_label),
+                        value = item.brand,
+                        multiline = true
+                    )
+                    RowDivider(
+                        thickness = 0.5.dp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+
+                KeyValueRow(
+                    label = stringResource(R.string.product_status_label),
+                    value = item.condition.displayName(context)
+                )
+            }
         }
+        // Imagen del ítem
+        ItemImageBox(item, 180.dp)
     }
-    // Imagen del ítem
-    ItemImageBox(item, 180.dp)
 }
 
 @Composable
@@ -274,38 +295,40 @@ private fun KeyValueRow(
     value: String,
     multiline: Boolean = false
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(IntrinsicSize.Min)
-    ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontFamily = FontFamily(Font(R.font.saira_regular)),
+    TruekeoTheme(dynamicColor = false) {
+        Row(
             modifier = Modifier
-                .width(80.dp)
-                .padding(0.dp, 8.dp, 8.dp, 8.dp)
-        )
+                .fillMaxWidth()
+                .height(IntrinsicSize.Min)
+        ) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontFamily = FontFamily(Font(R.font.saira_regular)),
+                modifier = Modifier
+                    .width(80.dp)
+                    .padding(0.dp, 8.dp, 8.dp, 8.dp)
+            )
 
-        Box(
-            modifier = Modifier
-                .fillMaxHeight()
-                .width(0.5.dp)
-                .background(MaterialTheme.colorScheme.onSurfaceVariant)
-        )
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .width(0.5.dp)
+                    .background(MaterialTheme.colorScheme.onSurfaceVariant)
+            )
 
-        Text(
-            text = value,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontFamily = FontFamily(Font(R.font.saira_medium)),
-            modifier = Modifier
-                .weight(1f)
-                .padding(8.dp),
-            maxLines = if (multiline) Int.MAX_VALUE else 1
-        )
+            Text(
+                text = value,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontFamily = FontFamily(Font(R.font.saira_medium)),
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(8.dp),
+                maxLines = if (multiline) Int.MAX_VALUE else 1
+            )
+        }
     }
 }
 
@@ -315,41 +338,45 @@ private fun RowDivider(
     thickness: Dp = 0.5.dp,
     color: Color = MaterialTheme.colorScheme.onSurfaceVariant
 ) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(thickness)
-            .background(color)
-    )
+    TruekeoTheme(dynamicColor = false) {
+        Box(
+            modifier = modifier
+                .fillMaxWidth()
+                .height(thickness)
+                .background(color)
+        )
+    }
 }
 
 @Composable
 private fun UploadedByRow(hostUser: User) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = stringResource(R.string.uploaded_by),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontFamily = FontFamily(Font(R.font.saira_regular)),
-        )
-
-        Spacer(Modifier.width(6.dp))
-
+    TruekeoTheme(dynamicColor = false) {
         Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(3.dp)
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            UserAvatarImage(hostUser, size = 20.dp)
-
             Text(
-                text = "@${hostUser.username}",
-                style = MaterialTheme.typography.bodyMedium,
-                fontFamily = FontFamily(Font(R.font.saira_medium)),
-                maxLines = 1
+                text = stringResource(R.string.uploaded_by),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontFamily = FontFamily(Font(R.font.saira_regular)),
             )
+
+            Spacer(Modifier.width(6.dp))
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(3.dp)
+            ) {
+                UserAvatarImage(hostUser, size = 20.dp)
+
+                Text(
+                    text = "@${hostUser.username}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontFamily = FontFamily(Font(R.font.saira_medium)),
+                    maxLines = 1
+                )
+            }
         }
     }
 }

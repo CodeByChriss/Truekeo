@@ -90,8 +90,7 @@ fun MyTruekesTab(navController: NavController) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .imePadding()
-                    .background(Color.White),
+                    .imePadding(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Spacer(Modifier.height(24.dp))
