@@ -5,9 +5,7 @@ import com.chaima.truekeo.models.GeoPoint
 import com.chaima.truekeo.models.Item
 import com.chaima.truekeo.models.ItemCondition
 import com.chaima.truekeo.models.ItemStatus
-import com.chaima.truekeo.models.OfferStatus
 import com.chaima.truekeo.models.Trueke
-import com.chaima.truekeo.models.TruekeOffer
 import com.chaima.truekeo.models.TruekeStatus
 import com.chaima.truekeo.models.User
 import com.google.firebase.auth.FirebaseAuth
@@ -202,6 +200,25 @@ class TruekeManager {
             Result.success(Unit)
         } catch (e: Exception) {
             Log.e("TruekeManager", "Error update status: ${e.message}")
+            Result.failure(e)
+        }
+    }
+
+    suspend fun reserveTrueke(truekeId: String, takerUserId: String, takerItemId: String): Result<Unit> {
+        return try {
+            val now = System.currentTimeMillis()
+            db.collection("truekes").document(truekeId)
+                .update(
+                    mapOf(
+                        "status" to TruekeStatus.RESERVED.name,
+                        "updatedAt" to now,
+                        "takerUserId" to takerUserId,
+                        "takerItemId" to takerItemId
+                    )
+                ).await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Log.e("TruekeManager", "Error update status to reserved: ${e.message}")
             Result.failure(e)
         }
     }
