@@ -71,6 +71,7 @@ import com.chaima.truekeo.models.Item
 import com.chaima.truekeo.models.MessageType
 import com.chaima.truekeo.models.OfferStatus
 import com.chaima.truekeo.models.Trueke
+import com.chaima.truekeo.models.TruekeStatus
 import com.chaima.truekeo.ui.theme.TruekeoTheme
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -257,8 +258,13 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
                         if (msg.type == MessageType.TRUEKE) {
                             TruekeBubble(
                                 msg,
-                                {
+                                { truekeId, truekeItemId ->
                                     scope.launch {
+                                        // actualizamos el trueke (el del mapa)
+                                        val truekeManager = TruekeContainer.truekeManager
+                                        truekeManager.reserveTrueke(truekeId,
+                                            user?.id ?: "ERROR", truekeItemId)
+                                        // actualizamos la propuesta de trueke
                                         chatManager.updateOfferStatus(
                                             conversationId,
                                             msg,
@@ -272,6 +278,18 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
                                             conversationId,
                                             msg,
                                             OfferStatus.REJECTED
+                                        )
+                                    }
+                                },
+                                {
+                                    // Si el trueke (el del mapa) ya esta reservado (ha aceptado una propuesta)
+                                    // y si la propuesta no está aceptada
+                                    // esta se cancela
+                                    scope.launch{
+                                        chatManager.updateOfferStatus(
+                                            conversationId,
+                                            msg,
+                                            OfferStatus.CANCELLED
                                         )
                                     }
                                 },
@@ -363,8 +381,9 @@ fun ChatBubble(message: ChatMessage) {
 @Composable
 fun TruekeBubble(
     message: ChatMessage,
-    onAccept: () -> Unit,
+    onAccept: (truekeId: String, truekeItemId: String) -> Unit,
     onReject: () -> Unit,
+    onTruekeReserved: () -> Unit,
     listState: LazyListState,
     cntChatMessages: Int
 ) {
@@ -381,9 +400,12 @@ fun TruekeBubble(
 
     LaunchedEffect(0) {
         isLoading = true
-        proposerItem = itemManager.getItemById(trueke.offeredItemId)
         truekeData = truekeManager.getTruekeById(trueke.truekeId)
+        if((trueke.status != OfferStatus.ACCEPTED || trueke.status != OfferStatus.REJECTED) && truekeData?.status == TruekeStatus.RESERVED){
+            onTruekeReserved()
+        }
         targetItem = itemManager.getItemById(truekeData?.hostItemId ?: "ERROR")
+        proposerItem = itemManager.getItemById(trueke.offeredItemId)
         isLoading = false
         // debemos volver a indicar que se llava abajo del todo porque el tamaño del TruekeBubble cambia al cargar las imágenes
         listState.animateScrollToItem(cntChatMessages)
@@ -459,7 +481,7 @@ fun TruekeBubble(
                                     onClick = {
                                         if (!isAcceptLoading) {
                                             isAcceptLoading = true
-                                            onAccept()
+                                            onAccept(truekeData?.id ?: "ERROR", proposerItem?.id ?: "ERROR")
                                             isAcceptLoading = false
                                         }
                                     },
