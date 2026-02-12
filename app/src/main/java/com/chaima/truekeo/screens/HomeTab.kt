@@ -46,7 +46,7 @@ import kotlin.String
 @OptIn(ExperimentalMaterial3Api::class, MapboxExperimental::class)
 @Composable
 fun HomeTab(
-    openConversation: (String) -> Unit
+    onOpenConversation: (String) -> Unit
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -184,7 +184,7 @@ fun HomeTab(
 
             if(resultId != null){
                 // abrimos la conversación
-                openConversation(resultId)
+                onOpenConversation(resultId)
             }else{
                 // feedback al usuario
                 Log.e("HomeTab", "Error proposing")
@@ -322,7 +322,7 @@ fun HomeTab(
                         .padding(horizontal = 20.dp)
                         .padding(bottom = 24.dp),
                     onConversationClicked = { conversationId ->
-                        openConversation(conversationId)
+                        onOpenConversation(conversationId)
                     },
                     onRequestPropose = {
                         scope.launch {

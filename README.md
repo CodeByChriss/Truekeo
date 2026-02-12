@@ -4,6 +4,8 @@ Somos una plataforma de intercambio local que facilita el trueque de objetos ent
 
 Impulsamos una economía circular basada en el intercambio responsable, donde cada objeto encuentra un nuevo propietario en lugar de convertirse en residuo.
 
+App en: **[Google Play](https://play.google.com/store/apps/details?id=com.chaima.truekeo)**
+
 ## Equipo de trabajo
 [SM] **Scrum Master** [malmorox](https://github.com/malmorox)<br>
 [CM] **Cloud Master**  [CodeByChriss](https://github.com/CodeByChriss)<br>
@@ -46,9 +48,9 @@ En el segundo sprint se ha comenzado con el desarrollo técnico del proyecto y l
 
 - [x] Creación del proyecto en GitHub.
 - [x] Implementación de las pantallas de:
-    - Splash
-    - Login
-    - Registro
+  - Splash
+  - Login
+  - Registro
 - [x] Diseño y uso de temas/estilos en Compose.
 
 ### Sprint 3 – Navegación, menús y adaptabilidad (3 semanas)
@@ -58,16 +60,40 @@ En el tercer sprint se amplía la funcionalidad de la aplicación desarrollando 
 ***Objetivos alcanzados:***
 
 - [x] **Desarrollo de la interfaz principal**
-    - Menús de navegación y fragments/tabs (no hacen falta más activities).
-    - Sistema completo de navegabilidad entre pantallas.
+  - Menús de navegación y fragments/tabs (no hacen falta más activities).
+  - Sistema completo de navegabilidad entre pantallas.
 
-- [ ] **Optimización del diseño**
-    - Adaptación a distintas densidades de pantalla y orientaciones.
-    - Layouts responsivos.
+- [x] **Optimización del diseño**
+  - Adaptación a distintas densidades de pantalla y orientaciones.
+  - Layouts responsivos.
 
-- [ ] **Internacionalización y temas**
-    - Soporte multiidioma.
-    - Modo claro/oscuro (Day/Night).
+- [x] **Internacionalización y temas**
+  - Soporte multiidioma.
+  - Modo claro/oscuro (Day/Night).
+
+### Sprint 4 – Integración, pruebas y publicación (4 semanas)
+
+En el cuarto sprint se ha llevado a cabo la integración completa del sistema, la resolución de incidencias detectadas y la preparación de la versión final para su distribución pública.
+
+***Objetivos alcanzados:***
+
+- [x] **Integración completa del proyecto**
+  - Conexión definitiva entre frontend (Jetpack Compose), backend (Firebase) y almacenamiento (Supabase).
+  - Integración del mapa interactivo con publicaciones en tiempo real.
+  - Resolución de conflictos y errores derivados de la integración de módulos.
+
+- [ ] **Pruebas, validación y documentación**
+  - Pruebas funcionales de navegación, autenticación y publicación de truekes.
+  - Validación de flujos completos de trueke.
+  - Corrección de bugs detectados durante el testing.
+  - Elaboración de informes técnicos y documentación del proyecto.
+
+- [ ] **Publicación y distribución**
+  - Generación de versión release firmada.
+  - Configuración de ficha en Google Play.
+  - Subida y despliegue de la aplicación en producción.
+
+🚀 **Release alpha publicada en Google Play**
 
 ## Implementación técnica y uso de librerías
 
@@ -86,36 +112,38 @@ Este apartado documenta las principales librerías utilizadas en el proyecto y c
 - Sistema de clicks en marcadores que despliega un Bottom Sheet con información detallada del Trueke.
 - Animaciones suaves de cámara (`flyTo`) al seleccionar ubicaciones.
 
-### 🔥 Firebase Suite (BOM v34.7.0)
+### 🔥 Firebase Authentication y Firestore
 
 **Propósito:** Gestión centralizada de autenticación y persistencia de perfiles de usuario en Firestore
 
 **Funcionalidades implementadas:**
-- **Autenticación Híbrida y Social:** Integración de `FirebaseAuth` para registro con Email/Password y soporte para `GoogleAuthProvider`.
-- **Identificación Dual de Usuario:** Sistema de inicio de sesión flexible que permite el acceso mediante **correo electrónico** o **nombre de usuario**, realizando consultas dinámicas en Firestore.
-- **Garantía de Unicidad (Transacciones):** Uso de `db.runTransaction` para asegurar que no existan duplicados en la colección de `usernames` durante el registro o actualización.
-- **Gestión Automática de Perfiles:** Generación de nombres de usuario aleatorios con lógica de reintento automático para nuevos registros mediante proveedores externos (Google).
-- **Flujos Asíncronos con Corrutinas:** Implementación de `suspend functions` y extensión `.await()` para un manejo eficiente y no bloqueante de las tareas de Firebase.
-- **Seguridad en el Registro:** Implementación de envío automático de correo de verificación tras la creación de cuenta exitosa.
+- **Autenticación híbrida y social:** Integración de `FirebaseAuth` para registro con Email/Password y soporte para `GoogleAuthProvider`.
+- **Identificación dual de usuario:** Sistema de inicio de sesión flexible que permite el acceso mediante ***correo electrónico*** o ***nombre de usuario***, realizando consultas dinámicas en Firestore.
+- **Garantía de unicidad (transacciones):** Uso de `db.runTransaction` para asegurar que no existan duplicados en la colección de `usernames` durante el registro o actualización.
+- **Gestión automática de perfiles:** Generación de nombres de usuario aleatorios con lógica de reintento automático para nuevos registros mediante proveedores externos (Google).
+- **Flujos ssíncronos con corrutinas:** Implementación de `suspend functions` y extensión `.await()` para un manejo eficiente y no bloqueante de las tareas de Firebase.
+- **Seguridad en el registro:** Implementación de envío automático de correo de verificación tras la creación de cuenta exitosa.
 
 ### 💾 Supabase
 
 **Propósito:** Almacenamiento de archivos binarios y gestión de activos multimedia de alta disponibilidad mediante Supabase Storage.
 
 **Funcionalidades implementadas:**
-- **Gestión de Buckets:** Configuración de contenedores públicos para el almacenamiento centralizado de avatares de usuario.
-- **Optimización de Almacenamiento (Upsert):** Implementación de lógica de subida con sobrescritura automática (`upsert = true`) para minimizar el uso de cuota en el tier gratuito.
-- **Políticas de Seguridad (RLS):** Configuración de Row Level Security para controlar los permisos de lectura y escritura de archivos desde el cliente móvil.
-- **Generación de URLs Públicas:** Obtención dinámica de enlaces permanentes para la persistencia de rutas de imagen en los perfiles de Firestore.
+- **Gestión de buckets:** Configuración de contenedores públicos para el almacenamiento centralizado de avatares de usuario.
+- **Optimización de almacenamiento (Upsert):** Implementación de lógica de subida con sobrescritura automática (`upsert = true`) para minimizar el uso de cuota en el tier gratuito.
+- **Políticas de seguridad (RLS):** Configuración de Row Level Security para controlar los permisos de lectura y escritura de archivos desde el cliente móvil.
+- **Generación de URLs públicas:** Obtención dinámica de enlaces permanentes para la persistencia de rutas de imagen en los perfiles de Firestore.
 
-### 🖼️ Compressor (https://github.com/zetbaitsu/Compressor)
+### 🖼️ Compressor (v3.0.1)
+
+https://github.com/zetbaitsu/Compressor
 
 **Propósito:** Optimización de recursos multimedia mediante la reducción del peso de las imágenes antes de la transferencia de datos.
 
 **Funcionalidades implementadas:**
-- **Compresión Adaptativa:** Reducción de dimensiones a un máximo de 320px, garantizando nitidez en pantallas de alta densidad (hasta 160dp) sin penalizar el rendimiento.
-- **Ahorro de Ancho de Banda:** Disminución drástica del peso del archivo (calidad 80%) para acelerar las subidas en conexiones móviles.
-- **Integración con Corrutinas:** Procesamiento asíncrono de imágenes para evitar bloqueos en el hilo principal de la interfaz durante la manipulación de archivos.
+- **Compresión adaptativa:** Reducción de dimensiones a un máximo de 320px, garantizando nitidez en pantallas de alta densidad (hasta 160dp) sin penalizar el rendimiento.
+- **Ahorro de ancho de banda:** Disminución drástica del peso del archivo (calidad 80%) para acelerar las subidas en conexiones móviles.
+- **Integración con corrutinas:** Procesamiento asíncrono de imágenes para evitar bloqueos en el hilo principal de la interfaz durante la manipulación de archivos.
 
 ### 🖼️ Coil (v3.3.0)
 

@@ -44,22 +44,10 @@ fun MyProductsScreen(navController: NavController) {
     val products = remember {
         listOf(
             MyProduct(
-                name = "Guitarra Gibson 233E",
-                description = "Guitarra Gibson 233E en excelente estado",
-                imageRes = R.drawable.guitarra,
-                status = ProductStatus.AVAILABLE
-            ),
-            MyProduct(
                 name = "iPhone12 256GB Negro",
                 description = "Sin golpes, batería al 90%",
                 imageRes = R.drawable.phone,
                 status = ProductStatus.RESERVED
-            ),
-            MyProduct(
-                name = "Bicicleta MTB Rockrider 520",
-                description = "Usada pero bien cuidada",
-                imageRes = R.drawable.bici,
-                status = ProductStatus.EXCHANGED
             )
         )
     }
