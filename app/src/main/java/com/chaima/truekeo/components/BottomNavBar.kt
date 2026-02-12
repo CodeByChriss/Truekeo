@@ -169,7 +169,7 @@ fun BottomNavBar(
                         },
                         icon = item.icon,
                         colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = Color.Black,
+                            selectedIconColor = MaterialTheme.colorScheme.onSurface,
                             unselectedIconColor = Color.Gray,
                             indicatorColor = Color.Transparent
                         )

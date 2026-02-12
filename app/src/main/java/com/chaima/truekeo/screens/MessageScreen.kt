@@ -10,12 +10,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
@@ -39,6 +39,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -56,6 +57,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.getString
@@ -162,7 +164,7 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
                             }
                         },
                         colors = TopAppBarDefaults.topAppBarColors(
-                            containerColor = Color.White
+                            containerColor = MaterialTheme.colorScheme.background
                         ),
                         actions = {
                             IconButton(onClick = {
@@ -179,7 +181,7 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
                 },
                 bottomBar = {
                     Surface(
-                        color = Color(0xFFF5F5F5),
+                        color = MaterialTheme.colorScheme.background,
                         modifier = Modifier.imePadding()
                     ) {
                         Row(
@@ -204,8 +206,8 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
                                     .padding(end = 8.dp),
                                 shape = CircleShape,
                                 colors = TextFieldDefaults.colors(
-                                    focusedContainerColor = Color(0xFFF0F0F0),
-                                    unfocusedContainerColor = Color(0xFFF0F0F0),
+                                    focusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(0.5.dp),
+                                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(0.5.dp),
                                     focusedIndicatorColor = Color.Transparent,
                                     unfocusedIndicatorColor = Color.Transparent,
                                     disabledIndicatorColor = Color.Transparent
@@ -250,7 +252,7 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(innerPadding)
-                        .background(Color(0xFFF5F5F5)),
+                        .background(MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp)),
                     contentPadding = PaddingValues(16.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
@@ -292,9 +294,7 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
                                             OfferStatus.CANCELLED
                                         )
                                     }
-                                },
-                                listState,
-                                chatMessages.size - 1
+                                }
                             )
                         } else {
                             ChatBubble(msg)
@@ -347,8 +347,8 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
 fun ChatBubble(message: ChatMessage) {
     val alignment = if (message.isFromMe) Alignment.CenterEnd else Alignment.CenterStart
     val columnAlignment = if (message.isFromMe) Alignment.End else Alignment.Start
-    val bgColor = if (message.isFromMe) MaterialTheme.colorScheme.primary else Color.White
-    val textColor = if (message.isFromMe) Color.White else Color.Black
+    val bgColor = if (message.isFromMe) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.background
+    val textColor = if (message.isFromMe) Color.White else MaterialTheme.colorScheme.onSurface
     val shape = if (message.isFromMe) {
         RoundedCornerShape(16.dp, 16.dp, 0.dp, 16.dp)
     } else {
@@ -360,7 +360,8 @@ fun ChatBubble(message: ChatMessage) {
             Surface(
                 color = bgColor,
                 shape = shape,
-                tonalElevation = 2.dp
+                tonalElevation = 4.dp,
+                shadowElevation = 3.dp
             ) {
                 Text(
                     text = message.text,
@@ -383,9 +384,7 @@ fun TruekeBubble(
     message: ChatMessage,
     onAccept: (truekeId: String, truekeItemId: String) -> Unit,
     onReject: () -> Unit,
-    onTruekeReserved: () -> Unit,
-    listState: LazyListState,
-    cntChatMessages: Int
+    onTruekeReserved: () -> Unit
 ) {
     val trueke = message.truekeOffer ?: return
     val itemManager = remember { ItemContainer.itemManager }
@@ -401,14 +400,14 @@ fun TruekeBubble(
     LaunchedEffect(0) {
         isLoading = true
         truekeData = truekeManager.getTruekeById(trueke.truekeId)
-        if((trueke.status != OfferStatus.ACCEPTED || trueke.status != OfferStatus.REJECTED) && truekeData?.status == TruekeStatus.RESERVED){
+        if(trueke.status != OfferStatus.ACCEPTED && trueke.status != OfferStatus.REJECTED && truekeData?.status == TruekeStatus.RESERVED){
             onTruekeReserved()
         }
         targetItem = itemManager.getItemById(truekeData?.hostItemId ?: "ERROR")
         proposerItem = itemManager.getItemById(trueke.offeredItemId)
         isLoading = false
         // debemos volver a indicar que se llava abajo del todo porque el tamaño del TruekeBubble cambia al cargar las imágenes
-        listState.animateScrollToItem(cntChatMessages)
+        // listState.animateScrollToItem(cntChatMessages)
     }
 
     // Uso un box para que cubra todo el ancho de la pantalla
@@ -419,7 +418,9 @@ fun TruekeBubble(
         contentAlignment = Alignment.Center
     ) {
         Surface(
-            modifier = Modifier.fillMaxWidth(0.85f), // Lo estrecho un poco para que sea más estético
+            modifier = Modifier
+                .fillMaxWidth(0.85f) // Lo estrecho un poco para que sea más estético
+                .heightIn(min = 250.dp), // debemos indicar un mínimo para evitar que la conversación se corte
             shape = RoundedCornerShape(20.dp),
             color = MaterialTheme.colorScheme.background,
             tonalElevation = 4.dp,
@@ -436,7 +437,7 @@ fun TruekeBubble(
                 ) {
                     Text(
                         text = stringResource(R.string.trueke_proposal),
-                        style = MaterialTheme.typography.labelLarge,
+                        style = MaterialTheme.typography.titleLarge,
                         fontFamily = FontFamily(Font(R.font.saira_semibold)),
                         color = MaterialTheme.colorScheme.primary,
                         letterSpacing = 1.sp
@@ -574,6 +575,8 @@ fun ProductItem(imageUrl: String, name: String) {
             fontSize = 13.sp,
             lineHeight = 16.sp,
             fontFamily = FontFamily(Font(R.font.saira_regular)),
+            maxLines = 3,
+            overflow = TextOverflow.Ellipsis,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )
