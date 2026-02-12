@@ -19,6 +19,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.chaima.truekeo.navigation.NavBarRoutes
+import com.chaima.truekeo.ui.theme.TruekeoTheme
 
 private data class BottomItem(
     val route: String,
@@ -102,93 +103,98 @@ fun BottomNavBar(
         }
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.White),
-    ) {
-        NavigationBar(
-            containerColor = Color.White,
+    TruekeoTheme(dynamicColor = false) {
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 12.dp)
+                .background(MaterialTheme.colorScheme.background)
         ) {
-            // Items de la izquierda
-            leftItems.forEach { item ->
-                val selected = when {
-                    isInTruekeDetails && item.route == NavBarRoutes.MyTruekes.route -> true
-                    else -> currentRoute == item.route
+            NavigationBar(
+                containerColor = MaterialTheme.colorScheme.background,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp)
+            ) {
+                // Items de la izquierda
+                leftItems.forEach { item ->
+                    val selected = when {
+                        isInTruekeDetails && item.route == NavBarRoutes.MyTruekes.route -> true
+                        else -> currentRoute == item.route
+                    }
+
+                    NavigationBarItem(
+                        selected = selected,
+                        onClick = {
+                            // Caso especial para que desde detaille de un trueke, al pulsar el tab de mis truekes vuelve al padre
+                            if (isInTruekeDetails && item.route == NavBarRoutes.MyTruekes.route) {
+                                onFabClose()
+                                val popped = navController.popBackStack(
+                                    NavBarRoutes.MyTruekes.route,
+                                    inclusive = false
+                                )
+                                if (!popped) goToTab(NavBarRoutes.MyTruekes.route)
+                                return@NavigationBarItem
+                            }
+
+                            if (currentRoute != item.route) {
+                                goToTab(item.route)
+                            }
+                        },
+                        icon = item.icon,
+                        colors = NavigationBarItemDefaults.colors(
+                            selectedIconColor = MaterialTheme.colorScheme.onSurface,
+                            unselectedIconColor = Color.Gray,
+                            indicatorColor = Color.Transparent
+                        )
+                    )
                 }
 
-                NavigationBarItem(
-                    selected = selected,
-                    onClick = {
-                        // Caso especial para que desde detaille de un trueke, al pulsar el tab de mis truekes vuelve al padre
-                        if (isInTruekeDetails && item.route == NavBarRoutes.MyTruekes.route) {
-                            onFabClose()
-                            val popped = navController.popBackStack(NavBarRoutes.MyTruekes.route, inclusive = false)
-                            if (!popped) goToTab(NavBarRoutes.MyTruekes.route)
-                            return@NavigationBarItem
-                        }
+                // Espacio para el botón central (sin peso)
+                Box(
+                    modifier = Modifier.width(72.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    // Espacio vacío para el botón
+                }
 
-                        if (currentRoute != item.route) {
-                            goToTab(item.route)
-                        }
-                    },
-                    icon = item.icon,
-                    colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = Color.Black,
-                        unselectedIconColor = Color.Gray,
-                        indicatorColor = Color.Transparent
+                // Items de la derecha
+                rightItems.forEach { item ->
+                    val selected = currentRoute == item.route
+                    NavigationBarItem(
+                        selected = selected,
+                        onClick = {
+                            if (currentRoute != item.route) {
+                                goToTab(item.route)
+                            }
+                        },
+                        icon = item.icon,
+                        colors = NavigationBarItemDefaults.colors(
+                            selectedIconColor = Color.Black,
+                            unselectedIconColor = Color.Gray,
+                            indicatorColor = Color.Transparent
+                        )
                     )
-                )
+                }
             }
 
-            // Espacio para el botón central (sin peso)
-            Box(
-                modifier = Modifier.width(72.dp),
-                contentAlignment = Alignment.Center
+            // Botón central integrado
+            FloatingActionButton(
+                onClick = onFabToggle,
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .offset(y = (-16).dp)
+                    .size(60.dp),
+                containerColor = MaterialTheme.colorScheme.secondary,
+                shape = RoundedCornerShape(16.dp),
+                elevation = FloatingActionButtonDefaults.elevation(0.dp)
             ) {
-                // Espacio vacío para el botón
-            }
-
-            // Items de la derecha
-            rightItems.forEach { item ->
-                val selected = currentRoute == item.route
-                NavigationBarItem(
-                    selected = selected,
-                    onClick = {
-                        if (currentRoute != item.route) {
-                            goToTab(item.route)
-                        }
-                    },
-                    icon = item.icon,
-                    colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = Color.Black,
-                        unselectedIconColor = Color.Gray,
-                        indicatorColor = Color.Transparent
-                    )
+                Icon(
+                    Icons.Rounded.Add,
+                    contentDescription = "Create",
+                    tint = Color.White,
+                    modifier = Modifier.size(32.dp)
                 )
             }
-        }
-
-        // Botón central integrado
-        FloatingActionButton(
-            onClick = onFabToggle,
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .offset(y = (-16).dp)
-                .size(60.dp),
-            containerColor = MaterialTheme.colorScheme.secondary,
-            shape = RoundedCornerShape(16.dp),
-            elevation = FloatingActionButtonDefaults.elevation(0.dp)
-        ) {
-            Icon(
-                Icons.Rounded.Add,
-                contentDescription = "Create",
-                tint = Color.White,
-                modifier = Modifier.size(32.dp)
-            )
         }
     }
 }
