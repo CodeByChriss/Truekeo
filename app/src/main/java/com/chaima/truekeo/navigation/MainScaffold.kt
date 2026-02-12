@@ -62,9 +62,11 @@ fun MainScaffold(rootNavController: NavController) {
             modifier = Modifier.padding(padding)
         ) {
             composable(NavBarRoutes.Home.route) {
-                HomeTab({ conversationId ->
-                    navController.navigate("${NavBarRoutes.Message.route}/$conversationId")
-                })
+                HomeTab(
+                    onOpenConversation = { conversationId ->
+                        navController.navigate("${NavBarRoutes.Message.route}/$conversationId")
+                    }
+                )
             }
             composable(NavBarRoutes.MyTruekes.route) {
                 MyTruekesTab(navController = navController)
@@ -82,7 +84,10 @@ fun MainScaffold(rootNavController: NavController) {
                 val truekeId = backStackEntry.arguments?.getString("truekeId")!!
                 TruekeDetailsScreen(
                     truekeId = truekeId,
-                    onBack = { navController.popBackStack() }
+                    onBack = { navController.popBackStack() },
+                    onOpenConversation = { conversationId ->
+                        navController.navigate("${NavBarRoutes.Message.route}/$conversationId")
+                    }
                 )
             }
 
