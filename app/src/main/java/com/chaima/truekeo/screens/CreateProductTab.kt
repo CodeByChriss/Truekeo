@@ -190,7 +190,7 @@ fun CreateProductTab() {
                         OutlinedTextField(
                             value = name,
                             onValueChange = { name = it },
-                            label = { Text(stringResource(R.string.product_name)) },
+                            label = { Text(stringResource(R.string.name)) },
                             singleLine = true,
                             shape = RoundedCornerShape(8.dp),
                             modifier = Modifier.fillMaxWidth()
@@ -202,7 +202,7 @@ fun CreateProductTab() {
                         OutlinedTextField(
                             value = description,
                             onValueChange = { description = it },
-                            label = { Text(stringResource(R.string.product_description)) },
+                            label = { Text(stringResource(R.string.description)) },
                             shape = RoundedCornerShape(8.dp),
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -224,12 +224,12 @@ fun CreateProductTab() {
                         BrandField(
                             value = brand,
                             onValueChange = { brand = it },
-                            label = stringResource(R.string.product_brand),
+                            label = stringResource(R.string.brand),
                             modifier = Modifier.fillMaxWidth()
                         )
                         FormErrorText(
                             showError = showBrandError,
-                            message = "Selecciona una marca valida"
+                            message = stringResource(R.string.select_valid_brand)
                         )
                     }
                 }
@@ -276,7 +276,7 @@ private fun ItemConditionDropdown(
             value = value.displayName(context),
             onValueChange = {},
             readOnly = true,
-            label = { Text(stringResource(R.string.product_state)) },
+            label = { Text(stringResource(R.string.state)) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
             shape = RoundedCornerShape(8.dp),
             modifier = Modifier
