@@ -45,11 +45,10 @@
     <string name="details">Details</string>
     <string name="location">Location</string>
     <string name="product_to_trueke">Product to trueke</string>
-    <string name="product_name">Name</string>
-    <string name="product_description">Description</string>
-    <string name="product_state">Condition</string>
-
-    <string name="product_brand">Brand</string>
+    <string name="name">Name</string>
+    <string name="description">Description</string>
+    <string name="state">Condition</string>
+    <string name="brand">Brand</string>
     <string name="no_products">No products</string>
     <string name="select_product">Select a product</string>
     <string name="click_select_product">Click to choose one of your products</string>
@@ -66,7 +65,7 @@
     <string name="time_now">just now</string>
     <string name="time_published_now">Published just now</string>
     <string name="logout">Cerrar sesión</string>
-    <string name="name">First and last name</string>
+    <string name="name_and_surname">First and last name</string>
     <string name="user">User</string>
     <string name="profile_updated">Updated profile</string>
     <string name="username_already_exits">That username already exists</string>
@@ -75,13 +74,11 @@
     <string name="edit_profile">Edit profile</string>
     <string name="change_picture">Change your profile picture</string>
     <string name="save">Save changes</string>
-    <string name="my_trueks">My truekes</string>
+    <string name="my_truekes">My truekes</string>
     <string name="my_products">My products</string>
     <string name="save_changes_question">Do you want to save changes before leaving?</string>
     <string name="discard">Discard</string>
     <string name="search_product">Search a product…</string>
-
-    <string name="my_truekes">My truekes</string>
 
     <string name="my_messages">My messages</string>
     <string name="delete_conversation">Delete conversation</string>
@@ -128,4 +125,17 @@
     <string name="trueke_accepted">Trueke accepted!</string>
     <string name="trueke_rejected">Trueke rejected</string>
     <string name="trueke_cancelled">Trueke cancelled</string>
+    <string name="time_prefix_completed">Completed on %1$s</string>
+    <string name="date_pattern_same_year">MMMM d</string>
+    <string name="date_pattern_other_year">MMMM d, yyyy</string>
+    <string name="select_valid_brand">Select a valid brand</string>
+    <string name="edit_trueke">Edit Trueke</string>
+    <string name="your_offer">Your offer</string>
+    <string name="mark_as_completed">Mark as completed</string>
+    <string name="you_receive">You receive</string>
+    <string name="cancel_trueke">Cancel Trueke</string>
+    <string name="to_chat">Message</string>
+    <string name="exchange">Exchange</string>
+    <string name="trade_completed">Trade completed</string>
+    <string name="trade_with">Trade with</string>
 </resources>

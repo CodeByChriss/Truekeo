@@ -131,7 +131,7 @@ fun ProfileTab(
             item {
                 ProfileOption(
                     iconRes = R.drawable.intercambio,
-                    title = stringResource(R.string.my_trueks),
+                    title = stringResource(R.string.my_truekes),
                     onClick = onMyTruekesClick
                 )
             }

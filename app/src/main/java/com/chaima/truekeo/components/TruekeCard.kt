@@ -35,6 +35,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
@@ -473,7 +474,7 @@ private fun CompletedTruekeLayout(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Truekeado con",
+                        text = stringResource(R.string.trade_with),
                         fontSize = 13.sp,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.60f),
                         fontFamily = FontFamily(Font(R.font.saira_regular))

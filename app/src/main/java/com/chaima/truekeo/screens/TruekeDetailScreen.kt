@@ -34,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
@@ -48,6 +49,7 @@ import com.chaima.truekeo.models.Item
 import com.chaima.truekeo.models.Trueke
 import com.chaima.truekeo.models.TruekeStatus
 import com.chaima.truekeo.ui.theme.TruekeoTheme
+import com.chaima.truekeo.utils.completedOn
 import com.chaima.truekeo.utils.resolvePlaceName
 import kotlinx.coroutines.launch
 import java.util.Locale
@@ -184,7 +186,7 @@ fun OpenTruekeLayout(
             Spacer(Modifier.height(12.dp))
 
             Text(
-                text = "Tu oferta".uppercase(),
+                text = stringResource(R.string.your_offer).uppercase(),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.primary,
                 fontFamily = FontFamily(Font(R.font.saira_medium))
@@ -208,7 +210,7 @@ fun OpenTruekeLayout(
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Text(
-                    text = "Editar Trueke".uppercase(Locale.getDefault()),
+                    text = stringResource(R.string.edit_trueke).uppercase(Locale.getDefault()),
                     style = MaterialTheme.typography.bodyLarge,
                     fontFamily = FontFamily(Font(R.font.saira_medium))
                 )
@@ -272,7 +274,7 @@ fun ReservedTruekeLayout(
         Spacer(Modifier.height(12.dp))
 
         Text(
-            text = "Intercambio".uppercase(),
+            text = stringResource(R.string.exchange).uppercase(),
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.primary,
             fontFamily = FontFamily(Font(R.font.saira_medium))
@@ -286,7 +288,7 @@ fun ReservedTruekeLayout(
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 Text(
-                    text = "Truekeado con",
+                    text = stringResource(R.string.trade_with),
                     style = MaterialTheme.typography.bodyMedium,
                     fontFamily = FontFamily(Font(R.font.saira_regular))
                 )
@@ -309,7 +311,7 @@ fun ReservedTruekeLayout(
         Spacer(Modifier.height(8.dp))
 
         Text(
-            text = "Tu oferta:",
+            text = "${stringResource(R.string.your_offer)}:",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontFamily = FontFamily(Font(R.font.saira_medium))
@@ -333,7 +335,7 @@ fun ReservedTruekeLayout(
         Spacer(Modifier.height(4.dp))
 
         Text(
-            text = "Recibes:",
+            text = "${stringResource(R.string.you_receive)}:",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontFamily = FontFamily(Font(R.font.saira_medium))
@@ -354,7 +356,7 @@ fun ReservedTruekeLayout(
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Text(
-                    text = "Marcar como completado".uppercase(Locale.getDefault()),
+                    text = stringResource(R.string.mark_as_completed).uppercase(Locale.getDefault()),
                     style = MaterialTheme.typography.bodyLarge,
                     fontFamily = FontFamily(Font(R.font.saira_medium))
                 )
@@ -374,7 +376,7 @@ fun ReservedTruekeLayout(
                 )
             ) {
                 Text(
-                    text = "Cancelar trueke".uppercase(Locale.getDefault()),
+                    text = stringResource(R.string.cancel_trueke).uppercase(Locale.getDefault()),
                     style = MaterialTheme.typography.bodyLarge,
                     fontFamily = FontFamily(Font(R.font.saira_medium))
                 )
@@ -396,7 +398,7 @@ fun ReservedTruekeLayout(
             )
         ) {
             Text(
-                text = "Escribir".uppercase(Locale.getDefault()),
+                text = stringResource(R.string.to_chat).uppercase(Locale.getDefault()),
                 style = MaterialTheme.typography.bodyLarge,
                 fontFamily = FontFamily(Font(R.font.saira_medium))
             )
@@ -416,6 +418,8 @@ fun CompletedTruekeLayout(
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     var isLoading by remember { mutableStateOf(false) }
+
+    val completedInstant = trueke.updatedAtInstant ?: trueke.createdAtInstant
 
     val takerItem = requireNotNull(trueke.takerItem) { "takerItem debe existir en RESERVED" }
 
@@ -459,7 +463,7 @@ fun CompletedTruekeLayout(
             .padding(horizontal = 24.dp)
         ) {
             Text(
-                text = "Finalizado el ",
+                text = completedOn(context, completedInstant),
                 style = MaterialTheme.typography.bodyLarge,
                 fontFamily = FontFamily(Font(R.font.saira_regular))
             )
@@ -471,7 +475,7 @@ fun CompletedTruekeLayout(
             Spacer(Modifier.height(12.dp))
 
             Text(
-                text = "Intercambio".uppercase(),
+                text = stringResource(R.string.exchange).uppercase(),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.primary,
                 fontFamily = FontFamily(Font(R.font.saira_medium))
@@ -485,7 +489,7 @@ fun CompletedTruekeLayout(
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     Text(
-                        text = "Truekeado con",
+                        text = stringResource(R.string.trade_with),
                         style = MaterialTheme.typography.bodyMedium,
                         fontFamily = FontFamily(Font(R.font.saira_regular))
                     )
@@ -508,7 +512,7 @@ fun CompletedTruekeLayout(
             Spacer(Modifier.height(8.dp))
 
             Text(
-                text = "Tu oferta:",
+                text = "${stringResource(R.string.your_offer)}:",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontFamily = FontFamily(Font(R.font.saira_medium))
@@ -532,7 +536,7 @@ fun CompletedTruekeLayout(
             Spacer(Modifier.height(4.dp))
 
             Text(
-                text = "Recibes:",
+                text = "${stringResource(R.string.you_receive)}:",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontFamily = FontFamily(Font(R.font.saira_medium))
@@ -555,7 +559,7 @@ fun CompletedTruekeLayout(
                 )
             ) {
                 Text(
-                    text = "Escribir".uppercase(Locale.getDefault()),
+                    text = stringResource(R.string.to_chat).uppercase(Locale.getDefault()),
                     style = MaterialTheme.typography.bodyLarge,
                     fontFamily = FontFamily(Font(R.font.saira_medium))
                 )
@@ -585,14 +589,14 @@ private fun BasicTruekeInfo(
 
     trueke.description?.let {
         LabeledValue(
-            label = "Descripción",
+            label = stringResource(R.string.description),
             value = it
         )
         Spacer(Modifier.height(12.dp))
     }
 
     LabeledValue(
-        label = "Ubicación",
+        label = stringResource(R.string.location),
         value = placeText
     )
 }
@@ -701,7 +705,7 @@ fun CompletedBanner() {
             Spacer(modifier = Modifier.width(8.dp))
 
             Text(
-                text = "TRUEKE COMPLETADO",
+                text = stringResource(R.string.trade_completed).uppercase(Locale.getDefault()),
                 style = MaterialTheme.typography.titleMedium,
 //                color = Color.White,
                 fontFamily = FontFamily(Font(R.font.saira_medium))
