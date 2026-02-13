@@ -87,7 +87,7 @@ fun TruekeDetailsScreen(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.White),
+                    .background(MaterialTheme.colorScheme.background),
                 contentAlignment = Alignment.Center
             ) {
                 Text("Trueke no encontrado")
@@ -133,11 +133,11 @@ fun TruekeDetailsContent(
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = Color.White
+                        containerColor = MaterialTheme.colorScheme.background
                     )
                 )
             },
-            containerColor = Color.White,
+            containerColor = MaterialTheme.colorScheme.background,
             modifier = Modifier.fillMaxSize()
         ) { padding ->
             when (trueke.status) {
@@ -295,14 +295,13 @@ fun ReservedTruekeLayout(
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(3.dp)
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     UserAvatarImage(u, size = 24.dp)
 
                     Text(
                         text = "@${u.username}",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = Color.Black,
                         fontFamily = FontFamily(Font(R.font.saira_medium))
                     )
                 }
@@ -504,7 +503,6 @@ fun CompletedTruekeLayout(
                         Text(
                             text = "@${u.username}",
                             style = MaterialTheme.typography.bodyMedium,
-                            color = Color.Black,
                             fontFamily = FontFamily(Font(R.font.saira_medium))
                         )
                     }
@@ -679,7 +677,7 @@ fun ItemCard(
                 Text(
                     text = item.condition.displayName(context),
                     style = MaterialTheme.typography.labelMedium,
-                    color = Color.White,
+//                    color = Color.White,
                     fontFamily = FontFamily(Font(R.font.saira_regular))
                 )
             }
@@ -701,7 +699,7 @@ fun CompletedBanner() {
             Icon(
                 imageVector = Icons.Rounded.Check,
                 contentDescription = null,
-                tint = Color.White
+                tint = MaterialTheme.colorScheme.onSurface
             )
 
             Spacer(modifier = Modifier.width(8.dp))
@@ -709,7 +707,7 @@ fun CompletedBanner() {
             Text(
                 text = stringResource(R.string.trade_completed).uppercase(Locale.getDefault()),
                 style = MaterialTheme.typography.titleMedium,
-                color = Color.White,
+//                color = Color.White,
                 fontFamily = FontFamily(Font(R.font.saira_medium))
             )
         }
