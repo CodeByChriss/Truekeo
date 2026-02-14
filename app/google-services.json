@@ -12,7 +12,20 @@
           "package_name": "com.chaima.truekeo"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1014848725574-1rittoloqjjmo48317oi57q2iif8ppig.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.chaima.truekeo",
+            "certificate_hash": "80d95ae7b96a85d70325a2bed1c9d8f024968ae0"
+          }
+        },
+        {
+          "client_id": "1014848725574-kb2ucqs2hadqt47pou7qigsln5fljjj1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBb2_5XYgnMLS55glHAmCUbGPNbdWGB2UQ"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1014848725574-kb2ucqs2hadqt47pou7qigsln5fljjj1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

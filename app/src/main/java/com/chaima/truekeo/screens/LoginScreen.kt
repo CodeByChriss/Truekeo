@@ -77,9 +77,8 @@ fun LoginScreen(onGoToSignup: () -> Unit, onLogin: () -> Unit) {
     val credentialManager = CredentialManager.create(context)
     val googleIdOption = GetGoogleIdOption.Builder()
         .setFilterByAuthorizedAccounts(false)
-        .setServerClientId(
-            stringResource(R.string.default_web_client_id)
-        )
+        .setAutoSelectEnabled(false) // Evita que el sistema intente loguear solo y falle
+        .setServerClientId(stringResource(R.string.default_web_client_id))
         .build()
 
     val request = GetCredentialRequest.Builder()
