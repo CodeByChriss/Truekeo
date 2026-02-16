@@ -525,7 +525,7 @@ fun TruekeBubble(
                                     } else {
                                         Text(
                                             stringResource(R.string.reject),
-                                            color = Color.Red,
+                                            color = MaterialTheme.colorScheme.error,
                                             fontFamily = FontFamily(Font(R.font.saira_medium))
                                         )
                                     }
@@ -542,7 +542,7 @@ fun TruekeBubble(
                     } else {
                         val (statusLabel, statusColor) = when (truekeOffer.status) {
                             OfferStatus.ACCEPTED -> stringResource(R.string.trueke_accepted) to Color(
-                                0xFF4CAF50
+                                0xFF30B677
                             )
 
                             OfferStatus.REJECTED -> stringResource(R.string.trueke_rejected) to Color.Red
