@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,35 +26,42 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.chaima.truekeo.R
-enum class ProductStatus {
-    AVAILABLE,
-    RESERVED,
-    EXCHANGED
-}
+import com.chaima.truekeo.models.Item
+import com.chaima.truekeo.models.ItemCondition
+import com.chaima.truekeo.models.ItemStatus
 
-data class MyProduct(
-    val name: String,
-    val description: String,
-    val imageRes: Int,
-    val status: ProductStatus
-)
 @Composable
 fun MyProductsScreen(navController: NavController) {
 
     var searchQuery by remember { mutableStateOf("") }
 
-    val products = remember {
+    val items = remember {
         listOf(
-            MyProduct(
-                name = "iPhone12 256GB Negro",
-                description = "Sin golpes, batería al 90%",
-                imageRes = R.drawable.phone,
-                status = ProductStatus.RESERVED
+            Item(
+                id = "1",
+                name = "Guitarra Gibson 233E",
+                details = "Guitarra Gibson 233E en excelente estado",
+                condition = ItemCondition.GOOD,
+                status = ItemStatus.AVAILABLE
+            ),
+            Item(
+                id = "2",
+                name = "iPhone 12 256GB Negro",
+                details = "Sin golpes, batería al 90%",
+                condition = ItemCondition.LIKE_NEW,
+                status = ItemStatus.RESERVED
+            ),
+            Item(
+                id = "3",
+                name = "Bicicleta MTB Rockrider 520",
+                details = "Usada pero bien cuidada",
+                condition = ItemCondition.FAIR,
+                status = ItemStatus.EXCHANGED
             )
         )
     }
 
-    val filteredProducts = products.filter {
+    val filteredItems = items.filter {
         it.name.contains(searchQuery, ignoreCase = true)
     }
 
@@ -88,13 +97,11 @@ fun MyProductsScreen(navController: NavController) {
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(filteredProducts) { product ->
-                MyProductItem(
-                    product = product,
+            items(filteredItems) { item ->
+                MyItemRow(
+                    item = item,
                     onClick = {
-                        navController.navigate(
-                            "product_details/${product.name}"
-                        )
+                        navController.navigate("product_details/${item.id}")
                     }
                 )
             }
@@ -103,8 +110,8 @@ fun MyProductsScreen(navController: NavController) {
 }
 
 @Composable
-fun MyProductItem(
-    product: MyProduct,
+fun MyItemRow(
+    item: Item,
     onClick: () -> Unit
 ) {
     Box(
@@ -112,30 +119,25 @@ fun MyProductItem(
             .fillMaxWidth()
             .height(96.dp)
             .clip(RoundedCornerShape(12.dp))
-            .border(
-                width = 1.dp,
-                color = Color.Black,
-                shape = RoundedCornerShape(12.dp)
-            )
+            .border(1.dp, Color.Black, RoundedCornerShape(12.dp))
             .background(Color(0xFFF7F7F7))
             .clickable { onClick() }
             .padding(8.dp)
     ) {
 
-        ProductStatusBadge(
-            status = product.status,
+        ItemStatusBadge(
+            status = item.status,
             modifier = Modifier.align(Alignment.TopEnd)
         )
 
         Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(start = 4.dp),
+            modifier = Modifier.fillMaxSize(),
             verticalAlignment = Alignment.CenterVertically
         ) {
+
             Image(
-                painter = painterResource(id = product.imageRes),
-                contentDescription = product.name,
+                painter = painterResource(R.drawable.guitarra),
+                contentDescription = item.name,
                 modifier = Modifier
                     .size(78.dp)
                     .clip(RoundedCornerShape(8.dp))
@@ -144,34 +146,34 @@ fun MyProductItem(
             Spacer(modifier = Modifier.width(12.dp))
 
             Column {
-                Spacer(modifier = Modifier.height(14.dp))
-
                 Text(
-                    text = product.name,
+                    text = item.name,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
                 )
 
-                Text(
-                    text = product.description,
-                    fontSize = 13.sp,
-                    color = Color.DarkGray,
-                    maxLines = 1
-                )
+                item.details?.let {
+                    Text(
+                        text = it,
+                        fontSize = 13.sp,
+                        color = Color.DarkGray,
+                        maxLines = 1
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-fun ProductStatusBadge(
-    status: ProductStatus,
+fun ItemStatusBadge(
+    status: ItemStatus,
     modifier: Modifier = Modifier
 ) {
-    val (text, color) = when (status) {
-        ProductStatus.AVAILABLE -> "Disponible" to Color(0xFF5FBAA8)
-        ProductStatus.RESERVED -> "Reservado" to Color(0xFFDEC786)
-        ProductStatus.EXCHANGED -> "Intercambiado" to Color(0xFFA9A8A8)
+    val color = when (status) {
+        ItemStatus.AVAILABLE -> Color(0xFF5FBAA8)
+        ItemStatus.RESERVED -> Color(0xFFDEC786)
+        ItemStatus.EXCHANGED -> Color(0xFFA9A8A8)
     }
 
     Box(
@@ -181,7 +183,7 @@ fun ProductStatusBadge(
             .padding(horizontal = 8.dp, vertical = 2.dp)
     ) {
         Text(
-            text = text,
+            text = stringResource(status.getStringResource()),
             fontSize = 10.sp,
             color = Color.White
         )
