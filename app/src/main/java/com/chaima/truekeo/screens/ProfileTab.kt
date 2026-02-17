@@ -83,7 +83,7 @@ fun ProfileTab(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     AsyncImage(
-                        model = user?.avatarUrl,
+                        model = "${user?.avatarUrl}?t=${System.currentTimeMillis()}",
                         contentDescription = user?.username,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
