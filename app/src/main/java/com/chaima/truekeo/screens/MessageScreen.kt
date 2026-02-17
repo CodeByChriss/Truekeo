@@ -10,12 +10,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
@@ -259,12 +259,12 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
                         if (msg.type == MessageType.TRUEKE) {
                             TruekeBubble(
                                 msg,
-                                { truekeId, truekeTakerUserId, truekeTakerItemId ->
+                                { truekeId, truekeItemId ->
                                     scope.launch {
                                         // actualizamos el trueke (el del mapa)
                                         val truekeManager = TruekeContainer.truekeManager
                                         truekeManager.reserveTrueke(truekeId,
-                                            truekeTakerUserId, truekeTakerItemId)
+                                            user?.id ?: "ERROR", truekeItemId)
                                         // actualizamos la propuesta de trueke
                                         chatManager.updateOfferStatus(
                                             conversationId,
@@ -293,9 +293,7 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
                                             OfferStatus.CANCELLED
                                         )
                                     }
-                                },
-                                listState,
-                                chatMessages.size - 1
+                                }
                             )
                         } else {
                             ChatBubble(msg)
@@ -382,13 +380,11 @@ fun ChatBubble(message: ChatMessage) {
 @Composable
 fun TruekeBubble(
     message: ChatMessage,
-    onAccept: (truekeId: String, truekeTakerUserId: String, truekeTakerItemId: String) -> Unit,
+    onAccept: (truekeId: String, truekeItemId: String) -> Unit,
     onReject: () -> Unit,
-    onTruekeReserved: () -> Unit,
-    listState: LazyListState,
-    cntChatMessages: Int
+    onTruekeReserved: () -> Unit
 ) {
-    val truekeOffer = message.truekeOffer ?: return
+    val trueke = message.truekeOffer ?: return
     val itemManager = remember { ItemContainer.itemManager }
     val truekeManager = remember { TruekeContainer.truekeManager }
 
@@ -399,39 +395,32 @@ fun TruekeBubble(
     var isAcceptLoading by remember { mutableStateOf(false) }
     var isRejectLoading by remember { mutableStateOf(false) }
 
-    LaunchedEffect(truekeOffer.truekeId, truekeOffer.offeredItemId) {
+    LaunchedEffect(0) {
         isLoading = true
-        proposerItem = null
-        targetItem = null
-        truekeData = null
-
-        truekeData = truekeManager.getTruekeById(truekeOffer.truekeId)
-
-        if (
-            truekeOffer.status != OfferStatus.ACCEPTED &&
-            truekeOffer.status != OfferStatus.REJECTED &&
-            truekeData?.status == TruekeStatus.RESERVED
-        ) {
+        truekeData = truekeManager.getTruekeById(trueke.truekeId)
+        if(trueke.status != OfferStatus.ACCEPTED && trueke.status != OfferStatus.REJECTED && truekeData?.status == TruekeStatus.RESERVED){
             onTruekeReserved()
         }
-
-        targetItem = itemManager.getItemById(truekeData?.hostItemId ?: "")
-        proposerItem = itemManager.getItemById(truekeOffer.offeredItemId)
-
+        targetItem = itemManager.getItemById(truekeData?.hostItemId ?: "ERROR")
+        proposerItem = itemManager.getItemById(trueke.offeredItemId)
         isLoading = false
-        listState.animateScrollToItem(cntChatMessages)
     }
 
     // Uso un box para que cubra todo el ancho de la pantalla
     Box(
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
         contentAlignment = Alignment.Center
     ) {
         Surface(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
-            color = Color.White,
+            modifier = Modifier
+                .fillMaxWidth(0.85f) // Lo estrecho un poco para que sea más estético
+                .heightIn(min = 250.dp), // debemos indicar un mínimo para evitar que la conversación se corte
+            shape = RoundedCornerShape(20.dp),
+            color = MaterialTheme.colorScheme.background,
+            tonalElevation = 4.dp,
+            shadowElevation = 3.dp
         ) {
             if (isLoading) {
                 Box(Modifier.padding(32.dp), contentAlignment = Alignment.Center) {
@@ -444,7 +433,7 @@ fun TruekeBubble(
                 ) {
                     Text(
                         text = stringResource(R.string.trueke_proposal),
-                        style = MaterialTheme.typography.labelLarge,
+                        style = MaterialTheme.typography.titleLarge,
                         fontFamily = FontFamily(Font(R.font.saira_semibold)),
                         color = MaterialTheme.colorScheme.primary,
                         letterSpacing = 1.sp
@@ -458,7 +447,7 @@ fun TruekeBubble(
                         verticalAlignment = Alignment.Top // Alineo arriba para que nombres largos no muevan las imágenes
                     ) {
                         ProductItem(
-                            imageUrl = proposerItem?.imageUrls?.first() ?: "",
+                            imageUrl = proposerItem?.imageUrls?.firstOrNull() ?: "",
                             name = proposerItem?.name ?: stringResource(R.string.error_loading)
                         )
 
@@ -472,14 +461,14 @@ fun TruekeBubble(
                         )
 
                         ProductItem(
-                            imageUrl = targetItem?.imageUrls?.first() ?: "",
+                            imageUrl = targetItem?.imageUrls?.firstOrNull() ?: "",
                             name = targetItem?.name ?: stringResource(R.string.error_loading)
                         )
                     }
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    if (truekeOffer.status == OfferStatus.PENDING) {
+                    if (trueke.status == OfferStatus.PENDING) {
                         if (!message.isFromMe) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
@@ -489,7 +478,7 @@ fun TruekeBubble(
                                     onClick = {
                                         if (!isAcceptLoading) {
                                             isAcceptLoading = true
-                                            onAccept(truekeData?.id ?: "ERROR", truekeOffer.proposerUserId, proposerItem?.id ?: "ERROR")
+                                            onAccept(truekeData?.id ?: "ERROR", proposerItem?.id ?: "ERROR")
                                             isAcceptLoading = false
                                         }
                                     },
@@ -540,7 +529,7 @@ fun TruekeBubble(
                             )
                         }
                     } else {
-                        val (statusLabel, statusColor) = when (truekeOffer.status) {
+                        val (statusLabel, statusColor) = when (trueke.status) {
                             OfferStatus.ACCEPTED -> stringResource(R.string.trueke_accepted) to Color(
                                 0xFF4CAF50
                             )
