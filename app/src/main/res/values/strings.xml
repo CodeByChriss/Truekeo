@@ -41,7 +41,7 @@
     <string name="product_status_label">Estado</string>
     <string name="uploaded_by">Subido por</string>
     <string name="write">Escribir</string>
-    <string name="accept">Aceptar</string>
+    <string name="propose">Proponer</string>
     <string name="cant_start_conversation_with_you">No puedes empezar una conversación contigo mismo</string>
     <string name="error_starting_conversation">Error al empezar la conversación</string>
     <!-- pestaña de crear trueke -->
@@ -50,10 +50,18 @@
     <string name="details">Detalles</string>
     <string name="location">Ubicación</string>
     <string name="product_to_trueke">Producto a truekear</string>
-    <string name="product_name">Nombre</string>
-    <string name="product_description">Descripción</string>
-    <string name="product_state">Estado</string>
-    <string name="product_brand">Marca</string>
+
+    <string name="name">Nombre</string>
+    <string name="description">Descripción</string>
+    <string name="state">Estado</string>
+    <string name="brand">Marca</string>
+
+    <string name="no_products">No hay artículos</string>
+    <!-- ItemSelectorCard -->
+    <string name="select_product">Selecciona un producto</string>
+    <string name="click_select_product">Pulsa para elegir uno de tus productos</string>
+    <string name="cancel">Cancelar</string>
+    <string name="confirm">Confirmar</string>
     <!-- estados del producto -->
     <string name="product_state_new">Nuevo</string>
     <string name="product_state_like_new">Como nuevo</string>
@@ -66,11 +74,11 @@
     <string name="time_now">ahora mismo</string>
     <string name="time_published_now">Publicado ahora mismo</string>
     <!-- Profile-->
-    <string name="my_trueks">Mis trueques</string>
+    <string name="my_truekes">Mis trueques</string>
     <string name="my_products">Mis productos</string>
     <string name="logout">Logout</string>
     <!-- Editar perfil y Profile-->
-    <string name="name">Nombre y apellido</string>
+    <string name="name_and_surname">Nombre y apellido</string>
     <string name="user">Usuario</string>
     <string name="profile_updated">Perfil actualizado</string>
     <string name="username_already_exits">Ese nombre de usuario ya existe</string>
@@ -86,8 +94,6 @@
     <!-- MisProductos-->
     <string name="search_product">Busca un producto…</string>
 
-    <!-- pestaña de mis truekes -->
-    <string name="my_truekes">Mis truekes</string>
     <!-- pestaña de mensajes -->
     <string name="my_messages">Mis mensajes</string>
     <string name="delete_conversation">Eliminar conversación</string>
@@ -127,5 +133,26 @@
     <string name="product_availability_reserved">Reservado</string>
     <string name="product_availability_exchanged">Intercambiado</string>
     <string name="select_a_product">Selecciona un producto</string>
+    <string name="trueke_proposal">Propuesta de Trueke</string>
+    <string name="error_loading">Error cargando</string>
+    <string name="accept">Aceptar</string>
+    <string name="reject">Rechazar</string>
+    <string name="waiting_response">Esperando respuesta…</string>
+    <string name="trueke_accepted">¡Trueke aceptado!</string>
+    <string name="trueke_rejected">Trueke rechazado</string>
+    <string name="trueke_cancelled">Trueke cancelado</string>
 
+    <string name="time_prefix_completed">Finalizado el %1$s</string>
+    <string name="date_pattern_same_year">d \'de\' MMMM</string>
+    <string name="date_pattern_other_year">d \'de\' MMMM \'de\' yyyy</string>
+    <string name="select_valid_brand">Selecciona una marca valida</string>
+    <string name="edit_trueke">Editar Trueke</string>
+    <string name="your_offer">Tu oferta</string>
+    <string name="mark_as_completed">Marcar como completado</string>
+    <string name="you_receive">Recibes</string>
+    <string name="cancel_trueke">Cancelar Trueke</string>
+    <string name="to_chat">Escribir</string>
+    <string name="exchange">Intercambio</string>
+    <string name="trade_completed">Trueke completado</string>
+    <string name="trade_with">Truekeado con</string>
 </resources>

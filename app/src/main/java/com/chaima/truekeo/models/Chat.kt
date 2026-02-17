@@ -22,9 +22,18 @@ data class ChatMessage(
     val text: String = "",
     @ServerTimestamp
     val timestamp: Timestamp? = null,
-    @get:Exclude val isFromMe : Boolean = false
+    @get:Exclude val isFromMe : Boolean = false,
+    
+    // Para diferenciar entre propuesta y mensaje
+    val type: MessageType = MessageType.TEXT,
+    val truekeOffer: TruekeOffer? = null
 ){
     fun getLongTimestamp(): Long {
         return timestamp?.toDate()?.time ?: System.currentTimeMillis()
     }
+}
+
+enum class MessageType{
+    TEXT,
+    TRUEKE
 }

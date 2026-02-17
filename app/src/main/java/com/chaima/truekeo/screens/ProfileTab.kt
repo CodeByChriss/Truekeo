@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -37,7 +38,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.chaima.truekeo.R
-import com.chaima.truekeo.data.AuthContainer
+import com.chaima.truekeo.managers.AuthContainer
+import com.chaima.truekeo.ui.theme.TruekeoTheme
 
 @Composable
 fun ProfileTab(
@@ -49,110 +51,113 @@ fun ProfileTab(
 ) {
     val user = AuthContainer.authManager.userProfile
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-    ) {
-        item {
-            Box(
-                modifier = Modifier.fillMaxWidth().padding(20.dp),
-                contentAlignment = Alignment.CenterEnd
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.logout),
-                    contentDescription = stringResource(R.string.logout),
-                    modifier = Modifier
-                        .size(32.dp)
-                        .clickable {
-                            onLogoutClick()
-                        },
-                )
-            }
-        }
-
-        item {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 32.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                AsyncImage(
-                    model = user?.avatarUrl,
-                    contentDescription = user?.username,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .size(160.dp)
-                        .clip(CircleShape)
-                )
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                Text(
-                    text = user?.firstAndLastName.toString(),
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.Bold
-                )
-
-                Text(
-                    text = "@${user?.username}",
-                    fontSize = 22.sp,
-                    color = Color.Gray
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Button(
-                    onClick = onEditProfileClick,
-                    modifier = Modifier
-                        .fillMaxWidth(0.7f)
-                        .height(52.dp),
-                    shape = RoundedCornerShape(14.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.secondary
-                    )
+    TruekeoTheme(dynamicColor = false){
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+        ) {
+            item {
+                Box(
+                    modifier = Modifier.fillMaxWidth().padding(20.dp),
+                    contentAlignment = Alignment.CenterEnd
                 ) {
-                    Text(
-                        text = stringResource(R.string.edit_profile),
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.SemiBold
+                    Image(
+                        painter = painterResource(id = R.drawable.logout),
+                        contentDescription = stringResource(R.string.logout),
+                        modifier = Modifier
+                            .size(32.dp)
+                            .clickable {
+                                onLogoutClick()
+                            },
+                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
                     )
                 }
             }
+
+            item {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 32.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    AsyncImage(
+                        model = "${user?.avatarUrl}?t=${System.currentTimeMillis()}",
+                        contentDescription = user?.username,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(160.dp)
+                            .clip(CircleShape)
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Text(
+                        text = user?.firstAndLastName.toString(),
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    Text(
+                        text = "@${user?.username}",
+                        fontSize = 22.sp,
+                        color = Color.Gray
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Button(
+                        onClick = onEditProfileClick,
+                        modifier = Modifier
+                            .fillMaxWidth(0.7f)
+                            .height(52.dp),
+                        shape = RoundedCornerShape(14.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.secondary
+                        )
+                    ) {
+                        Text(
+                            text = stringResource(R.string.edit_profile),
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
+            }
+
+            item { HorizontalDivider() }
+
+            item {
+                ProfileOption(
+                    iconRes = R.drawable.intercambio,
+                    title = stringResource(R.string.my_truekes),
+                    onClick = onMyTruekesClick
+                )
+            }
+
+            item { HorizontalDivider() }
+
+            item {
+                ProfileOption(
+                    iconRes = R.drawable.orden,
+                    title = stringResource(R.string.my_products),
+                    onClick = onMyProductsClick
+                )
+            }
+
+            item { HorizontalDivider() }
+
+            item {
+                ProfileOption(
+                    iconRes = R.drawable.chat,
+                    title = stringResource(R.string.my_messages),
+                    onClick = onMessagesClick
+                )
+            }
+
+            item { Spacer(modifier = Modifier.height(24.dp)) }
         }
-
-        item { HorizontalDivider() }
-
-        item {
-            ProfileOption(
-                iconRes = R.drawable.intercambio,
-                title = stringResource(R.string.my_trueks),
-                onClick = onMyTruekesClick
-            )
-        }
-
-        item { HorizontalDivider() }
-
-        item {
-            ProfileOption(
-                iconRes = R.drawable.orden,
-                title = stringResource(R.string.my_products),
-                onClick = onMyProductsClick
-            )
-        }
-
-        item { HorizontalDivider() }
-
-        item {
-            ProfileOption(
-                iconRes = R.drawable.chat,
-                title = stringResource(R.string.my_messages),
-                onClick = onMessagesClick
-            )
-        }
-
-        item { Spacer(modifier = Modifier.height(24.dp)) }
     }
 }
 
@@ -174,7 +179,8 @@ fun ProfileOption(
         Image(
             painter = painterResource(id = iconRes),
             contentDescription = title,
-            modifier = Modifier.size(48.dp)
+            modifier = Modifier.size(48.dp),
+            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
         )
 
         Spacer(modifier = Modifier.width(20.dp))

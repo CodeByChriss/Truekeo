@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -22,11 +24,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.SwapHoriz
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -34,6 +39,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -50,14 +56,23 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.getString
 import coil3.compose.AsyncImage
 import com.chaima.truekeo.R
-import com.chaima.truekeo.data.AuthContainer
-import com.chaima.truekeo.data.ChatContainer
+import com.chaima.truekeo.managers.AuthContainer
+import com.chaima.truekeo.managers.ChatContainer
+import com.chaima.truekeo.managers.ItemContainer
+import com.chaima.truekeo.managers.TruekeContainer
 import com.chaima.truekeo.models.ChatMessage
 import com.chaima.truekeo.models.Conversation
+import com.chaima.truekeo.models.Item
+import com.chaima.truekeo.models.MessageType
+import com.chaima.truekeo.models.OfferStatus
+import com.chaima.truekeo.models.Trueke
+import com.chaima.truekeo.models.TruekeStatus
 import com.chaima.truekeo.ui.theme.TruekeoTheme
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -148,7 +163,7 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
                             }
                         },
                         colors = TopAppBarDefaults.topAppBarColors(
-                            containerColor = Color.White
+                            containerColor = MaterialTheme.colorScheme.background
                         ),
                         actions = {
                             IconButton(onClick = {
@@ -165,7 +180,7 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
                 },
                 bottomBar = {
                     Surface(
-                        color = Color(0xFFF5F5F5),
+                        color = MaterialTheme.colorScheme.background,
                         modifier = Modifier.imePadding()
                     ) {
                         Row(
@@ -190,8 +205,8 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
                                     .padding(end = 8.dp),
                                 shape = CircleShape,
                                 colors = TextFieldDefaults.colors(
-                                    focusedContainerColor = Color(0xFFF0F0F0),
-                                    unfocusedContainerColor = Color(0xFFF0F0F0),
+                                    focusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(0.5.dp),
+                                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(0.5.dp),
                                     focusedIndicatorColor = Color.Transparent,
                                     unfocusedIndicatorColor = Color.Transparent,
                                     disabledIndicatorColor = Color.Transparent
@@ -230,18 +245,59 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
                         }
                     }
                 }
-            ) { innerPadding ->
+            ) { padding ->
                 LazyColumn(
                     state = listState,
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(innerPadding)
-                        .background(Color(0xFFF5F5F5)),
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                        .padding(padding)
+                        .background(MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp)),
+                    contentPadding = PaddingValues(24.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     items(chatMessages) { msg ->
-                        ChatBubble(msg)
+                        if (msg.type == MessageType.TRUEKE) {
+                            TruekeBubble(
+                                msg,
+                                { truekeId, truekeItemId ->
+                                    scope.launch {
+                                        // actualizamos el trueke (el del mapa)
+                                        val truekeManager = TruekeContainer.truekeManager
+                                        truekeManager.reserveTrueke(truekeId,
+                                            user?.id ?: "ERROR", truekeItemId)
+                                        // actualizamos la propuesta de trueke
+                                        chatManager.updateOfferStatus(
+                                            conversationId,
+                                            msg,
+                                            OfferStatus.ACCEPTED
+                                        )
+                                    }
+                                },
+                                {
+                                    scope.launch {
+                                        chatManager.updateOfferStatus(
+                                            conversationId,
+                                            msg,
+                                            OfferStatus.REJECTED
+                                        )
+                                    }
+                                },
+                                {
+                                    // Si el trueke (el del mapa) ya esta reservado (ha aceptado una propuesta)
+                                    // y si la propuesta no está aceptada
+                                    // esta se cancela
+                                    scope.launch{
+                                        chatManager.updateOfferStatus(
+                                            conversationId,
+                                            msg,
+                                            OfferStatus.CANCELLED
+                                        )
+                                    }
+                                }
+                            )
+                        } else {
+                            ChatBubble(msg)
+                        }
                     }
                 }
             }
@@ -290,12 +346,12 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
 fun ChatBubble(message: ChatMessage) {
     val alignment = if (message.isFromMe) Alignment.CenterEnd else Alignment.CenterStart
     val columnAlignment = if (message.isFromMe) Alignment.End else Alignment.Start
-    val bgColor = if (message.isFromMe) MaterialTheme.colorScheme.primary else Color.White
-    val textColor = if (message.isFromMe) Color.White else Color.Black
+    val bgColor = if (message.isFromMe) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.background
+    val textColor = if (message.isFromMe) Color.White else MaterialTheme.colorScheme.onSurface
     val shape = if (message.isFromMe) {
-        RoundedCornerShape(16.dp, 16.dp, 0.dp, 16.dp)
+        RoundedCornerShape(8.dp, 8.dp, 0.dp, 8.dp)
     } else {
-        RoundedCornerShape(16.dp, 16.dp, 16.dp, 0.dp)
+        RoundedCornerShape(8.dp, 8.dp, 8.dp, 0.dp)
     }
 
     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = alignment) {
@@ -307,7 +363,7 @@ fun ChatBubble(message: ChatMessage) {
             ) {
                 Text(
                     text = message.text,
-                    modifier = Modifier.padding(12.dp),
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
                     color = textColor
                 )
             }
@@ -318,6 +374,208 @@ fun ChatBubble(message: ChatMessage) {
                 modifier = Modifier.padding(top = 2.dp)
             )
         }
+    }
+}
+
+@Composable
+fun TruekeBubble(
+    message: ChatMessage,
+    onAccept: (truekeId: String, truekeItemId: String) -> Unit,
+    onReject: () -> Unit,
+    onTruekeReserved: () -> Unit
+) {
+    val trueke = message.truekeOffer ?: return
+    val itemManager = remember { ItemContainer.itemManager }
+    val truekeManager = remember { TruekeContainer.truekeManager }
+
+    var proposerItem by remember { mutableStateOf<Item?>(null) }
+    var truekeData by remember { mutableStateOf<Trueke?>(null) }
+    var targetItem by remember { mutableStateOf<Item?>(null) }
+    var isLoading by remember { mutableStateOf(true) }
+    var isAcceptLoading by remember { mutableStateOf(false) }
+    var isRejectLoading by remember { mutableStateOf(false) }
+
+    LaunchedEffect(0) {
+        isLoading = true
+        truekeData = truekeManager.getTruekeById(trueke.truekeId)
+        if(trueke.status != OfferStatus.ACCEPTED && trueke.status != OfferStatus.REJECTED && truekeData?.status == TruekeStatus.RESERVED){
+            onTruekeReserved()
+        }
+        targetItem = itemManager.getItemById(truekeData?.hostItemId ?: "ERROR")
+        proposerItem = itemManager.getItemById(trueke.offeredItemId)
+        isLoading = false
+    }
+
+    // Uso un box para que cubra todo el ancho de la pantalla
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth(0.85f) // Lo estrecho un poco para que sea más estético
+                .heightIn(min = 250.dp), // debemos indicar un mínimo para evitar que la conversación se corte
+            shape = RoundedCornerShape(20.dp),
+            color = MaterialTheme.colorScheme.background,
+            tonalElevation = 4.dp,
+            shadowElevation = 3.dp
+        ) {
+            if (isLoading) {
+                Box(Modifier.padding(32.dp), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(modifier = Modifier.size(28.dp), strokeWidth = 3.dp)
+                }
+            } else {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = stringResource(R.string.trueke_proposal),
+                        style = MaterialTheme.typography.titleLarge,
+                        fontFamily = FontFamily(Font(R.font.saira_semibold)),
+                        color = MaterialTheme.colorScheme.primary,
+                        letterSpacing = 1.sp
+                    )
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 16.dp),
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.Top // Alineo arriba para que nombres largos no muevan las imágenes
+                    ) {
+                        ProductItem(
+                            imageUrl = proposerItem?.imageUrls?.firstOrNull() ?: "",
+                            name = proposerItem?.name ?: stringResource(R.string.error_loading)
+                        )
+
+                        Icon(
+                            imageVector = Icons.Default.SwapHoriz,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.secondary,
+                            modifier = Modifier
+                                .padding(top = 12.dp)
+                                .size(32.dp)
+                        )
+
+                        ProductItem(
+                            imageUrl = targetItem?.imageUrls?.firstOrNull() ?: "",
+                            name = targetItem?.name ?: stringResource(R.string.error_loading)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    if (trueke.status == OfferStatus.PENDING) {
+                        if (!message.isFromMe) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                            ) {
+                                Button(
+                                    onClick = {
+                                        if (!isAcceptLoading) {
+                                            isAcceptLoading = true
+                                            onAccept(truekeData?.id ?: "ERROR", proposerItem?.id ?: "ERROR")
+                                            isAcceptLoading = false
+                                        }
+                                    },
+                                    modifier = Modifier.weight(1f),
+                                    shape = RoundedCornerShape(12.dp)
+                                ) {
+                                    if (isAcceptLoading) {
+                                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                            CircularProgressIndicator(color = Color.White)
+                                        }
+                                    } else {
+                                        Text(
+                                            stringResource(R.string.accept),
+                                            fontFamily = FontFamily(Font(R.font.saira_medium))
+                                        )
+                                    }
+                                }
+                                OutlinedButton(
+                                    onClick = {
+                                        if (!isRejectLoading) {
+                                            isRejectLoading = true
+                                            onReject()
+                                            isRejectLoading = false
+                                        }
+                                    },
+                                    modifier = Modifier.weight(1f),
+                                    shape = RoundedCornerShape(12.dp)
+                                ) {
+                                    if (isRejectLoading) {
+                                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                            CircularProgressIndicator(color = Color.White)
+                                        }
+                                    } else {
+                                        Text(
+                                            stringResource(R.string.reject),
+                                            color = MaterialTheme.colorScheme.error,
+                                            fontFamily = FontFamily(Font(R.font.saira_medium))
+                                        )
+                                    }
+                                }
+                            }
+                        } else {
+                            Text(
+                                text = stringResource(R.string.waiting_response),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = Color.Gray,
+                                fontFamily = FontFamily(Font(R.font.saira_regular))
+                            )
+                        }
+                    } else {
+                        val (statusLabel, statusColor) = when (trueke.status) {
+                            OfferStatus.ACCEPTED -> stringResource(R.string.trueke_accepted) to Color(
+                                0xFF30B677
+                            )
+
+                            OfferStatus.REJECTED -> stringResource(R.string.trueke_rejected) to Color.Red
+                            OfferStatus.CANCELLED -> stringResource(R.string.trueke_cancelled) to Color.Gray
+                            else -> "" to Color.Black
+                        }
+                        Text(
+                            text = statusLabel,
+                            color = statusColor,
+                            style = MaterialTheme.typography.titleMedium,
+                            fontFamily = FontFamily(Font(R.font.saira_bold))
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ProductItem(imageUrl: String, name: String) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.width(100.dp) // Un poco más ancho para dar espacio al texto
+    ) {
+        AsyncImage(
+            model = imageUrl,
+            contentDescription = name,
+            modifier = Modifier
+                .size(70.dp)
+                .clip(RoundedCornerShape(12.dp)),
+            contentScale = ContentScale.Crop
+        )
+
+        Spacer(modifier = Modifier.height(6.dp))
+
+        Text(
+            text = name,
+            fontSize = 13.sp,
+            lineHeight = 16.sp,
+            fontFamily = FontFamily(Font(R.font.saira_regular)),
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
+        )
     }
 }
 

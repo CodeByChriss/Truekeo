@@ -35,6 +35,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
@@ -46,6 +47,7 @@ import com.chaima.truekeo.R
 import com.chaima.truekeo.models.Item
 import com.chaima.truekeo.models.Trueke
 import com.chaima.truekeo.models.TruekeStatus
+import com.chaima.truekeo.ui.theme.TruekeoTheme
 import com.chaima.truekeo.utils.TimePrefix
 import com.chaima.truekeo.utils.prefixedTimeAgo
 
@@ -59,44 +61,46 @@ fun TruekeCard(
     val isHost = currentUserId != null && trueke.hostUserId == currentUserId
 
     // area interactiva completa sin márgenes
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .clickable{ onClick() }
-    ) {
-        // area con los margenes visuales de la tarjeta
+    TruekeoTheme(dynamicColor = false) {
         Box(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
-                .padding(24.dp, 16.dp, 24.dp, 10.dp)
+                .clickable { onClick() }
+                .background(MaterialTheme.colorScheme.background)
         ) {
+            // area con los margenes visuales de la tarjeta
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color.White)
+                    .padding(24.dp, 16.dp, 24.dp, 10.dp)
             ) {
-                when (trueke.status) {
-                    TruekeStatus.OPEN -> {
-                        OpenTruekeLayout(
-                            trueke = trueke
-                        )
-                    }
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    when (trueke.status) {
+                        TruekeStatus.OPEN -> {
+                            OpenTruekeLayout(
+                                trueke = trueke
+                            )
+                        }
 
-                    TruekeStatus.RESERVED -> {
-                        ReservedTruekeLayout(
-                            trueke = trueke,
-                            isHost = isHost
-                        )
-                    }
+                        TruekeStatus.RESERVED -> {
+                            ReservedTruekeLayout(
+                                trueke = trueke,
+                                isHost = isHost
+                            )
+                        }
 
-                    TruekeStatus.COMPLETED -> {
-                        CompletedTruekeLayout(
-                            trueke = trueke,
-                            isHost = isHost
-                        )
-                    }
+                        TruekeStatus.COMPLETED -> {
+                            CompletedTruekeLayout(
+                                trueke = trueke,
+                                isHost = isHost
+                            )
+                        }
 
-                    else -> null
+                        else -> null
+                    }
                 }
             }
         }
@@ -115,13 +119,13 @@ private fun OpenTruekeLayout(
             prefixedTimeAgo(
                 context = context,
                 from = trueke.updatedAtInstant!!,
-                prefix = TimePrefix.UPDATED
+                prefix = TimePrefix.UPDATED,
             )
         } else {
             prefixedTimeAgo(
                 context = context,
                 from = trueke.createdAtInstant,
-                prefix = TimePrefix.PUBLISHED
+                prefix = TimePrefix.PUBLISHED,
             )
         }
     }
@@ -136,7 +140,8 @@ private fun OpenTruekeLayout(
             style = MaterialTheme.typography.titleMedium,
             fontFamily = FontFamily(Font(R.font.saira_medium)),
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
+            color = MaterialTheme.colorScheme.onSurface,
         )
 
         Spacer(Modifier.height(2.dp))
@@ -144,8 +149,8 @@ private fun OpenTruekeLayout(
         Text(
             text = timeText,
             fontSize = 12.sp,
-            color = Color.Black.copy(alpha = 0.6f),
-            fontFamily = FontFamily(Font(R.font.saira_regular))
+            color = MaterialTheme.colorScheme.onSurface,
+            fontFamily = FontFamily(Font(R.font.saira_regular)),
         )
 
         Spacer(Modifier.height(8.dp))
@@ -185,7 +190,8 @@ private fun OpenTruekeLayout(
                     fontSize = 14.sp,
                     fontFamily = FontFamily(Font(R.font.saira_medium)),
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
 
                 Box(
@@ -196,9 +202,9 @@ private fun OpenTruekeLayout(
                 ) {
                     Text(
                         text = trueke.hostItem.condition.displayName(context),
-                        color = Color.White,
                         fontSize = 10.sp,
-                        fontFamily = FontFamily(Font(R.font.saira_regular))
+                        fontFamily = FontFamily(Font(R.font.saira_regular)),
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                 }
             }
@@ -239,7 +245,7 @@ private fun ReservedTruekeLayout(
             Text(
                 text = "@${otherUser?.username ?: "?"}",
                 fontSize = 16.sp,
-                color = Color.Black,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontFamily = FontFamily(Font(R.font.saira_medium))
             )
         }
@@ -316,7 +322,7 @@ private fun ExchangeItemBlock(
                 .background(Color(0xFFF2F2F2))
         ) {
             AsyncImage(
-                model = item.imageUrls.firstOrNull(),
+                model = item.imageUrls.first(),
                 contentDescription = item.name,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
@@ -334,7 +340,7 @@ private fun ExchangeItemBlock(
                 text = item.name,
                 fontSize = 13.sp,
                 lineHeight = 16.sp,
-                color = Color.Black.copy(alpha = 0.60f),
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.60f),
                 fontFamily = FontFamily(Font(R.font.saira_medium)),
                 minLines = 2,
                 maxLines = 2,
@@ -410,7 +416,7 @@ private fun CompletedTruekeLayout(
             Icon(
                 imageVector = Icons.Rounded.ArrowDownward,
                 contentDescription = null,
-                tint = Color.White,
+                tint = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier
                     .align(Alignment.CenterStart)
                     .offset(x = 10.dp)
@@ -434,7 +440,7 @@ private fun CompletedTruekeLayout(
                     .size(20.dp)
                     .offset(x = (-6).dp, y = (-4).dp)
                     .clip(CircleShape)
-                    .background(Color(0xFF278652)),
+                    .background(Color(0xFF30B677)),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
@@ -460,16 +466,17 @@ private fun CompletedTruekeLayout(
                     style = MaterialTheme.typography.titleMedium,
                     fontFamily = FontFamily(Font(R.font.saira_medium)),
                     maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Truekeado con",
+                        text = stringResource(R.string.trade_with),
                         fontSize = 13.sp,
-                        color = Color.Black.copy(alpha = 0.60f),
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.60f),
                         fontFamily = FontFamily(Font(R.font.saira_regular))
                     )
 
@@ -478,7 +485,7 @@ private fun CompletedTruekeLayout(
                     Text(
                         text = "@${otherUser?.username ?: "?"}",
                         fontSize = 14.sp,
-                        color = Color.Black,
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontFamily = FontFamily(Font(R.font.saira_medium))
                     )
                 }
@@ -487,7 +494,7 @@ private fun CompletedTruekeLayout(
             Text(
                 text = "Intercambio finalizado con éxito, el ",
                 fontSize = 13.sp,
-                color = Color.Black.copy(alpha = 0.60f),
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.60f),
                 fontFamily = FontFamily(Font(R.font.saira_regular))
             )
         }

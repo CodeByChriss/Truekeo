@@ -1,14 +1,19 @@
-package com.chaima.truekeo.data
+package com.chaima.truekeo.managers
 
 import android.util.Log
 import com.chaima.truekeo.models.ChatMessage
 import com.chaima.truekeo.models.Conversation
+import com.chaima.truekeo.models.Item
+import com.chaima.truekeo.models.MessageType
+import com.chaima.truekeo.models.OfferStatus
+import com.chaima.truekeo.models.TruekeOffer
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
+import java.util.UUID
 
 // Creamos una única instancia del ChatManager para toda la aplicación y asi evitamos errores
 object ChatContainer {
@@ -205,6 +210,71 @@ class ChatManager {
         } catch (e: Exception) {
             Log.e("ChatManager", "Error al eliminar conversación: ${e.message}")
             false
+        }
+    }
+
+    suspend fun sendTruekeOffer(
+        truekeId: String, // id del trueke seleccionado en el mapa
+        myUid: String,
+        otherUid: String,
+        myProduct: Item,      // Item (producto) seleccionado para proponer el trueke
+        truekeMessage: String
+    ): String? {
+        return try {
+            val conversationId = startOrGetConversation(myUid, otherUid) ?: return null
+
+            val offerData = TruekeOffer(
+                id = UUID.randomUUID().toString(),
+                truekeId = truekeId,
+                proposerUserId = myUid,
+                offeredItemId = myProduct.id,
+                status = OfferStatus.PENDING,
+                createdAt = System.currentTimeMillis(),
+                updatedAt = System.currentTimeMillis()
+            )
+
+            val message = ChatMessage(
+                senderId = myUid,
+                text = truekeMessage,
+                type = MessageType.TRUEKE,
+                truekeOffer = offerData
+            )
+
+            db.collection("conversations")
+                .document(conversationId)
+                .collection("messages")
+                .add(message)
+                .await()
+
+            db.collection("conversations").document(conversationId).update(
+                "last_message", truekeMessage,
+                "unread_count.$otherUid", com.google.firebase.firestore.FieldValue.increment(1)
+            ).await()
+
+            conversationId
+        } catch (e: Exception) {
+            Log.e("ChatManager", "Error al enviar propuesta: ${e.message}")
+            null
+        }
+    }
+
+    suspend fun updateOfferStatus(conversationId: String, message: ChatMessage, newStatus: OfferStatus) {
+        try {
+            val query = db.collection("conversations")
+                .document(conversationId)
+                .collection("messages")
+                .whereEqualTo("timestamp", message.timestamp)
+                .get()
+                .await()
+
+            val docRef = query.documents.firstOrNull()?.reference
+            docRef?.update(
+                "truekeOffer.status", newStatus.name,
+                "truekeOffer.updatedAt", System.currentTimeMillis()
+            )?.await()
+
+        } catch (e: Exception) {
+            Log.e("ChatManager", "Error al actualizar oferta: ${e.message}")
         }
     }
 }

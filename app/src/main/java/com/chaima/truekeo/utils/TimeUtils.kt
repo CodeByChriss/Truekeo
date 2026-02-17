@@ -1,10 +1,41 @@
 package com.chaima.truekeo.utils
 
 import android.content.Context
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.chaima.truekeo.R
 import java.time.Duration
 import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import kotlin.math.round
+
+@RequiresApi(Build.VERSION_CODES.O)
+fun completedOn(
+    context: Context,
+    from: Instant,
+    to: Instant = Instant.now()
+): String {
+
+    val zoneId = ZoneId.systemDefault()
+    val date = from.atZone(zoneId).toLocalDate()
+    val currentYear = to.atZone(zoneId).year
+
+    val pattern = if (date.year == currentYear) {
+        context.getString(R.string.date_pattern_same_year)
+    } else {
+        context.getString(R.string.date_pattern_other_year)
+    }
+
+    val formatter = DateTimeFormatter.ofPattern(
+        pattern,
+        context.resources.configuration.locales[0]
+    )
+
+    val dateText = date.format(formatter)
+
+    return context.getString(R.string.time_prefix_completed, dateText)
+}
 
 private fun roundToNearest(value: Double, step: Int = 1): Int {
     return (round(value / step) * step).toInt()

@@ -23,10 +23,9 @@ import com.chaima.truekeo.screens.CreateProductTab
 import com.chaima.truekeo.screens.HomeTab
 import com.chaima.truekeo.screens.CreateTruekeTab
 import androidx.navigation.NavController
-import com.chaima.truekeo.data.AuthContainer
+import com.chaima.truekeo.managers.AuthContainer
 import com.chaima.truekeo.screens.MessageScreen
 import com.chaima.truekeo.screens.EditProfileScreen
-import com.chaima.truekeo.screens.EditTruekeScreen
 import com.chaima.truekeo.screens.MessagesTab
 import com.chaima.truekeo.screens.MyProductsScreen
 import com.chaima.truekeo.screens.ProfileTab
@@ -63,9 +62,11 @@ fun MainScaffold(rootNavController: NavController) {
             modifier = Modifier.padding(padding)
         ) {
             composable(NavBarRoutes.Home.route) {
-                HomeTab({ conversationId ->
-                    navController.navigate("${NavBarRoutes.Message.route}/$conversationId")
-                })
+                HomeTab(
+                    onOpenConversation = { conversationId ->
+                        navController.navigate("${NavBarRoutes.Message.route}/$conversationId")
+                    }
+                )
             }
             composable(NavBarRoutes.MyTruekes.route) {
                 MyTruekesTab(navController = navController)
@@ -83,7 +84,10 @@ fun MainScaffold(rootNavController: NavController) {
                 val truekeId = backStackEntry.arguments?.getString("truekeId")!!
                 TruekeDetailsScreen(
                     truekeId = truekeId,
-                    onBack = { navController.popBackStack() }
+                    onBack = { navController.popBackStack() },
+                    onOpenConversation = { conversationId ->
+                        navController.navigate("${NavBarRoutes.Message.route}/$conversationId")
+                    }
                 )
             }
 

@@ -47,7 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.getString
 import com.chaima.truekeo.R
-import com.chaima.truekeo.data.AuthContainer
+import com.chaima.truekeo.managers.AuthContainer
 import com.chaima.truekeo.ui.theme.TruekeoTheme
 import kotlinx.coroutines.launch
 import java.util.Locale
@@ -74,7 +74,7 @@ fun SignupScreen(onSignUp: () -> Unit, onBackToLogin: () -> Unit) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.White)
+                .background(MaterialTheme.colorScheme.background)
         ) {
             IconButton(
                 onClick = { onBackToLogin() },

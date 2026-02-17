@@ -1,4 +1,4 @@
-package com.chaima.truekeo.data
+package com.chaima.truekeo.managers
 
 import android.content.Context
 import android.net.Uri
@@ -9,7 +9,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import java.io.File
-import java.util.UUID
 
 class ImageStorageManager(private val context: Context) {
     private val storage = SupabaseClient.supabase.storage

@@ -22,22 +22,28 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.chaima.truekeo.R
+import com.chaima.truekeo.managers.AuthContainer
 import com.chaima.truekeo.ui.theme.TruekeoTheme
 import kotlinx.coroutines.delay
 
 @Composable
-fun SplashScreen(onNextScreen: () -> Unit) {
-    // A los dos segundos lanza la función lambda
-    LaunchedEffect(key1 = true) {
-        delay(2000)
-        onNextScreen()
-    }
+fun SplashScreen(
+    onNavigateToMain: () -> Unit,
+    onNavigateToAuth: () -> Unit
+) {
+    val authManager = AuthContainer.authManager
+
+    LaunchedEffect(Unit) {
+        delay(1700)
+        val isLoggedIn = authManager.checkUserSession()
+
+        if (isLoggedIn) onNavigateToMain() else onNavigateToAuth()    }
 
     TruekeoTheme(dynamicColor = false) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.White),
+                .background(MaterialTheme.colorScheme.background),
             contentAlignment = Alignment.Center
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -46,12 +52,14 @@ fun SplashScreen(onNextScreen: () -> Unit) {
                     contentDescription = stringResource(R.string.truekeo_logo),
                     modifier = Modifier.size(156.dp)
                 )
+
                 Spacer(modifier = Modifier.height(24.dp))
+
                 Text(
-                    text = "Truekeo",
+                    text = stringResource(R.string.app_name),
                     fontSize = 36.sp,
-                    fontFamily = FontFamily(Font(R.font.saira_medium)),
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.secondary,
+                    fontFamily = FontFamily(Font(R.font.saira_medium))
                 )
             }
         }

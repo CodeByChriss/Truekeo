@@ -114,7 +114,7 @@ private fun ImageSlot(
             Icon(
                 imageVector = Icons.Default.Close,
                 contentDescription = stringResource(R.string.remove_image),
-                tint = Color.White,
+                tint = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.size(16.dp)
             )
         }
@@ -163,7 +163,7 @@ private fun PrimaryPhotoBadge(
     ) {
         Text(
             text = stringResource(R.string.main_product_image),
-            color = Color.White,
+//            color = Color.White,
             style = MaterialTheme.typography.bodyMedium
         )
     }

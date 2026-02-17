@@ -13,9 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -32,7 +30,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -44,11 +41,10 @@ import androidx.compose.ui.unit.sp
 import com.chaima.truekeo.R
 import com.chaima.truekeo.components.BrandField
 import com.chaima.truekeo.components.ImageSelectorGrid
-import com.chaima.truekeo.data.AuthContainer
-import com.chaima.truekeo.data.ImageStorageManager
-import com.chaima.truekeo.data.ItemContainer
+import com.chaima.truekeo.managers.ItemContainer
 import com.chaima.truekeo.models.ItemCondition
 import com.chaima.truekeo.ui.theme.TruekeoTheme
+import com.chaima.truekeo.utils.BrandData
 import com.chaima.truekeo.utils.FormErrorText
 import kotlinx.coroutines.launch
 import java.util.Locale
@@ -86,11 +82,15 @@ fun CreateProductTab() {
 
     val nameOk = name.trim().isNotEmpty()
     val imagesOk = imageUris.isNotEmpty()
+    val brandOk = brand.isBlank() || BrandData.knownBrands.any {
+        it.equals(brand, ignoreCase = true)
+    }
 
     val showNameError = triedSubmit && !nameOk
     val showImagesError = triedSubmit && !imagesOk
+    val showBrandError = triedSubmit && !brandOk
 
-    val formOk = nameOk && imagesOk
+    val formOk = nameOk && imagesOk && brandOk
 
     var isCreating by remember { mutableStateOf(false) }
 
@@ -142,7 +142,7 @@ fun CreateProductTab() {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.White)
+                .background(MaterialTheme.colorScheme.background)
                 .padding(horizontal = 24.dp)
         ) {
             Column(
@@ -189,7 +189,7 @@ fun CreateProductTab() {
                         OutlinedTextField(
                             value = name,
                             onValueChange = { name = it },
-                            label = { Text(stringResource(R.string.product_name)) },
+                            label = { Text(stringResource(R.string.name)) },
                             singleLine = true,
                             shape = RoundedCornerShape(8.dp),
                             modifier = Modifier.fillMaxWidth()
@@ -201,7 +201,7 @@ fun CreateProductTab() {
                         OutlinedTextField(
                             value = description,
                             onValueChange = { description = it },
-                            label = { Text(stringResource(R.string.product_description)) },
+                            label = { Text(stringResource(R.string.description)) },
                             shape = RoundedCornerShape(8.dp),
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -223,8 +223,12 @@ fun CreateProductTab() {
                         BrandField(
                             value = brand,
                             onValueChange = { brand = it },
-                            label = stringResource(R.string.product_brand),
+                            label = stringResource(R.string.brand),
                             modifier = Modifier.fillMaxWidth()
+                        )
+                        FormErrorText(
+                            showError = showBrandError,
+                            message = stringResource(R.string.select_valid_brand)
                         )
                     }
                 }
@@ -271,7 +275,7 @@ private fun ItemConditionDropdown(
             value = value.displayName(context),
             onValueChange = {},
             readOnly = true,
-            label = { Text(stringResource(R.string.product_state)) },
+            label = { Text(stringResource(R.string.state)) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
             shape = RoundedCornerShape(8.dp),
             modifier = Modifier
@@ -281,7 +285,7 @@ private fun ItemConditionDropdown(
         ExposedDropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
-            containerColor = Color.White,
+            containerColor = MaterialTheme.colorScheme.background,
             tonalElevation = 0.dp
         ) {
             ItemCondition.entries.forEach { condition ->
