@@ -440,7 +440,7 @@ private fun CompletedTruekeLayout(
                     .size(20.dp)
                     .offset(x = (-6).dp, y = (-4).dp)
                     .clip(CircleShape)
-                    .background(Color(0xFF278652)),
+                    .background(Color(0xFF30B677)),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
