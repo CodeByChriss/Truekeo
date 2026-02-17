@@ -60,6 +60,9 @@ import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import kotlinx.coroutines.launch
 import java.util.Locale
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
 
 @Composable
 fun LoginScreen(onGoToSignup: () -> Unit, onLogin: () -> Unit) {
@@ -118,6 +121,10 @@ fun LoginScreen(onGoToSignup: () -> Unit, onLogin: () -> Unit) {
                     shape = RoundedCornerShape(8.dp),
                     modifier = Modifier
                         .width(300.dp)
+                        .semantics{ // Para que Robo de Test Lab sea capaz de iniciar sesión
+                            testTag = "login_username"
+                            contentDescription = "username_field"
+                        }
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -148,6 +155,10 @@ fun LoginScreen(onGoToSignup: () -> Unit, onLogin: () -> Unit) {
                     shape = RoundedCornerShape(8.dp),
                     modifier = Modifier
                         .width(300.dp)
+                        .semantics{ // Para que Robo de Test Lab sea capaz de iniciar sesión
+                            testTag = "login_password"
+                            contentDescription = "password_field"
+                        }
                 )
 
                 Spacer(modifier = Modifier.height(28.dp))
