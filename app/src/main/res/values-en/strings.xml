@@ -138,4 +138,7 @@
     <string name="exchange">Exchange</string>
     <string name="trade_completed">Trade completed</string>
     <string name="trade_with">Trade with</string>
+    <string name="reserved">Reserved</string>
+    <string name="pending">Peding</string>
+    <string name="completed">Completed</string>
 </resources>

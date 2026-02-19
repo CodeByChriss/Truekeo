@@ -1,6 +1,5 @@
 package com.chaima.truekeo.screens
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -35,6 +34,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -77,9 +77,9 @@ fun MyTruekesTab(navController: NavController) {
     }
 
     val pages = listOf(
-        "Pendientes" to TruekeStatus.OPEN,
-        "Reservados" to TruekeStatus.RESERVED,
-        "Completados" to TruekeStatus.COMPLETED
+        stringResource(R.string.pending) to TruekeStatus.OPEN,
+        stringResource(R.string.reserved) to TruekeStatus.RESERVED,
+        stringResource(R.string.completed) to TruekeStatus.COMPLETED
     )
 
     val pagerState = rememberPagerState(initialPage = 1, pageCount = { pages.size })
@@ -132,7 +132,9 @@ fun MyTruekesTab(navController: NavController) {
                                 Text(
                                     text = label,
                                     color = MaterialTheme.colorScheme.secondary,
-                                    fontFamily = FontFamily(Font(R.font.saira_medium))
+                                    fontFamily = FontFamily(Font(R.font.saira_medium)),
+                                    overflow = TextOverflow.Ellipsis,
+                                    maxLines = 1
                                 )
                             }
                         )
