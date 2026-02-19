@@ -109,6 +109,20 @@ class ItemManager {
         }
     }
 
+    suspend fun updateItem(item: Item): Result<Unit> {
+        return try {
+            db.collection("items")
+                .document(item.id)
+                .set(item)
+                .await()
+
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Log.e("ItemManager", "Error updateItem: ${e.message}")
+            Result.failure(e)
+        }
+    }
+
     suspend fun getItemById(itemId: String): Item? {
         return try {
             val doc = db.collection("items").document(itemId).get().await()

@@ -12,7 +12,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -30,9 +29,9 @@ fun ProductDetailsScreen(
     productId: String,
     onBack: () -> Unit
 ) {
-
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    val itemManager = ItemContainer.itemManager
 
     var isLoading by remember { mutableStateOf(true) }
     var currentItem by remember { mutableStateOf<Item?>(null) }
@@ -44,8 +43,11 @@ fun ProductDetailsScreen(
     var imageUris by remember { mutableStateOf<List<Uri>>(emptyList()) }
     var imageSlotToEdit by remember { mutableStateOf<Int?>(null) }
 
+    var showDeleteConfirm by remember { mutableStateOf(false) }
+    var snackMessage by remember { mutableStateOf<String?>(null) }
+
     LaunchedEffect(productId) {
-        currentItem = ItemContainer.itemManager.getItemById(productId)
+        currentItem = itemManager.getItemById(productId)
 
         currentItem?.let {
             title = it.name
@@ -57,19 +59,15 @@ fun ProductDetailsScreen(
     }
 
     val imagePickerLauncher =
-        rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.GetContent()
-        ) { uri: Uri? ->
+        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             if (uri != null && imageSlotToEdit != null) {
                 val slot = imageSlotToEdit!!
-
                 imageUris =
                     if (slot < imageUris.size) {
                         imageUris.toMutableList().also { it[slot] = uri }
                     } else {
                         imageUris + uri
                     }
-
                 imageSlotToEdit = null
             }
         }
@@ -121,9 +119,7 @@ fun ProductDetailsScreen(
                     imagePickerLauncher.launch("image/*")
                 },
                 onRemoveImage = { index ->
-                    imageUris = imageUris.toMutableList().also {
-                        it.removeAt(index)
-                    }
+                    imageUris = imageUris.toMutableList().also { it.removeAt(index) }
                 }
             )
 
@@ -173,7 +169,6 @@ fun ProductDetailsScreen(
                 onClick = {
                     scope.launch {
                         val imageStorage = ImageStorageManager(context)
-
                         val imageUrls =
                             if (imageUris.isNotEmpty()) {
                                 imageStorage.uploadItemImages(productId, imageUris)
@@ -188,22 +183,7 @@ fun ProductDetailsScreen(
                             imageUrls = imageUrls
                         )
 
-                        ItemContainer.itemManager
-                            .updateItemStatus(productId, status)
-
-                        ItemContainer.itemManager
-                            .deleteItem(productId)
-
-                        ItemContainer.itemManager
-                            .createItem(
-                                name = updatedItem.name,
-                                details = updatedItem.details,
-                                imageUris = emptyList(),
-                                brand = updatedItem.brand,
-                                condition = updatedItem.condition,
-                                context = context
-                            )
-
+                        ItemContainer.itemManager.updateItem(updatedItem)
                         onBack()
                     }
                 },
@@ -214,6 +194,46 @@ fun ProductDetailsScreen(
             ) {
                 Text("Guardar cambios")
             }
+
+            Button(
+                onClick = { showDeleteConfirm = true },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text("Eliminar producto")
+            }
         }
     }
+
+    if (showDeleteConfirm) {
+        AlertDialog(
+            onDismissRequest = { showDeleteConfirm = false },
+            title = { Text("Eliminar producto") },
+            text = { Text("¿Estás seguro de que deseas eliminar este producto?") },
+            confirmButton = {
+                TextButton(onClick = {
+                    scope.launch {
+                        val result = ItemContainer.itemManager.deleteItem(productId)
+                        if (result.isSuccess) {
+                            onBack()
+                        } else {
+                            snackMessage = result.exceptionOrNull()?.message ?: "Error al eliminar"
+                        }
+                        showDeleteConfirm = false
+                    }
+                }) {
+                    Text("Sí")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteConfirm = false }) {
+                    Text("Cancelar")
+                }
+            }
+        )
+    }
 }
+
