@@ -28,6 +28,7 @@ import com.chaima.truekeo.R
 import com.chaima.truekeo.managers.ItemContainer
 import com.chaima.truekeo.models.Item
 import com.chaima.truekeo.models.ItemStatus
+import com.chaima.truekeo.ui.theme.TruekeoTheme
 
 @Composable
 fun MyProductsScreen(navController: NavController) {
@@ -46,49 +47,51 @@ fun MyProductsScreen(navController: NavController) {
         it.name.contains(searchQuery, ignoreCase = true)
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-            .padding(20.dp)
-    ) {
+    TruekeoTheme {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(20.dp)
+        ) {
 
-        Text(
-            text = stringResource(R.string.my_products),
-            fontSize = 32.sp,
-            fontFamily = FontFamily(Font(R.font.saira_medium)),
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.fillMaxWidth()
-        )
+            Text(
+                text = stringResource(R.string.my_products),
+                fontSize = 32.sp,
+                fontFamily = FontFamily(Font(R.font.saira_medium)),
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.fillMaxWidth()
+            )
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-        OutlinedTextField(
-            value = searchQuery,
-            onValueChange = { searchQuery = it },
-            modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text(stringResource(R.string.search_product)) },
-            singleLine = true,
-            shape = RoundedCornerShape(12.dp)
-        )
+            OutlinedTextField(
+                value = searchQuery,
+                onValueChange = { searchQuery = it },
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = { Text(stringResource(R.string.search_product)) },
+                singleLine = true,
+                shape = RoundedCornerShape(12.dp)
+            )
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-        if (isLoading) {
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
-            }
-        } else {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                items(filteredItems) { item ->
-                    MyItemRow(
-                        item = item,
-                        onClick = {
-                            navController.navigate("product_details/${item.id}")
-                        }
-                    )
+            if (isLoading) {
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
+            } else {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    items(filteredItems) { item ->
+                        MyItemRow(
+                            item = item,
+                            onClick = {
+                                navController.navigate("product_details/${item.id}")
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -100,53 +103,54 @@ fun MyItemRow(
     item: Item,
     onClick: () -> Unit
 ) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(96.dp)
-            .clip(RoundedCornerShape(12.dp))
-            .border(1.dp, Color.Black, RoundedCornerShape(12.dp))
-            .background(Color(0xFFF7F7F7))
-            .clickable { onClick() }
-            .padding(8.dp)
-    ) {
-
-        ItemStatusBadge(
-            status = item.status,
-            modifier = Modifier.align(Alignment.TopEnd)
-        )
-
-        Row(
-            modifier = Modifier.fillMaxSize(),
-            verticalAlignment = Alignment.CenterVertically
+    TruekeoTheme {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(96.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .border(1.dp, MaterialTheme.colorScheme.onSurface, RoundedCornerShape(12.dp))
+                .background(MaterialTheme.colorScheme.surfaceVariant)
+                .clickable { onClick() }
+                .padding(8.dp)
         ) {
 
-            val imageUrl = item.imageUrls.firstOrNull()
-
-            AsyncImage(
-                model = imageUrl,
-                contentDescription = item.name,
-                modifier = Modifier
-                    .size(78.dp)
-                    .clip(RoundedCornerShape(8.dp))
+            ItemStatusBadge(
+                status = item.status,
+                modifier = Modifier.align(Alignment.TopEnd)
             )
 
-            Spacer(modifier = Modifier.width(12.dp))
+            Row(
+                modifier = Modifier.fillMaxSize(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
 
-            Column {
-                Text(
-                    text = item.name,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold
+                val imageUrl = item.imageUrls.firstOrNull()
+
+                AsyncImage(
+                    model = imageUrl,
+                    contentDescription = item.name,
+                    modifier = Modifier
+                        .size(78.dp)
+                        .clip(RoundedCornerShape(8.dp))
                 )
 
-                item.details?.let {
+                Spacer(modifier = Modifier.width(12.dp))
+
+                Column {
                     Text(
-                        text = it,
-                        fontSize = 13.sp,
-                        color = Color.DarkGray,
-                        maxLines = 1
+                        text = item.name,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
                     )
+
+                    item.details?.let {
+                        Text(
+                            text = it,
+                            fontSize = 13.sp,
+                            maxLines = 1
+                        )
+                    }
                 }
             }
         }
@@ -164,16 +168,18 @@ fun ItemStatusBadge(
         ItemStatus.EXCHANGED -> Color(0xFFA9A8A8)
     }
 
-    Box(
-        modifier = modifier
-            .clip(RoundedCornerShape(20.dp))
-            .background(color)
-            .padding(horizontal = 8.dp, vertical = 2.dp)
-    ) {
-        Text(
-            text = stringResource(status.getStringResource()),
-            fontSize = 10.sp,
-            color = Color.White
-        )
+    TruekeoTheme {
+        Box(
+            modifier = modifier
+                .clip(RoundedCornerShape(20.dp))
+                .background(color)
+                .padding(horizontal = 8.dp, vertical = 2.dp)
+        ) {
+            Text(
+                text = stringResource(status.getStringResource()),
+                fontSize = 10.sp,
+                color = Color.White
+            )
+        }
     }
 }

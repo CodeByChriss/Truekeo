@@ -351,7 +351,7 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
 fun ChatBubble(message: ChatMessage) {
     val alignment = if (message.isFromMe) Alignment.CenterEnd else Alignment.CenterStart
     val columnAlignment = if (message.isFromMe) Alignment.End else Alignment.Start
-    val bgColor = if (message.isFromMe) MaterialTheme.colorScheme.primary else Color.White
+    val bgColor = if (message.isFromMe) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.background
     val textColor = if (message.isFromMe) Color.White else MaterialTheme.colorScheme.onSurface
     val shape = if (message.isFromMe) {
         RoundedCornerShape(8.dp, 8.dp, 0.dp, 8.dp)
@@ -364,7 +364,7 @@ fun ChatBubble(message: ChatMessage) {
             Surface(
                 color = bgColor,
                 shape = shape,
-                tonalElevation = 2.dp
+//                tonalElevation = 2.dp
             ) {
                 Text(
                     text = message.text,
@@ -421,7 +421,7 @@ fun TruekeBubble(
                 .fillMaxWidth(0.85f) // Lo estrecho un poco para que sea más estético
                 .heightIn(min = 250.dp), // debemos indicar un mínimo para evitar que la conversación se corte
             shape = RoundedCornerShape(16.dp),
-            color = Color.White
+            color = MaterialTheme.colorScheme.background
         ) {
             if (isLoading) {
                 Box(Modifier.padding(32.dp), contentAlignment = Alignment.Center) {
