@@ -1,6 +1,7 @@
 package com.chaima.truekeo.screens
 
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -8,61 +9,80 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
-import androidx.compose.material3.Button
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import com.chaima.truekeo.R
 import com.chaima.truekeo.components.ImageSelectorGrid
+import com.chaima.truekeo.managers.ImageStorageManager
+import com.chaima.truekeo.managers.ItemContainer
+import com.chaima.truekeo.models.Item
 import com.chaima.truekeo.models.ItemStatus
+import kotlinx.coroutines.launch
 
 @Composable
 fun ProductDetailsScreen(
-    productName: String,
+    productId: String,
     onBack: () -> Unit
 ) {
-    var title by remember { mutableStateOf(productName) }
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val itemManager = ItemContainer.itemManager
+
+    var isLoading by remember { mutableStateOf(true) }
+    var currentItem by remember { mutableStateOf<Item?>(null) }
+
+    var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     var status by remember { mutableStateOf(ItemStatus.AVAILABLE) }
 
     var imageUris by remember { mutableStateOf<List<Uri>>(emptyList()) }
     var imageSlotToEdit by remember { mutableStateOf<Int?>(null) }
 
+    var showDeleteConfirm by remember { mutableStateOf(false) }
+
+    LaunchedEffect(productId) {
+        currentItem = itemManager.getItemById(productId)
+        currentItem?.let {
+            title = it.name
+            description = it.details ?: ""
+            status = it.status
+        }
+        isLoading = false
+    }
+
     val imagePickerLauncher =
-        rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.GetContent(),
-            onResult = { uri: Uri? ->
-                if (uri != null && imageSlotToEdit != null) {
-                    val slot = imageSlotToEdit!!
-
-                    imageUris =
-                        if (slot < imageUris.size) {
-                            imageUris.toMutableList().also { it[slot] = uri }
-                        } else {
-                            imageUris + uri
-                        }
-
-                    imageSlotToEdit = null
-                }
+        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            if (uri != null && imageSlotToEdit != null) {
+                val slot = imageSlotToEdit!!
+                imageUris =
+                    if (slot < imageUris.size) {
+                        imageUris.toMutableList().also { it[slot] = uri }
+                    } else {
+                        imageUris + uri
+                    }
+                imageSlotToEdit = null
             }
-        )
+        }
+
+    if (isLoading) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
+        return
+    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -72,9 +92,7 @@ fun ProductDetailsScreen(
             IconButton(onClick = onBack) {
                 Icon(Icons.Rounded.ArrowBack, contentDescription = null)
             }
-
             Spacer(modifier = Modifier.width(8.dp))
-
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleLarge,
@@ -93,50 +111,48 @@ fun ProductDetailsScreen(
             ImageSelectorGrid(
                 images = imageUris,
                 maxImages = 5,
-                onAddImage = { slot: Int ->
+                onAddImage = { slot ->
                     imageSlotToEdit = slot
                     imagePickerLauncher.launch("image/*")
                 },
-                onRemoveImage = { index: Int ->
-                    imageUris = imageUris.toMutableList().also {
-                        it.removeAt(index)
-                    }
+                onRemoveImage = { index ->
+                    imageUris = imageUris.toMutableList().also { it.removeAt(index) }
                 }
             )
 
             OutlinedTextField(
                 value = title,
-                onValueChange = { newValue: String -> title = newValue },
-                label = { Text("Título") },
+                onValueChange = { title = it },
+                label = { Text(text = stringResource(R.string.title)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
             )
 
             OutlinedTextField(
                 value = description,
-                onValueChange = { newValue: String -> description = newValue },
-                label = { Text("Descripción") },
+                onValueChange = { description = it },
+                label = { Text(text = stringResource(R.string.description)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(120.dp)
             )
 
             Text(
-                text = "Estado",
+                text = stringResource(R.string.styles),
                 style = MaterialTheme.typography.titleMedium
             )
 
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                ItemStatus.entries.forEach { itemStatus: ItemStatus ->
+                ItemStatus.entries.forEach { itemStatus ->
                     FilterChip(
                         selected = status == itemStatus,
                         onClick = { status = itemStatus },
                         label = {
                             Text(
                                 when (itemStatus) {
-                                    ItemStatus.AVAILABLE -> "Disponible"
-                                    ItemStatus.RESERVED -> "Reservado"
-                                    ItemStatus.EXCHANGED -> "Intercambiado"
+                                    ItemStatus.AVAILABLE -> stringResource(R.string.available)
+                                    ItemStatus.RESERVED -> stringResource(R.string.reserved)
+                                    ItemStatus.EXCHANGED -> stringResource(R.string.interchanged)
                                 }
                             )
                         }
@@ -148,15 +164,80 @@ fun ProductDetailsScreen(
 
             Button(
                 onClick = {
+                    scope.launch {
+                        val imageStorage = ImageStorageManager(context)
+                        val imageUrls =
+                            if (imageUris.isNotEmpty()) {
+                                imageStorage.uploadItemImages(productId, imageUris)
+                            } else {
+                                currentItem?.imageUrls ?: emptyList()
+                            }
 
+                        val updatedItem = currentItem!!.copy(
+                            name = title.trim(),
+                            details = description.trim(),
+                            status = status,
+                            imageUrls = imageUrls
+                        )
+
+                        val result = itemManager.updateItem(updatedItem)
+                        if (result.isSuccess) {
+                            Toast.makeText(context, "Producto actualizado ✅", Toast.LENGTH_SHORT).show()
+                        }
+                        onBack()
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(52.dp),
                 shape = RoundedCornerShape(12.dp)
             ) {
-                Text("Guardar cambios")
+                Text(text = stringResource(R.string.save_changes))
             }
+
+            Button(
+                onClick = { showDeleteConfirm = true },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp)
+                    .offset(y = (-5).dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error
+                ),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text(text = stringResource(R.string.delete_product))
+            }
+
         }
+    }
+
+    if (showDeleteConfirm) {
+        AlertDialog(
+            onDismissRequest = { showDeleteConfirm = false },
+            title = { Text(text = stringResource(R.string.delete_product)) },
+            text = { Text(text = stringResource(R.string.confirm_deletion)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    scope.launch {
+                        val result = itemManager.deleteItem(productId)
+                        if (result.isSuccess) {
+                            Toast.makeText(context, "Producto eliminado ✅", Toast.LENGTH_SHORT).show()
+                            onBack()
+                        } else {
+                            Toast.makeText(context, "No se puede eliminar el producto ❌", Toast.LENGTH_SHORT).show()
+                        }
+                        showDeleteConfirm = false
+                    }
+                }) {
+                    Text("Sí")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteConfirm = false }) {
+                    Text(text = stringResource(R.string.cancel))
+                }
+            }
+        )
     }
 }

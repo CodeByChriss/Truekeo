@@ -179,22 +179,21 @@ fun MainScaffold(rootNavController: NavController) {
 
 
             composable(
-                route = "product_details/{productName}",
+                route = "product_details/{itemId}",
                 arguments = listOf(
-                    navArgument("productName") { type = NavType.StringType }
+                    navArgument("itemId") { type = NavType.StringType }
                 )
             ) { backStackEntry ->
 
-                val productName =
-                    backStackEntry.arguments?.getString("productName") ?: ""
+                val itemId =
+                    backStackEntry.arguments?.getString("itemId") ?: ""
 
                 ProductDetailsScreen(
-                    productName = productName,
+                    productId  = itemId,
                     onBack = { navController.popBackStack() }
                 )
+
             }
-
-
 
             composable(NavBarRoutes.EditProfile.route) {
                 EditProfileScreen(
