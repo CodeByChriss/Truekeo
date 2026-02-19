@@ -80,6 +80,13 @@
     <string name="discard">Discard</string>
     <string name="search_product">Search a product…</string>
 
+    <string name="available">Available</string>
+    <string name="reserved">Reserved</string>
+    <string name="interchanged">Interchanged</string>
+    <string name="styles">Styles</string>
+
+
+    <string name="confirm_deletion">Are you sure you want to remove this product?</string>
     <string name="my_messages">My messages</string>
     <string name="delete_conversation">Delete conversation</string>
     <string name="remove_conversation">Delete conversation!</string>
@@ -138,4 +145,6 @@
     <string name="exchange">Exchange</string>
     <string name="trade_completed">Trade completed</string>
     <string name="trade_with">Trade with</string>
+    <string name="save_changes">Save changes</string>
+    <string name="delete_product">Delete product</string>
 </resources>

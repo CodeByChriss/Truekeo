@@ -1,6 +1,7 @@
 package com.chaima.truekeo.screens
 
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -13,6 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
@@ -44,17 +46,14 @@ fun ProductDetailsScreen(
     var imageSlotToEdit by remember { mutableStateOf<Int?>(null) }
 
     var showDeleteConfirm by remember { mutableStateOf(false) }
-    var snackMessage by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(productId) {
         currentItem = itemManager.getItemById(productId)
-
         currentItem?.let {
             title = it.name
             description = it.details ?: ""
             status = it.status
         }
-
         isLoading = false
     }
 
@@ -93,9 +92,7 @@ fun ProductDetailsScreen(
             IconButton(onClick = onBack) {
                 Icon(Icons.Rounded.ArrowBack, contentDescription = null)
             }
-
             Spacer(modifier = Modifier.width(8.dp))
-
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleLarge,
@@ -126,7 +123,7 @@ fun ProductDetailsScreen(
             OutlinedTextField(
                 value = title,
                 onValueChange = { title = it },
-                label = { Text("Título") },
+                label = { Text(text = stringResource(R.string.title)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
             )
@@ -134,14 +131,14 @@ fun ProductDetailsScreen(
             OutlinedTextField(
                 value = description,
                 onValueChange = { description = it },
-                label = { Text("Descripción") },
+                label = { Text(text = stringResource(R.string.description)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(120.dp)
             )
 
             Text(
-                text = "Estado",
+                text = stringResource(R.string.styles),
                 style = MaterialTheme.typography.titleMedium
             )
 
@@ -153,9 +150,9 @@ fun ProductDetailsScreen(
                         label = {
                             Text(
                                 when (itemStatus) {
-                                    ItemStatus.AVAILABLE -> "Disponible"
-                                    ItemStatus.RESERVED -> "Reservado"
-                                    ItemStatus.EXCHANGED -> "Intercambiado"
+                                    ItemStatus.AVAILABLE -> stringResource(R.string.available)
+                                    ItemStatus.RESERVED -> stringResource(R.string.reserved)
+                                    ItemStatus.EXCHANGED -> stringResource(R.string.interchanged)
                                 }
                             )
                         }
@@ -183,7 +180,10 @@ fun ProductDetailsScreen(
                             imageUrls = imageUrls
                         )
 
-                        ItemContainer.itemManager.updateItem(updatedItem)
+                        val result = itemManager.updateItem(updatedItem)
+                        if (result.isSuccess) {
+                            Toast.makeText(context, "Producto actualizado ✅", Toast.LENGTH_SHORT).show()
+                        }
                         onBack()
                     }
                 },
@@ -192,35 +192,40 @@ fun ProductDetailsScreen(
                     .height(52.dp),
                 shape = RoundedCornerShape(12.dp)
             ) {
-                Text("Guardar cambios")
+                Text(text = stringResource(R.string.save_changes))
             }
 
             Button(
                 onClick = { showDeleteConfirm = true },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(52.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
+                    .height(52.dp)
+                    .offset(y = (-5).dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error
+                ),
                 shape = RoundedCornerShape(12.dp)
             ) {
-                Text("Eliminar producto")
+                Text(text = stringResource(R.string.delete_product))
             }
+
         }
     }
 
     if (showDeleteConfirm) {
         AlertDialog(
             onDismissRequest = { showDeleteConfirm = false },
-            title = { Text("Eliminar producto") },
-            text = { Text("¿Estás seguro de que deseas eliminar este producto?") },
+            title = { Text(text = stringResource(R.string.delete_product)) },
+            text = { Text(text = stringResource(R.string.confirm_deletion)) },
             confirmButton = {
                 TextButton(onClick = {
                     scope.launch {
-                        val result = ItemContainer.itemManager.deleteItem(productId)
+                        val result = itemManager.deleteItem(productId)
                         if (result.isSuccess) {
+                            Toast.makeText(context, "Producto eliminado ✅", Toast.LENGTH_SHORT).show()
                             onBack()
                         } else {
-                            snackMessage = result.exceptionOrNull()?.message ?: "Error al eliminar"
+                            Toast.makeText(context, "No se puede eliminar el producto ❌", Toast.LENGTH_SHORT).show()
                         }
                         showDeleteConfirm = false
                     }
@@ -230,10 +235,9 @@ fun ProductDetailsScreen(
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteConfirm = false }) {
-                    Text("Cancelar")
+                    Text(text = stringResource(R.string.cancel))
                 }
             }
         )
     }
 }
-
