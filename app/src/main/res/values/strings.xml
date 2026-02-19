@@ -165,4 +165,9 @@
     <string name="exchange">Intercambio</string>
     <string name="trade_completed">Trueke completado</string>
     <string name="trade_with">Truekeado con</string>
+
+    <!-- My Truekes -->
+    <string name="pending">Pendientes</string>
+    <string name="reserved">Reservados</string>
+    <string name="completed">Completados</string>
 </resources>

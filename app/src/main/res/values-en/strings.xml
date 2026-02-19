@@ -147,4 +147,7 @@
     <string name="trade_with">Trade with</string>
     <string name="save_changes">Save changes</string>
     <string name="delete_product">Delete product</string>
+    <string name="reserved">Reserved</string>
+    <string name="pending">Peding</string>
+    <string name="completed">Completed</string>
 </resources>

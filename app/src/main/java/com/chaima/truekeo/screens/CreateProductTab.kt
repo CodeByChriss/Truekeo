@@ -44,7 +44,6 @@ import com.chaima.truekeo.components.ImageSelectorGrid
 import com.chaima.truekeo.managers.ItemContainer
 import com.chaima.truekeo.models.ItemCondition
 import com.chaima.truekeo.ui.theme.TruekeoTheme
-import com.chaima.truekeo.utils.BrandData
 import com.chaima.truekeo.utils.FormErrorText
 import kotlinx.coroutines.launch
 import java.util.Locale
@@ -82,9 +81,7 @@ fun CreateProductTab() {
 
     val nameOk = name.trim().isNotEmpty()
     val imagesOk = imageUris.isNotEmpty()
-    val brandOk = brand.isBlank() || BrandData.knownBrands.any {
-        it.equals(brand, ignoreCase = true)
-    }
+    val brandOk = brand.isNotBlank()
 
     val showNameError = triedSubmit && !nameOk
     val showImagesError = triedSubmit && !imagesOk
@@ -100,6 +97,7 @@ fun CreateProductTab() {
         condition = ItemCondition.GOOD
         imageUris = emptyList()
         triedSubmit = false
+        brand = ""
     }
 
     fun handleSubmit() {

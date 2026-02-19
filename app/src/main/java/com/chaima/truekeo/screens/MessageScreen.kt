@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -24,7 +23,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.SwapHoriz
+import androidx.compose.material.icons.rounded.SwapHoriz
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -346,7 +345,7 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
 fun ChatBubble(message: ChatMessage) {
     val alignment = if (message.isFromMe) Alignment.CenterEnd else Alignment.CenterStart
     val columnAlignment = if (message.isFromMe) Alignment.End else Alignment.Start
-    val bgColor = if (message.isFromMe) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.background
+    val bgColor = if (message.isFromMe) MaterialTheme.colorScheme.primary else Color.White
     val textColor = if (message.isFromMe) Color.White else MaterialTheme.colorScheme.onSurface
     val shape = if (message.isFromMe) {
         RoundedCornerShape(8.dp, 8.dp, 0.dp, 8.dp)
@@ -408,19 +407,14 @@ fun TruekeBubble(
 
     // Uso un box para que cubra todo el ancho de la pantalla
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
+        modifier = Modifier.fillMaxWidth(),
         contentAlignment = Alignment.Center
     ) {
         Surface(
             modifier = Modifier
-                .fillMaxWidth(0.85f) // Lo estrecho un poco para que sea más estético
-                .heightIn(min = 250.dp), // debemos indicar un mínimo para evitar que la conversación se corte
-            shape = RoundedCornerShape(20.dp),
-            color = MaterialTheme.colorScheme.background,
-            tonalElevation = 4.dp,
-            shadowElevation = 3.dp
+                .fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp),
+            color = Color.White
         ) {
             if (isLoading) {
                 Box(Modifier.padding(32.dp), contentAlignment = Alignment.Center) {
@@ -433,7 +427,7 @@ fun TruekeBubble(
                 ) {
                     Text(
                         text = stringResource(R.string.trueke_proposal),
-                        style = MaterialTheme.typography.titleLarge,
+                        style = MaterialTheme.typography.labelLarge,
                         fontFamily = FontFamily(Font(R.font.saira_semibold)),
                         color = MaterialTheme.colorScheme.primary,
                         letterSpacing = 1.sp
@@ -452,7 +446,7 @@ fun TruekeBubble(
                         )
 
                         Icon(
-                            imageVector = Icons.Default.SwapHoriz,
+                            imageVector = Icons.Rounded.SwapHoriz,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.secondary,
                             modifier = Modifier
@@ -561,7 +555,7 @@ fun ProductItem(imageUrl: String, name: String) {
             model = imageUrl,
             contentDescription = name,
             modifier = Modifier
-                .size(70.dp)
+                .size(80.dp)
                 .clip(RoundedCornerShape(12.dp)),
             contentScale = ContentScale.Crop
         )
