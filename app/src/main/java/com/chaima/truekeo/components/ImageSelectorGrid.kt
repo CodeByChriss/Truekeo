@@ -1,6 +1,7 @@
 package com.chaima.truekeo.components
 
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -54,6 +55,7 @@ fun ImageSelectorGrid(
                 modifier = Modifier.size(slotSize)
             ) {
                 if (index < images.size) {
+                    Log.e("image_load","${index} -> ${images[index]}")
                     ImageSlot(
                         imageUri = images[index],
                         onRemove = { onRemoveImage(index) },

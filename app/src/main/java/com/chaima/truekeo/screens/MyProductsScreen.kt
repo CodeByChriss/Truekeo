@@ -78,7 +78,7 @@ fun MyProductsScreen(navController: NavController) {
 
             if (isLoading) {
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
+                    CircularProgressIndicator(color = Color.White)
                 }
             } else {
                 LazyColumn(

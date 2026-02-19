@@ -1,6 +1,7 @@
 package com.chaima.truekeo.screens
 
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -13,6 +14,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
@@ -25,6 +27,7 @@ import com.chaima.truekeo.managers.ItemContainer
 import com.chaima.truekeo.models.Item
 import com.chaima.truekeo.models.ItemStatus
 import kotlinx.coroutines.launch
+import androidx.core.net.toUri
 
 @Composable
 fun ProductDetailsScreen(
@@ -36,6 +39,7 @@ fun ProductDetailsScreen(
     val itemManager = ItemContainer.itemManager
 
     var isLoading by remember { mutableStateOf(true) }
+    var isLoadingSaveOrDelete by remember { mutableStateOf(false) }
     var currentItem by remember { mutableStateOf<Item?>(null) }
 
     var title by remember { mutableStateOf("") }
@@ -53,27 +57,22 @@ fun ProductDetailsScreen(
             title = it.name
             description = it.details ?: ""
             status = it.status
+            imageUris = it.imageUrls.map { url -> url.toUri() }
         }
         isLoading = false
     }
 
     val imagePickerLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-            if (uri != null && imageSlotToEdit != null) {
-                val slot = imageSlotToEdit!!
-                imageUris =
-                    if (slot < imageUris.size) {
-                        imageUris.toMutableList().also { it[slot] = uri }
-                    } else {
-                        imageUris + uri
-                    }
-                imageSlotToEdit = null
+            if (uri != null) {
+                // Simplemente se añade la nueva imagen al final de la lista existente
+                imageUris = imageUris + uri
             }
         }
 
     if (isLoading) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator()
+            CircularProgressIndicator(color = Color.White)
         }
         return
     }
@@ -165,34 +164,61 @@ fun ProductDetailsScreen(
             Button(
                 onClick = {
                     scope.launch {
-                        val imageStorage = ImageStorageManager(context)
-                        val imageUrls =
-                            if (imageUris.isNotEmpty()) {
-                                imageStorage.uploadItemImages(productId, imageUris)
+                        if (!isLoadingSaveOrDelete) {
+                            isLoadingSaveOrDelete = true
+
+                            val imageStorage = ImageStorageManager(context)
+
+                            // Separamos las que ya son de internet de las que son nuevas
+                            val remoteUrls =
+                                imageUris.filter { it.scheme == "http" || it.scheme == "https" }
+                            val localUris =
+                                imageUris.filter { it.scheme != "http" && it.scheme != "https" }
+
+                            // Subimos solo las nuevas
+                            val newUploadedUrls = if (localUris.isNotEmpty()) {
+                                val url = imageStorage.uploadItemImages(productId, localUris)
+                                Log.e("image_load","New image: ${url}")
+                                url
                             } else {
-                                currentItem?.imageUrls ?: emptyList()
+                                emptyList()
                             }
 
-                        val updatedItem = currentItem!!.copy(
-                            name = title.trim(),
-                            details = description.trim(),
-                            status = status,
-                            imageUrls = imageUrls
-                        )
+                            // La lista final: las que ya estaban + las nuevas subidas
+                            val finalImageUrls = remoteUrls.map { it.toString() } + newUploadedUrls
 
-                        val result = itemManager.updateItem(updatedItem)
-                        if (result.isSuccess) {
-                            Toast.makeText(context, "Producto actualizado ✅", Toast.LENGTH_SHORT).show()
+                            val updatedItem = currentItem!!.copy(
+                                name = title.trim(),
+                                details = description.trim(),
+                                status = status,
+                                imageUrls = finalImageUrls
+                            )
+
+                            val result = itemManager.updateItem(updatedItem)
+                            if (result.isSuccess) {
+                                Toast.makeText(
+                                    context,
+                                    "Producto actualizado ✅",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                onBack()
+                            }
+                            isLoadingSaveOrDelete = false
                         }
-                        onBack()
                     }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(52.dp),
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(12.dp),
             ) {
-                Text(text = stringResource(R.string.save_changes))
+                if (isLoadingSaveOrDelete) {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator(color = Color.White)
+                    }
+                } else {
+                    Text(text = stringResource(R.string.save_changes))
+                }
             }
 
             Button(
@@ -206,7 +232,13 @@ fun ProductDetailsScreen(
                 ),
                 shape = RoundedCornerShape(12.dp)
             ) {
-                Text(text = stringResource(R.string.delete_product))
+                if (isLoadingSaveOrDelete) {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator(color = Color.White)
+                    }
+                } else {
+                    Text(text = stringResource(R.string.delete_product))
+                }
             }
 
         }
@@ -220,14 +252,23 @@ fun ProductDetailsScreen(
             confirmButton = {
                 TextButton(onClick = {
                     scope.launch {
-                        val result = itemManager.deleteItem(productId)
-                        if (result.isSuccess) {
-                            Toast.makeText(context, "Producto eliminado ✅", Toast.LENGTH_SHORT).show()
-                            onBack()
-                        } else {
-                            Toast.makeText(context, "No se puede eliminar el producto ❌", Toast.LENGTH_SHORT).show()
+                        if (!isLoadingSaveOrDelete) {
+                            isLoadingSaveOrDelete = true
+                            val result = itemManager.deleteItem(productId)
+                            if (result.isSuccess) {
+                                Toast.makeText(context, "Producto eliminado ✅", Toast.LENGTH_SHORT)
+                                    .show()
+                                onBack()
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    "No se puede eliminar el producto ❌",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                            showDeleteConfirm = false
                         }
-                        showDeleteConfirm = false
+                        isLoadingSaveOrDelete = false
                     }
                 }) {
                     Text("Sí")
