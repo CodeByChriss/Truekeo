@@ -168,6 +168,5 @@
 
     <!-- My Truekes -->
     <string name="pending">Pendientes</string>
-    <string name="reserved">Reservados</string>
     <string name="completed">Completados</string>
 </resources>
