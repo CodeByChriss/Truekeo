@@ -8,61 +8,84 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
-import androidx.compose.material3.Button
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import com.chaima.truekeo.R
 import com.chaima.truekeo.components.ImageSelectorGrid
+import com.chaima.truekeo.managers.ImageStorageManager
+import com.chaima.truekeo.managers.ItemContainer
+import com.chaima.truekeo.models.Item
 import com.chaima.truekeo.models.ItemStatus
+import kotlinx.coroutines.launch
 
 @Composable
 fun ProductDetailsScreen(
-    productName: String,
+    productId: String,
     onBack: () -> Unit
 ) {
-    var title by remember { mutableStateOf(productName) }
+
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+
+    var isLoading by remember { mutableStateOf(true) }
+    var currentItem by remember { mutableStateOf<Item?>(null) }
+
+    var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     var status by remember { mutableStateOf(ItemStatus.AVAILABLE) }
 
     var imageUris by remember { mutableStateOf<List<Uri>>(emptyList()) }
     var imageSlotToEdit by remember { mutableStateOf<Int?>(null) }
 
+    LaunchedEffect(productId) {
+        currentItem = ItemContainer.itemManager.getItemById(productId)
+
+        currentItem?.let {
+            title = it.name
+            description = it.details ?: ""
+            status = it.status
+        }
+
+        isLoading = false
+    }
+
     val imagePickerLauncher =
         rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.GetContent(),
-            onResult = { uri: Uri? ->
-                if (uri != null && imageSlotToEdit != null) {
-                    val slot = imageSlotToEdit!!
+            contract = ActivityResultContracts.GetContent()
+        ) { uri: Uri? ->
+            if (uri != null && imageSlotToEdit != null) {
+                val slot = imageSlotToEdit!!
 
-                    imageUris =
-                        if (slot < imageUris.size) {
-                            imageUris.toMutableList().also { it[slot] = uri }
-                        } else {
-                            imageUris + uri
-                        }
+                imageUris =
+                    if (slot < imageUris.size) {
+                        imageUris.toMutableList().also { it[slot] = uri }
+                    } else {
+                        imageUris + uri
+                    }
 
-                    imageSlotToEdit = null
-                }
+                imageSlotToEdit = null
             }
-        )
+        }
+
+    if (isLoading) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
+        return
+    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -93,11 +116,11 @@ fun ProductDetailsScreen(
             ImageSelectorGrid(
                 images = imageUris,
                 maxImages = 5,
-                onAddImage = { slot: Int ->
+                onAddImage = { slot ->
                     imageSlotToEdit = slot
                     imagePickerLauncher.launch("image/*")
                 },
-                onRemoveImage = { index: Int ->
+                onRemoveImage = { index ->
                     imageUris = imageUris.toMutableList().also {
                         it.removeAt(index)
                     }
@@ -106,7 +129,7 @@ fun ProductDetailsScreen(
 
             OutlinedTextField(
                 value = title,
-                onValueChange = { newValue: String -> title = newValue },
+                onValueChange = { title = it },
                 label = { Text("Título") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
@@ -114,7 +137,7 @@ fun ProductDetailsScreen(
 
             OutlinedTextField(
                 value = description,
-                onValueChange = { newValue: String -> description = newValue },
+                onValueChange = { description = it },
                 label = { Text("Descripción") },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -127,7 +150,7 @@ fun ProductDetailsScreen(
             )
 
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                ItemStatus.entries.forEach { itemStatus: ItemStatus ->
+                ItemStatus.entries.forEach { itemStatus ->
                     FilterChip(
                         selected = status == itemStatus,
                         onClick = { status = itemStatus },
@@ -148,7 +171,41 @@ fun ProductDetailsScreen(
 
             Button(
                 onClick = {
+                    scope.launch {
+                        val imageStorage = ImageStorageManager(context)
 
+                        val imageUrls =
+                            if (imageUris.isNotEmpty()) {
+                                imageStorage.uploadItemImages(productId, imageUris)
+                            } else {
+                                currentItem?.imageUrls ?: emptyList()
+                            }
+
+                        val updatedItem = currentItem!!.copy(
+                            name = title.trim(),
+                            details = description.trim(),
+                            status = status,
+                            imageUrls = imageUrls
+                        )
+
+                        ItemContainer.itemManager
+                            .updateItemStatus(productId, status)
+
+                        ItemContainer.itemManager
+                            .deleteItem(productId)
+
+                        ItemContainer.itemManager
+                            .createItem(
+                                name = updatedItem.name,
+                                details = updatedItem.details,
+                                imageUris = emptyList(),
+                                brand = updatedItem.brand,
+                                condition = updatedItem.condition,
+                                context = context
+                            )
+
+                        onBack()
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()

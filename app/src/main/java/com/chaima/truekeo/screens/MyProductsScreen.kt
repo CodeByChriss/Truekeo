@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -19,45 +20,26 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.chaima.truekeo.R
+import com.chaima.truekeo.managers.ItemContainer
 import com.chaima.truekeo.models.Item
-import com.chaima.truekeo.models.ItemCondition
 import com.chaima.truekeo.models.ItemStatus
 
 @Composable
 fun MyProductsScreen(navController: NavController) {
 
     var searchQuery by remember { mutableStateOf("") }
+    var items by remember { mutableStateOf<List<Item>>(emptyList()) }
+    var isLoading by remember { mutableStateOf(true) }
 
-    val items = remember {
-        listOf(
-            Item(
-                id = "1",
-                name = "Guitarra Gibson 233E",
-                details = "Guitarra Gibson 233E en excelente estado",
-                condition = ItemCondition.GOOD,
-                status = ItemStatus.AVAILABLE
-            ),
-            Item(
-                id = "2",
-                name = "iPhone 12 256GB Negro",
-                details = "Sin golpes, batería al 90%",
-                condition = ItemCondition.LIKE_NEW,
-                status = ItemStatus.RESERVED
-            ),
-            Item(
-                id = "3",
-                name = "Bicicleta MTB Rockrider 520",
-                details = "Usada pero bien cuidada",
-                condition = ItemCondition.FAIR,
-                status = ItemStatus.EXCHANGED
-            )
-        )
+    LaunchedEffect(navController.currentBackStackEntry) {
+        isLoading = true
+        items = ItemContainer.itemManager.getMyItems()
+        isLoading = false
     }
 
     val filteredItems = items.filter {
@@ -76,8 +58,7 @@ fun MyProductsScreen(navController: NavController) {
             fontSize = 32.sp,
             fontFamily = FontFamily(Font(R.font.saira_medium)),
             color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Start
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -93,16 +74,22 @@ fun MyProductsScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            items(filteredItems) { item ->
-                MyItemRow(
-                    item = item,
-                    onClick = {
-                        navController.navigate("product_details/${item.id}")
-                    }
-                )
+        if (isLoading) {
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+        } else {
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(filteredItems) { item ->
+                    MyItemRow(
+                        item = item,
+                        onClick = {
+                            navController.navigate("product_details/${item.id}")
+                        }
+                    )
+                }
             }
         }
     }
@@ -134,8 +121,10 @@ fun MyItemRow(
             verticalAlignment = Alignment.CenterVertically
         ) {
 
+            val imageUrl = item.imageUrls.firstOrNull()
+
             AsyncImage(
-                model = item.imageUrls.first(),
+                model = imageUrl,
                 contentDescription = item.name,
                 modifier = Modifier
                     .size(78.dp)
