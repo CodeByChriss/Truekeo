@@ -169,4 +169,7 @@
     <!-- My Truekes -->
     <string name="pending">Pendientes</string>
     <string name="completed">Completados</string>
+
+    <!-- Trueke card -->
+    <string name="exchange_agreed_with">Intercambio acordado con</string>
 </resources>

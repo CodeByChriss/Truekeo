@@ -234,7 +234,7 @@ private fun ReservedTruekeLayout(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Intercambio acordado con",
+                text = stringResource(R.string.exchange_agreed_with),
                 fontSize = 13.sp,
                 color = Color.Black.copy(alpha = 0.80f),
                 fontFamily = FontFamily(Font(R.font.saira_regular))
@@ -445,7 +445,7 @@ private fun CompletedTruekeLayout(
             ) {
                 Icon(
                     imageVector = Icons.Default.Check,
-                    contentDescription = "Completado",
+                    contentDescription = stringResource(R.string.completed),
                     tint = Color.White,
                     modifier = Modifier.size(12.dp)
                 )

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -68,6 +69,7 @@ import com.chaima.truekeo.managers.TruekeContainer
 import com.chaima.truekeo.models.ChatMessage
 import com.chaima.truekeo.models.Conversation
 import com.chaima.truekeo.models.Item
+import com.chaima.truekeo.models.ItemStatus
 import com.chaima.truekeo.models.MessageType
 import com.chaima.truekeo.models.OfferStatus
 import com.chaima.truekeo.models.Trueke
@@ -89,6 +91,7 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val chatManager = ChatContainer.chatManager
+    val itemManager = ItemContainer.itemManager
     val user = AuthContainer.authManager.userProfile
     var conversation: Conversation? by remember { mutableStateOf(Conversation()) }
     var chatMessages by remember { mutableStateOf(emptyList<ChatMessage>()) }
@@ -258,7 +261,7 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
                         if (msg.type == MessageType.TRUEKE) {
                             TruekeBubble(
                                 msg,
-                                { truekeId, truekeItemId ->
+                                { truekeId, hostItemId, truekeItemId ->
                                     scope.launch {
                                         // actualizamos el trueke (el del mapa)
                                         val truekeManager = TruekeContainer.truekeManager
@@ -270,6 +273,9 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
                                             msg,
                                             OfferStatus.ACCEPTED
                                         )
+                                        // actualizamos el estado de los productos a reservado
+                                        itemManager.updateItemStatus(hostItemId, ItemStatus.RESERVED)
+                                        itemManager.updateItemStatus(truekeItemId ?: "ERROR", ItemStatus.RESERVED)
                                     }
                                 },
                                 {
@@ -379,7 +385,7 @@ fun ChatBubble(message: ChatMessage) {
 @Composable
 fun TruekeBubble(
     message: ChatMessage,
-    onAccept: (truekeId: String, truekeItemId: String) -> Unit,
+    onAccept: (truekeId: String, hostItemId: String, truekeItemId: String) -> Unit,
     onReject: () -> Unit,
     onTruekeReserved: () -> Unit
 ) {
@@ -412,7 +418,8 @@ fun TruekeBubble(
     ) {
         Surface(
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth(0.85f) // Lo estrecho un poco para que sea más estético
+                .heightIn(min = 250.dp), // debemos indicar un mínimo para evitar que la conversación se corte
             shape = RoundedCornerShape(16.dp),
             color = Color.White
         ) {
@@ -472,7 +479,7 @@ fun TruekeBubble(
                                     onClick = {
                                         if (!isAcceptLoading) {
                                             isAcceptLoading = true
-                                            onAccept(truekeData?.id ?: "ERROR", proposerItem?.id ?: "ERROR")
+                                            onAccept(truekeData?.id ?: "ERROR", truekeData?.hostItemId ?: "ERROR", proposerItem?.id ?: "ERROR")
                                             isAcceptLoading = false
                                         }
                                     },

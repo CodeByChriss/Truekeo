@@ -149,4 +149,5 @@
     <string name="reserved">Reserved</string>
     <string name="pending">Peding</string>
     <string name="completed">Completed</string>
+    <string name="exchange_agreed_with">Exchange agreed with</string>
 </resources>

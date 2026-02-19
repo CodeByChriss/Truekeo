@@ -44,8 +44,10 @@ import com.chaima.truekeo.components.ItemImageBox
 import com.chaima.truekeo.components.UserAvatarImage
 import com.chaima.truekeo.managers.AuthContainer
 import com.chaima.truekeo.managers.ChatContainer
+import com.chaima.truekeo.managers.ItemContainer
 import com.chaima.truekeo.managers.TruekeContainer
 import com.chaima.truekeo.models.Item
+import com.chaima.truekeo.models.ItemStatus
 import com.chaima.truekeo.models.Trueke
 import com.chaima.truekeo.models.TruekeStatus
 import com.chaima.truekeo.ui.theme.TruekeoTheme
@@ -146,6 +148,7 @@ fun TruekeDetailsContent(
 
                 TruekeStatus.RESERVED ->
                     ReservedTruekeLayout(
+                        onBack,
                         trueke,
                         isHost,
                         onOpenConversation,
@@ -207,7 +210,8 @@ fun OpenTruekeLayout(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(52.dp),
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(12.dp),
+                enabled = false
             ) {
                 Text(
                     text = stringResource(R.string.edit_trueke).uppercase(Locale.getDefault()),
@@ -221,6 +225,7 @@ fun OpenTruekeLayout(
 
 @Composable
 fun ReservedTruekeLayout(
+    onBack: () -> Unit,
     trueke: Trueke,
     isHost: Boolean,
     onOpenConversation: (String) -> Unit,
@@ -228,9 +233,12 @@ fun ReservedTruekeLayout(
 ) {
     val user = AuthContainer.authManager.userProfile
     val chatManager = ChatContainer.chatManager
+    val truekeManager = TruekeContainer.truekeManager
+    val itemManager = ItemContainer.itemManager
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     var isLoading by remember { mutableStateOf(false) }
+    var isLoadingChangeTruekeStatus by remember { mutableStateOf(false) }
 
     val takerItem = requireNotNull(trueke.takerItem) { "takerItem debe existir en RESERVED" }
 
@@ -245,7 +253,11 @@ fun ReservedTruekeLayout(
         val otherId = otherUser?.id ?: return
 
         if (myId == otherId) {
-            Toast.makeText(context, getString(context, R.string.cant_start_conversation_with_you), Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                context,
+                getString(context, R.string.cant_start_conversation_with_you),
+                Toast.LENGTH_SHORT
+            ).show()
             return
         }
 
@@ -253,7 +265,11 @@ fun ReservedTruekeLayout(
             isLoading = true
             val conversationId = chatManager.startOrGetConversation(myId, otherId)
             if (conversationId == null) {
-                Toast.makeText(context, getString(context, R.string.error_starting_conversation), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    getString(context, R.string.error_starting_conversation),
+                    Toast.LENGTH_SHORT
+                ).show()
             } else {
                 onOpenConversation(conversationId)
             }
@@ -349,23 +365,51 @@ fun ReservedTruekeLayout(
         // Botones de acción
         if (isHost) {
             Button(
-                onClick = { /* TODO: Marcar como completado */ },
+                onClick = {
+                    if (!isLoadingChangeTruekeStatus) {
+                        isLoadingChangeTruekeStatus = true
+                        scope.launch {
+                            // cambiamos el status del trueke a completado
+                            truekeManager.updateTruekeStatus(trueke.id, TruekeStatus.COMPLETED)
+                            // cambiamos el estado de los productos a intercambiados
+                            itemManager.updateItemStatus(trueke.hostUserId, ItemStatus.EXCHANGED)
+                            itemManager.updateItemStatus(trueke.takerItemId ?: "ERROR", ItemStatus.EXCHANGED)
+                            isLoadingChangeTruekeStatus = false
+                            onBack()
+                        }
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(52.dp),
                 shape = RoundedCornerShape(12.dp)
             ) {
-                Text(
-                    text = stringResource(R.string.mark_as_completed).uppercase(Locale.getDefault()),
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontFamily = FontFamily(Font(R.font.saira_medium))
-                )
+                if (isLoading) {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator(color = Color.White)
+                    }
+                } else {
+                    Text(
+                        text = stringResource(R.string.mark_as_completed).uppercase(Locale.getDefault()),
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontFamily = FontFamily(Font(R.font.saira_medium))
+                    )
+                }
             }
 
             Spacer(Modifier.height(12.dp))
 
             OutlinedButton(
-                onClick = { /* TODO: Cancelar trueke */ },
+                onClick = {
+                    if (!isLoadingChangeTruekeStatus) {
+                        isLoadingChangeTruekeStatus = true
+                        scope.launch {
+                            // cambiamos el status del trueke a cancelado
+                            truekeManager.updateTruekeStatus(trueke.id, TruekeStatus.CANCELLED)
+                            isLoadingChangeTruekeStatus = false
+                        }
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(52.dp),
@@ -375,15 +419,21 @@ fun ReservedTruekeLayout(
                     color = MaterialTheme.colorScheme.primary
                 )
             ) {
-                Text(
-                    text = stringResource(R.string.cancel_trueke).uppercase(Locale.getDefault()),
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontFamily = FontFamily(Font(R.font.saira_medium))
-                )
+                if (isLoadingChangeTruekeStatus) {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator(color = Color.White)
+                    }
+                } else {
+                    Text(
+                        text = stringResource(R.string.cancel_trueke).uppercase(Locale.getDefault()),
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontFamily = FontFamily(Font(R.font.saira_medium))
+                    )
+                }
             }
-
-            Spacer(Modifier.height(12.dp))
         }
+
+        Spacer(Modifier.height(12.dp))
 
         // Siempre sale el boton de escribir (host o no host)
         OutlinedButton(
@@ -434,7 +484,11 @@ fun CompletedTruekeLayout(
         val otherId = otherUser?.id ?: return
 
         if (myId == otherId) {
-            Toast.makeText(context, getString(context, R.string.cant_start_conversation_with_you), Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                context,
+                getString(context, R.string.cant_start_conversation_with_you),
+                Toast.LENGTH_SHORT
+            ).show()
             return
         }
 
@@ -442,7 +496,11 @@ fun CompletedTruekeLayout(
             isLoading = true
             val conversationId = chatManager.startOrGetConversation(myId, otherId)
             if (conversationId == null) {
-                Toast.makeText(context, getString(context, R.string.error_starting_conversation), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    getString(context, R.string.error_starting_conversation),
+                    Toast.LENGTH_SHORT
+                ).show()
             } else {
                 onOpenConversation(conversationId)
             }
@@ -459,8 +517,9 @@ fun CompletedTruekeLayout(
 
         Spacer(Modifier.height(16.dp))
 
-        Column(modifier = Modifier
-            .padding(horizontal = 24.dp)
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 24.dp)
         ) {
             Text(
                 text = completedOn(context, completedInstant),
