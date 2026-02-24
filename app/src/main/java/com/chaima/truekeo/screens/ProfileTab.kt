@@ -1,6 +1,5 @@
 package com.chaima.truekeo.screens
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -18,6 +17,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.rounded.Logout
+import androidx.compose.material.icons.rounded.SwapHoriz
+import androidx.compose.material.icons.rounded.Inventory2
+import androidx.compose.material.icons.rounded.Chat
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -29,9 +32,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -62,15 +64,13 @@ fun ProfileTab(
                     modifier = Modifier.fillMaxWidth().padding(20.dp),
                     contentAlignment = Alignment.CenterEnd
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.logout),
+                    Icon(
+                        imageVector = Icons.Rounded.Logout,
                         contentDescription = stringResource(R.string.logout),
                         modifier = Modifier
                             .size(32.dp)
-                            .clickable {
-                                onLogoutClick()
-                            },
-                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
+                            .clickable { onLogoutClick() },
+                        tint = MaterialTheme.colorScheme.onSurface
                     )
                 }
             }
@@ -130,7 +130,7 @@ fun ProfileTab(
 
             item {
                 ProfileOption(
-                    iconRes = R.drawable.intercambio,
+                    icon = Icons.Rounded.SwapHoriz,
                     title = stringResource(R.string.my_truekes),
                     onClick = onMyTruekesClick
                 )
@@ -140,7 +140,7 @@ fun ProfileTab(
 
             item {
                 ProfileOption(
-                    iconRes = R.drawable.orden,
+                    icon = Icons.Rounded.Inventory2,
                     title = stringResource(R.string.my_products),
                     onClick = onMyProductsClick
                 )
@@ -150,7 +150,7 @@ fun ProfileTab(
 
             item {
                 ProfileOption(
-                    iconRes = R.drawable.chat,
+                    icon = Icons.Rounded.Chat,
                     title = stringResource(R.string.my_messages),
                     onClick = onMessagesClick
                 )
@@ -163,7 +163,7 @@ fun ProfileTab(
 
 @Composable
 fun ProfileOption(
-    iconRes: Int,
+    icon: ImageVector,
     title: String,
     onClick: () -> Unit = {}
 ) {
@@ -171,16 +171,16 @@ fun ProfileOption(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onClick() }
-            .padding(horizontal = 20.dp)
+            .padding(horizontal = 24.dp)
             .height(110.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
 
-        Image(
-            painter = painterResource(id = iconRes),
+        Icon(
+            imageVector = icon,
             contentDescription = title,
             modifier = Modifier.size(48.dp),
-            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
+            tint = MaterialTheme.colorScheme.onSurface
         )
 
         Spacer(modifier = Modifier.width(20.dp))

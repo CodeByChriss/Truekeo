@@ -57,6 +57,13 @@ fun MyTruekesTab(navController: NavController) {
 
     var truekes by remember { mutableStateOf(emptyList<Trueke>()) }
     var isLoading by remember { mutableStateOf(true) }
+    var startPage by remember { mutableStateOf<Int?>(null) }
+
+    val pages = listOf(
+        stringResource(R.string.trueke_state_open) to TruekeStatus.OPEN,
+        stringResource(R.string.trueke_state_reserved) to TruekeStatus.RESERVED,
+        stringResource(R.string.trueke_state_completed) to TruekeStatus.COMPLETED
+    )
 
     // Cargar truekes al entrar (y cuando cambie el usuario)
     LaunchedEffect(authManager.userProfile?.id) {
@@ -76,13 +83,27 @@ fun MyTruekesTab(navController: NavController) {
         isLoading = false
     }
 
-    val pages = listOf(
-        stringResource(R.string.pending) to TruekeStatus.OPEN,
-        stringResource(R.string.reserved) to TruekeStatus.RESERVED,
-        stringResource(R.string.completed) to TruekeStatus.COMPLETED
-    )
+    LaunchedEffect(isLoading, truekes) {
+        if (!isLoading) {
+            val priority = listOf(
+                TruekeStatus.RESERVED,
+                TruekeStatus.OPEN,
+                TruekeStatus.COMPLETED
+            )
 
-    val pagerState = rememberPagerState(initialPage = 1, pageCount = { pages.size })
+            val targetStatus = priority.firstOrNull { status ->
+                truekes.any { it.status == status }
+            }
+
+            // Si no hay ninguno => reserved (index 1)
+            val targetPage = targetStatus?.let { status ->
+                pages.indexOfFirst { it.second == status }
+            } ?: 1
+
+            startPage = if (targetPage >= 0) targetPage else 1
+        }
+    }
+
     val scope = rememberCoroutineScope()
 
     TruekeoTheme(dynamicColor = false) {
@@ -108,52 +129,59 @@ fun MyTruekesTab(navController: NavController) {
 
                 Spacer(Modifier.height(12.dp))
 
-                TabRow(
-                    selectedTabIndex = pagerState.currentPage,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 24.dp),
-                    containerColor = Color.Transparent,
-                    divider = {},
-                    indicator = { tabPositions ->
-                        TabRowDefaults.Indicator(
-                            modifier = Modifier.tabIndicatorOffset(tabPositions[pagerState.currentPage]),
-                            color = MaterialTheme.colorScheme.secondary
-                        )
+                // ✅ Mientras no sepamos qué página va primero, mostramos loader (evita "salto" visual)
+                if (isLoading || startPage == null) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
                     }
-                ) {
-                    pages.forEachIndexed { index, (label, _) ->
-                        Tab(
-                            selected = pagerState.currentPage == index,
-                            onClick = {
-                                scope.launch { pagerState.animateScrollToPage(index) }
-                            },
-                            text = {
-                                Text(
-                                    text = label,
-                                    color = MaterialTheme.colorScheme.secondary,
-                                    fontFamily = FontFamily(Font(R.font.saira_medium)),
-                                    overflow = TextOverflow.Ellipsis,
-                                    maxLines = 1
-                                )
-                            }
-                        )
-                    }
-                }
+                } else {
+                    // ✅ Creamos el pagerState SOLO cuando ya sabemos startPage
+                    val pagerState = rememberPagerState(
+                        initialPage = startPage!!,
+                        pageCount = { pages.size }
+                    )
 
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                ) {
-                    if (isLoading) {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator()
+                    TabRow(
+                        selectedTabIndex = pagerState.currentPage,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 24.dp),
+                        containerColor = Color.Transparent,
+                        divider = {},
+                        indicator = { tabPositions ->
+                            TabRowDefaults.Indicator(
+                                modifier = Modifier.tabIndicatorOffset(tabPositions[pagerState.currentPage]),
+                                color = MaterialTheme.colorScheme.secondary
+                            )
                         }
-                    } else {
+                    ) {
+                        pages.forEachIndexed { index, (label, _) ->
+                            Tab(
+                                selected = pagerState.currentPage == index,
+                                onClick = { scope.launch { pagerState.animateScrollToPage(index) } },
+                                text = {
+                                    Text(
+                                        text = label,
+                                        color = MaterialTheme.colorScheme.secondary,
+                                        fontFamily = FontFamily(Font(R.font.saira_medium)),
+                                        overflow = TextOverflow.Ellipsis,
+                                        maxLines = 1
+                                    )
+                                }
+                            )
+                        }
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                    ) {
                         HorizontalPager(
                             state = pagerState,
                             modifier = Modifier.fillMaxSize()
@@ -174,9 +202,7 @@ fun MyTruekesTab(navController: NavController) {
                                     )
                                 }
                             } else {
-                                LazyColumn(
-                                    modifier = Modifier.fillMaxSize(),
-                                ) {
+                                LazyColumn(modifier = Modifier.fillMaxSize()) {
                                     item {
                                         HorizontalDivider(
                                             modifier = Modifier.fillMaxWidth(),

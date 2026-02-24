@@ -112,10 +112,6 @@
     <string name="yes_delete">Sí, eleminar</string>
     <string name="no">No</string>
     <!-- estados del trueke -->
-    <string name="trueke_state_open">Pendiente</string>
-    <string name="trueke_state_reserved">Reservado</string>
-    <string name="trueke_state_completed">Completado</string>
-    <string name="trueke_state_cancelled">Cancelado</string>
     <string name="create">Crear</string>
     <string name="required_field_error">Este campo es obligatorio</string>
     <string name="at_least_one_image_required">Añade al menos una imagen</string>
@@ -153,6 +149,7 @@
     <string name="trueke_cancelled">Trueke cancelado</string>
 
     <string name="time_prefix_completed">Finalizado el %1$s</string>
+    <string name="time_prefix_completed_on">Intercambio finalizado con éxito el %1$s</string>
     <string name="date_pattern_same_year">d \'de\' MMMM</string>
     <string name="date_pattern_other_year">d \'de\' MMMM \'de\' yyyy</string>
     <string name="select_valid_brand">Selecciona una marca valida</string>
@@ -169,6 +166,11 @@
     <!-- My Truekes -->
     <string name="pending">Pendientes</string>
     <string name="completed">Completados</string>
+
+    <!-- Trueke states -->
+    <string name="trueke_state_open">Pendientes</string>
+    <string name="trueke_state_reserved">Reservados</string>
+    <string name="trueke_state_completed">Completados</string>
 
     <!-- Trueke card -->
     <string name="exchange_agreed_with">Intercambio acordado con</string>

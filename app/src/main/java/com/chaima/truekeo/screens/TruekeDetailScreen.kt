@@ -51,7 +51,7 @@ import com.chaima.truekeo.models.ItemStatus
 import com.chaima.truekeo.models.Trueke
 import com.chaima.truekeo.models.TruekeStatus
 import com.chaima.truekeo.ui.theme.TruekeoTheme
-import com.chaima.truekeo.utils.completedOn
+import com.chaima.truekeo.utils.dateOn
 import com.chaima.truekeo.utils.resolvePlaceName
 import kotlinx.coroutines.launch
 import java.util.Locale
@@ -522,7 +522,7 @@ fun CompletedTruekeLayout(
                 .padding(horizontal = 24.dp)
         ) {
             Text(
-                text = completedOn(context, completedInstant),
+                text = dateOn(context, completedInstant, R.string.time_prefix_completed),
                 style = MaterialTheme.typography.bodyLarge,
                 fontFamily = FontFamily(Font(R.font.saira_regular))
             )

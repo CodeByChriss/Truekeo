@@ -11,12 +11,12 @@ import java.time.format.DateTimeFormatter
 import kotlin.math.round
 
 @RequiresApi(Build.VERSION_CODES.O)
-fun completedOn(
+fun dateOn(
     context: Context,
     from: Instant,
+    prefixResId: Int,
     to: Instant = Instant.now()
 ): String {
-
     val zoneId = ZoneId.systemDefault()
     val date = from.atZone(zoneId).toLocalDate()
     val currentYear = to.atZone(zoneId).year
@@ -34,7 +34,7 @@ fun completedOn(
 
     val dateText = date.format(formatter)
 
-    return context.getString(R.string.time_prefix_completed, dateText)
+    return context.getString(prefixResId, dateText)
 }
 
 private fun roundToNearest(value: Double, step: Int = 1): Int {
