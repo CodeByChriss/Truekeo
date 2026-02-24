@@ -147,7 +147,7 @@
     <string name="save_changes">Save changes</string>
     <string name="delete_product">Delete product</string>
     <string name="reserved">Reserved</string>
-    <string name="pending">Peding</string>
+    <string name="pending">Pending</string>
     <string name="completed">Completed</string>
     <string name="exchange_agreed_with">Exchange agreed with</string>
 </resources>

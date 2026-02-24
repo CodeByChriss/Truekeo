@@ -107,8 +107,7 @@ fun MessagesTab(onMessageClick: (String) -> Unit) {
                             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                                 Text(
                                     text = stringResource(R.string.no_conversation),
-                                    color = MaterialTheme.colorScheme.onSurface,
-                                    fontFamily = FontFamily(Font(R.font.saira_medium))
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
                         } else {

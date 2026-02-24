@@ -418,8 +418,7 @@ fun TruekeBubble(
     ) {
         Surface(
             modifier = Modifier
-                .fillMaxWidth(0.85f) // Lo estrecho un poco para que sea más estético
-                .heightIn(min = 250.dp), // debemos indicar un mínimo para evitar que la conversación se corte
+                .fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
             color = MaterialTheme.colorScheme.background
         ) {
@@ -452,14 +451,17 @@ fun TruekeBubble(
                             name = proposerItem?.name ?: stringResource(R.string.error_loading)
                         )
 
-                        Icon(
-                            imageVector = Icons.Rounded.SwapHoriz,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.secondary,
+                        Box(
                             modifier = Modifier
-                                .padding(top = 12.dp)
-                                .size(32.dp)
-                        )
+                                .align(Alignment.CenterVertically)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.SwapHoriz,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.secondary,
+                                modifier = Modifier.size(32.dp)
+                            )
+                        }
 
                         ProductItem(
                             imageUrl = targetItem?.imageUrls?.firstOrNull() ?: "",
