@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import com.chaima.truekeo.R
 import com.chaima.truekeo.components.BrandField
 import com.chaima.truekeo.components.ImageSelectorGrid
+import com.chaima.truekeo.components.ItemConditionDropdown
 import com.chaima.truekeo.managers.ItemContainer
 import com.chaima.truekeo.models.ItemCondition
 import com.chaima.truekeo.ui.theme.TruekeoTheme
@@ -248,52 +249,6 @@ fun CreateProductTab() {
                 }
 
                 Spacer(Modifier.height(24.dp))
-            }
-        }
-    }
-}
-
-// Dropdown para seleccionar la condición del producto del trueke
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun ItemConditionDropdown(
-    value: ItemCondition,
-    onValueChange: (ItemCondition) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val context = LocalContext.current
-    var expanded by remember { mutableStateOf(false) }
-
-    ExposedDropdownMenuBox(
-        expanded = expanded,
-        onExpandedChange = { expanded = !expanded },
-        modifier = modifier
-    ) {
-        OutlinedTextField(
-            value = value.displayName(context),
-            onValueChange = {},
-            readOnly = true,
-            label = { Text(stringResource(R.string.state)) },
-            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
-            shape = RoundedCornerShape(8.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .menuAnchor()
-        )
-        ExposedDropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            containerColor = MaterialTheme.colorScheme.background,
-            tonalElevation = 0.dp
-        ) {
-            ItemCondition.entries.forEach { condition ->
-                DropdownMenuItem(
-                    text = { Text(condition.displayName(context)) },
-                    onClick = {
-                        onValueChange(condition)
-                        expanded = false
-                    }
-                )
             }
         }
     }

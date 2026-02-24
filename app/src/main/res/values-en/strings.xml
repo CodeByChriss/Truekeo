@@ -152,4 +152,7 @@
     <string name="trueke_state_open">Pending</string>
     <string name="trueke_state_reserved">Reserved</string>
     <string name="trueke_state_completed">Completed</string>
+
+    <string name="discard_changes">Discard changes</string>
+    <string name="discard_changes_message">You have unsaved changes. Are you sure you want to leave?</string>
 </resources>

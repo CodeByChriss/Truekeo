@@ -52,8 +52,9 @@ fun MyProductsScreen(navController: NavController) {
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
-                .padding(20.dp)
+                .padding(horizontal = 24.dp)
         ) {
+            Spacer(Modifier.height(24.dp))
 
             Text(
                 text = stringResource(R.string.my_products),

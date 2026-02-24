@@ -174,4 +174,7 @@
 
     <!-- Trueke card -->
     <string name="exchange_agreed_with">Intercambio acordado con</string>
+
+    <string name="discard_changes">Descartar cambios</string>
+    <string name="discard_changes_message">Tienes cambios sin guardar. ¿Seguro que quieres salir?</string>
 </resources>
