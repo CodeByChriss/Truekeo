@@ -120,7 +120,8 @@ fun ProfileTab(
                         Text(
                             text = stringResource(R.string.edit_profile),
                             fontSize = 18.sp,
-                            fontWeight = FontWeight.SemiBold
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.White
                         )
                     }
                 }
