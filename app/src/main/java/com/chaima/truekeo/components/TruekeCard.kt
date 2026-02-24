@@ -49,6 +49,7 @@ import com.chaima.truekeo.models.Trueke
 import com.chaima.truekeo.models.TruekeStatus
 import com.chaima.truekeo.ui.theme.TruekeoTheme
 import com.chaima.truekeo.utils.TimePrefix
+import com.chaima.truekeo.utils.dateOn
 import com.chaima.truekeo.utils.prefixedTimeAgo
 
 @Composable
@@ -356,6 +357,8 @@ private fun CompletedTruekeLayout(
     trueke: Trueke,
     isHost: Boolean
 ) {
+    val context = LocalContext.current
+
     val otherUser = if (isHost) trueke.takerUser else trueke.hostUser
 
     val takerItem = trueke.takerItem
@@ -363,6 +366,15 @@ private fun CompletedTruekeLayout(
 
     val topItem = if (isHost) trueke.hostItem else takerItem
     val bottomItem = if (isHost) takerItem else trueke.hostItem
+
+    val completedText = remember(trueke.updatedAtInstant, trueke.createdAtInstant) {
+        val completedAt = trueke.updatedAtInstant ?: trueke.createdAtInstant
+        dateOn(
+            context = context,
+            from = completedAt,
+            prefixResId = R.string.time_prefix_completed_on
+        )
+    }
 
     Row(
         modifier = Modifier
@@ -492,7 +504,7 @@ private fun CompletedTruekeLayout(
             }
 
             Text(
-                text = "Intercambio finalizado con éxito, el ",
+                text = completedText,
                 fontSize = 13.sp,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.60f),
                 fontFamily = FontFamily(Font(R.font.saira_regular))

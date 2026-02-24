@@ -92,10 +92,7 @@
     <string name="remove_conversation_text">Are you sure you want to delete this conversation? This action cannot be undone.</string>
     <string name="yes_delete">Yes, delete</string>
     <string name="no">No</string>
-    <string name="trueke_state_open">Pending</string>
-    <string name="trueke_state_reserved">Reserved</string>
-    <string name="trueke_state_completed">Completed</string>
-    <string name="trueke_state_cancelled">Cancelled</string>
+
     <string name="create">Create</string>
     <string name="required_field_error">This field is required</string>
     <string name="at_least_one_image_required">Add at least one image</string>
@@ -132,6 +129,7 @@
     <string name="trueke_rejected">Trueke rejected</string>
     <string name="trueke_cancelled">Trueke cancelled</string>
     <string name="time_prefix_completed">Completed on %1$s</string>
+    <string name="time_prefix_completed_on">Exchange successfully completed on %1$s</string>
     <string name="date_pattern_same_year">MMMM d</string>
     <string name="date_pattern_other_year">MMMM d, yyyy</string>
     <string name="select_valid_brand">Select a valid brand</string>
@@ -150,4 +148,8 @@
     <string name="pending">Pending</string>
     <string name="completed">Completed</string>
     <string name="exchange_agreed_with">Exchange agreed with</string>
+
+    <string name="trueke_state_open">Pending</string>
+    <string name="trueke_state_reserved">Reserved</string>
+    <string name="trueke_state_completed">Completed</string>
 </resources>

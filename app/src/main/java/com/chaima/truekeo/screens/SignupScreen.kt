@@ -19,6 +19,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.rounded.Visibility
+import androidx.compose.material.icons.rounded.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -143,18 +145,10 @@ fun SignupScreen(onSignUp: () -> Unit, onBackToLogin: () -> Unit) {
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
                     trailingIcon = {
-                        val image = if (showPassword)
-                            ImageVector.vectorResource(id = R.drawable.ic_hide_password)
-                        else ImageVector.vectorResource(id = R.drawable.ic_show_password)
-
                         IconButton(onClick = { showPassword = !showPassword }) {
                             Icon(
-                                imageVector = image,
-                                contentDescription = getString(
-                                    context,
-                                    R.string.toggle_password_visibility
-                                ),
-                                modifier = Modifier.width(24.dp)
+                                imageVector = if (showPassword) Icons.Rounded.VisibilityOff else Icons.Rounded.Visibility,
+                                contentDescription = getString(context, R.string.toggle_password_visibility)
                             )
                         }
                     },
@@ -173,18 +167,10 @@ fun SignupScreen(onSignUp: () -> Unit, onBackToLogin: () -> Unit) {
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
                     trailingIcon = {
-                        val image = if (showPassword)
-                            ImageVector.vectorResource(id = R.drawable.ic_hide_password)
-                        else ImageVector.vectorResource(id = R.drawable.ic_show_password)
-
                         IconButton(onClick = { showPassword = !showPassword }) {
                             Icon(
-                                imageVector = image,
-                                contentDescription = getString(
-                                    context,
-                                    R.string.toggle_password_visibility
-                                ),
-                                modifier = Modifier.width(24.dp)
+                                imageVector = if (showPassword) Icons.Rounded.VisibilityOff else Icons.Rounded.Visibility,
+                                contentDescription = getString(context, R.string.toggle_password_visibility)
                             )
                         }
                     },

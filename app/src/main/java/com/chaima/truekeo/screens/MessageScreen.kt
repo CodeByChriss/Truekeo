@@ -189,35 +189,47 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 8.dp, vertical = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                            verticalAlignment = Alignment.Bottom
                         ) {
-                            TextField(
-                                value = textState,
-                                onValueChange = { textState = it },
-                                placeholder = {
-                                    Text(
-                                        getString(
-                                            context,
-                                            R.string.write_message_here
+                            Box(modifier = Modifier.weight(1f)) {
+                                TextField(
+                                    value = textState,
+                                    onValueChange = { textState = it },
+                                    placeholder = {
+                                        Text(
+                                            getString(
+                                                context,
+                                                R.string.write_message_here
+                                            )
                                         )
-                                    )
-                                },
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .padding(end = 8.dp),
-                                shape = CircleShape,
-                                colors = TextFieldDefaults.colors(
-                                    focusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(0.5.dp),
-                                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(0.5.dp),
-                                    focusedIndicatorColor = Color.Transparent,
-                                    unfocusedIndicatorColor = Color.Transparent,
-                                    disabledIndicatorColor = Color.Transparent
+                                    },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .heightIn(min = 56.dp, max = 140.dp),
+                                    shape = RoundedCornerShape(8.dp),
+                                    colors = TextFieldDefaults.colors(
+                                        focusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(
+                                            0.5.dp
+                                        ),
+                                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(
+                                            0.5.dp
+                                        ),
+                                        focusedIndicatorColor = Color.Transparent,
+                                        unfocusedIndicatorColor = Color.Transparent,
+                                        disabledIndicatorColor = Color.Transparent
+                                    ),
+                                    singleLine = false, // permite saltos de línea
+                                    minLines = 1, // comienza en una línea
+                                    maxLines = 4 // se expande hasta 4 líneas; después habrá scroll interno
                                 )
-                            )
+                            }
+
+                            Spacer(modifier = Modifier.width(8.dp))
 
                             IconButton(
                                 onClick = {
-                                    val messageToSend = textState
+                                    val messageToSend = textState.trimEnd()
+                                    if (messageToSend.isBlank()) return@IconButton
                                     textState = ""
                                     scope.launch {
                                         chatManager.sendMessage(
@@ -367,7 +379,7 @@ fun ChatBubble(message: ChatMessage) {
 //                tonalElevation = 2.dp
             ) {
                 Text(
-                    text = message.text,
+                    text = message.text.trimEnd(),
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
                     color = textColor
                 )
