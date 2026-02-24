@@ -109,14 +109,14 @@ private fun ImageSlot(
                 .zIndex(1f)
                 .size(28.dp)
                 .clip(RoundedCornerShape(50))
-                .background(Color.Black.copy(alpha = 0.6f))
+                .background(Color.Black.copy(alpha = 0.35f))
                 .clickable { onRemove() },
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 imageVector = Icons.Default.Close,
                 contentDescription = stringResource(R.string.remove_image),
-                tint = MaterialTheme.colorScheme.onSurface,
+                tint = Color.White,
                 modifier = Modifier.size(16.dp)
             )
         }
@@ -165,7 +165,7 @@ private fun PrimaryPhotoBadge(
     ) {
         Text(
             text = stringResource(R.string.main_product_image),
-//            color = Color.White,
+            color = Color.White,
             style = MaterialTheme.typography.bodyMedium
         )
     }
