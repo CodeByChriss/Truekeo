@@ -74,7 +74,7 @@
     <string name="time_now">ahora mismo</string>
     <string name="time_published_now">Publicado ahora mismo</string>
     <!-- Profile-->
-    <string name="my_truekes">Mis trueques</string>
+    <string name="my_truekes">Mis truekes</string>
     <string name="my_products">Mis productos</string>
     <string name="logout">Logout</string>
     <!-- Editar perfil y Profile-->
@@ -177,4 +177,7 @@
 
     <string name="discard_changes">Descartar cambios</string>
     <string name="discard_changes_message">Tienes cambios sin guardar. ¿Seguro que quieres salir?</string>
+
+    <string name="no_products_yet">No tienes productos subidos aún</string>
+    <string name="no_products_yet_subtitle">Crea uno para empezar a truekear</string>
 </resources>

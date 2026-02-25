@@ -28,11 +28,11 @@ import com.chaima.truekeo.R
 import com.chaima.truekeo.managers.ItemContainer
 import com.chaima.truekeo.models.Item
 import com.chaima.truekeo.models.ItemStatus
+import com.chaima.truekeo.navigation.NavBarRoutes
 import com.chaima.truekeo.ui.theme.TruekeoTheme
 
 @Composable
 fun MyProductsScreen(navController: NavController) {
-
     var searchQuery by remember { mutableStateOf("") }
     var items by remember { mutableStateOf<List<Item>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
@@ -66,32 +66,57 @@ fun MyProductsScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            OutlinedTextField(
-                value = searchQuery,
-                onValueChange = { searchQuery = it },
-                modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text(stringResource(R.string.search_product)) },
-                singleLine = true,
-                shape = RoundedCornerShape(12.dp)
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
             if (isLoading) {
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator(color = Color.White)
                 }
             } else {
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    items(filteredItems) { item ->
-                        MyItemRow(
-                            item = item,
-                            onClick = {
-                                navController.navigate("product_details/${item.id}")
-                            }
-                        )
+                if (items.isEmpty()) {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.no_products_yet),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                fontFamily = FontFamily(Font(R.font.saira_medium))
+                            )
+                            Text(
+                                text = stringResource(R.string.no_products_yet_subtitle),
+                                fontSize = 13.sp,
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.clickable {
+                                    navController.navigate(NavBarRoutes.CreateProduct.route)
+                                }
+                            )
+                        }
+                    }
+                } else {
+                    OutlinedTextField(
+                        value = searchQuery,
+                        onValueChange = { searchQuery = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        placeholder = { Text(stringResource(R.string.search_product)) },
+                        singleLine = true,
+                        shape = RoundedCornerShape(12.dp)
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    LazyColumn(
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        items(filteredItems) { item ->
+                            MyItemRow(
+                                item = item,
+                                onClick = {
+                                    navController.navigate(
+                                        NavBarRoutes.ProductDetails.create(item.id)
+                                    )
+                                }
+                            )
+                        }
                     }
                 }
             }

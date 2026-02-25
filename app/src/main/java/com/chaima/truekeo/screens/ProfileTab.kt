@@ -17,10 +17,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material.icons.rounded.Logout
 import androidx.compose.material.icons.rounded.SwapHoriz
 import androidx.compose.material.icons.rounded.Inventory2
 import androidx.compose.material.icons.rounded.Chat
+import androidx.compose.material.icons.rounded.ExitToApp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -35,6 +35,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -42,6 +44,7 @@ import coil3.compose.AsyncImage
 import com.chaima.truekeo.R
 import com.chaima.truekeo.managers.AuthContainer
 import com.chaima.truekeo.ui.theme.TruekeoTheme
+import java.util.Locale
 
 @Composable
 fun ProfileTab(
@@ -65,7 +68,7 @@ fun ProfileTab(
                     contentAlignment = Alignment.CenterEnd
                 ) {
                     Icon(
-                        imageVector = Icons.Rounded.Logout,
+                        imageVector = Icons.Rounded.ExitToApp,
                         contentDescription = stringResource(R.string.logout),
                         modifier = Modifier
                             .size(32.dp)
@@ -118,9 +121,9 @@ fun ProfileTab(
                         )
                     ) {
                         Text(
-                            text = stringResource(R.string.edit_profile),
+                            text = stringResource(R.string.edit_profile).uppercase(Locale.getDefault()),
                             fontSize = 18.sp,
-                            fontWeight = FontWeight.SemiBold,
+                            fontFamily = FontFamily(Font(R.font.saira_medium)),
                             color = Color.White
                         )
                     }
@@ -132,7 +135,7 @@ fun ProfileTab(
             item {
                 ProfileOption(
                     icon = Icons.Rounded.SwapHoriz,
-                    title = stringResource(R.string.my_truekes),
+                    option = stringResource(R.string.my_truekes),
                     onClick = onMyTruekesClick
                 )
             }
@@ -142,7 +145,7 @@ fun ProfileTab(
             item {
                 ProfileOption(
                     icon = Icons.Rounded.Inventory2,
-                    title = stringResource(R.string.my_products),
+                    option = stringResource(R.string.my_products),
                     onClick = onMyProductsClick
                 )
             }
@@ -152,7 +155,7 @@ fun ProfileTab(
             item {
                 ProfileOption(
                     icon = Icons.Rounded.Chat,
-                    title = stringResource(R.string.my_messages),
+                    option = stringResource(R.string.my_messages),
                     onClick = onMessagesClick
                 )
             }
@@ -165,7 +168,7 @@ fun ProfileTab(
 @Composable
 fun ProfileOption(
     icon: ImageVector,
-    title: String,
+    option: String,
     onClick: () -> Unit = {}
 ) {
     Row(
@@ -179,7 +182,7 @@ fun ProfileOption(
 
         Icon(
             imageVector = icon,
-            contentDescription = title,
+            contentDescription = option,
             modifier = Modifier.size(48.dp),
             tint = MaterialTheme.colorScheme.onSurface
         )
@@ -187,9 +190,10 @@ fun ProfileOption(
         Spacer(modifier = Modifier.width(20.dp))
 
         Text(
-            text = title,
+            text = option,
             fontSize = 30.sp,
-            fontWeight = FontWeight.Black
+            fontWeight = FontWeight.Black,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
         Spacer(modifier = Modifier.weight(1f))
@@ -198,7 +202,7 @@ fun ProfileOption(
             imageVector = Icons.Filled.ChevronRight,
             modifier = Modifier.size(48.dp),
             contentDescription = null,
-            tint = Color.Gray
+            tint = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }

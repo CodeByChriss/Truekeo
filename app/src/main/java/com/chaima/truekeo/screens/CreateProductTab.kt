@@ -38,6 +38,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.chaima.truekeo.R
 import com.chaima.truekeo.components.BrandField
 import com.chaima.truekeo.components.ImageSelectorGrid
@@ -45,12 +46,15 @@ import com.chaima.truekeo.components.ItemConditionDropdown
 import com.chaima.truekeo.managers.ItemContainer
 import com.chaima.truekeo.models.ItemCondition
 import com.chaima.truekeo.ui.theme.TruekeoTheme
+import com.chaima.truekeo.utils.BrandData
 import com.chaima.truekeo.utils.FormErrorText
 import kotlinx.coroutines.launch
 import java.util.Locale
 
 @Composable
-fun CreateProductTab() {
+fun CreateProductTab(
+    navController: NavController
+) {
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -82,7 +86,9 @@ fun CreateProductTab() {
 
     val nameOk = name.trim().isNotEmpty()
     val imagesOk = imageUris.isNotEmpty()
-    val brandOk = brand.isNotBlank()
+    val brandOk = brand.isBlank() || BrandData.knownBrands.any {
+        it.equals(brand.trim(), ignoreCase = true)
+    }
 
     val showNameError = triedSubmit && !nameOk
     val showImagesError = triedSubmit && !imagesOk
@@ -127,6 +133,11 @@ fun CreateProductTab() {
 
                 // resetear formulario
                 resetForm()
+
+                // navegar al detalle
+                navController.navigate("product_details/$productId") {
+                    launchSingleTop = true
+                }
             }.onFailure { e ->
                 Toast.makeText(
                     context,

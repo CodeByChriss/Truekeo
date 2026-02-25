@@ -21,6 +21,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.chaima.truekeo.R
 import com.chaima.truekeo.components.ItemSelectorCard
 import com.chaima.truekeo.components.LocationSearchField
@@ -37,7 +38,7 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateTruekeTab(
-    navController: androidx.navigation.NavController
+    navController: NavController
 ) {
     val truekeManager = remember { TruekeContainer.truekeManager }
     val itemManager = remember { ItemContainer.itemManager }
