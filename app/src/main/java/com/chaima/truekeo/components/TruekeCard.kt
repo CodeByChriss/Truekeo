@@ -439,7 +439,7 @@ private fun CompletedTruekeLayout(
             Icon(
                 imageVector = Icons.Rounded.ArrowUpward,
                 contentDescription = null,
-                tint = Color.White,
+                tint = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier
                     .align(Alignment.CenterEnd)
                     .offset(x = (-10).dp)

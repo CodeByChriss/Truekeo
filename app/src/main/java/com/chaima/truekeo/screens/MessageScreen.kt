@@ -25,6 +25,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.rounded.SwapHoriz
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -35,6 +36,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
@@ -92,6 +94,8 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
     val scope = rememberCoroutineScope()
     val chatManager = ChatContainer.chatManager
     val itemManager = ItemContainer.itemManager
+    val truekeManager = TruekeContainer.truekeManager
+
     val user = AuthContainer.authManager.userProfile
     var conversation: Conversation? by remember { mutableStateOf(Conversation()) }
     var chatMessages by remember { mutableStateOf(emptyList<ChatMessage>()) }
@@ -167,7 +171,7 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
                         colors = TopAppBarDefaults.topAppBarColors(
                             containerColor = MaterialTheme.colorScheme.background
                         ),
-                        actions = {
+                        /*actions = {
                             IconButton(onClick = {
                                 scope.launch { showDeleteDialog = true }
                             }) {
@@ -177,7 +181,7 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
                                     tint = Color(0xFFfa375f)
                                 )
                             }
-                        }
+                        }*/
                     )
                 },
                 bottomBar = {
@@ -273,12 +277,11 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
                         if (msg.type == MessageType.TRUEKE) {
                             TruekeBubble(
                                 msg,
-                                { truekeId, hostItemId, truekeItemId ->
+                                { truekeId, hostItemId, takerItemId, takerUserId  ->
                                     scope.launch {
-                                        // actualizamos el trueke (el del mapa)
-                                        val truekeManager = TruekeContainer.truekeManager
+                                        // actualizamos el trueke (aceptado y reservado)
                                         truekeManager.reserveTrueke(truekeId,
-                                            user?.id ?: "ERROR", truekeItemId)
+                                            takerUserId, takerItemId)
                                         // actualizamos la propuesta de trueke
                                         chatManager.updateOfferStatus(
                                             conversationId,
@@ -287,7 +290,7 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
                                         )
                                         // actualizamos el estado de los productos a reservado
                                         itemManager.updateItemStatus(hostItemId, ItemStatus.RESERVED)
-                                        itemManager.updateItemStatus(truekeItemId ?: "ERROR", ItemStatus.RESERVED)
+                                        itemManager.updateItemStatus(takerItemId, ItemStatus.RESERVED)
                                     }
                                 },
                                 {
@@ -322,7 +325,7 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
 
         // El diálogo de eliminar conversación
         if (showDeleteDialog) {
-            androidx.compose.material3.AlertDialog(
+            AlertDialog(
                 onDismissRequest = { showDeleteDialog = false },
                 icon = { Icon(Icons.Default.Delete, contentDescription = null) },
                 title = {
@@ -335,7 +338,7 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
                     Text(stringResource(R.string.remove_conversation_text))
                 },
                 confirmButton = {
-                    androidx.compose.material3.TextButton(
+                    TextButton(
                         onClick = {
                             showDeleteDialog = false
                             scope.launch {
@@ -348,7 +351,7 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
                     }
                 },
                 dismissButton = {
-                    androidx.compose.material3.TextButton(
+                    TextButton(
                         onClick = { showDeleteDialog = false }
                     ) {
                         Text(stringResource(R.string.no))
@@ -397,7 +400,7 @@ fun ChatBubble(message: ChatMessage) {
 @Composable
 fun TruekeBubble(
     message: ChatMessage,
-    onAccept: (truekeId: String, hostItemId: String, truekeItemId: String) -> Unit,
+    onAccept: (truekeId: String, hostItemId: String, takerItemId: String, takerUserId: String) -> Unit,
     onReject: () -> Unit,
     onTruekeReserved: () -> Unit
 ) {
@@ -493,7 +496,7 @@ fun TruekeBubble(
                                     onClick = {
                                         if (!isAcceptLoading) {
                                             isAcceptLoading = true
-                                            onAccept(truekeData?.id ?: "ERROR", truekeData?.hostItemId ?: "ERROR", proposerItem?.id ?: "ERROR")
+                                            onAccept(truekeData?.id ?: "ERROR", truekeData?.hostItemId ?: "ERROR", proposerItem?.id ?: "ERROR", trueke.proposerUserId)
                                             isAcceptLoading = false
                                         }
                                     },
