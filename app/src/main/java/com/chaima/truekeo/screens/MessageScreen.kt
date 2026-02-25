@@ -174,7 +174,7 @@ fun MessageScreen(conversationId: String?, onBack: () -> Unit) {
                                 Icon(
                                     imageVector = Icons.Default.Delete,
                                     contentDescription = stringResource(R.string.delete_conversation),
-                                    tint = Color.Red
+                                    tint = Color(0xFFfa375f)
                                 )
                             }
                         }

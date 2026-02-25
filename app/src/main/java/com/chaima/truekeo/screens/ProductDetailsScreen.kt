@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -34,6 +35,7 @@ import com.chaima.truekeo.managers.ItemContainer
 import com.chaima.truekeo.models.Item
 import com.chaima.truekeo.models.ItemCondition
 import com.chaima.truekeo.ui.theme.TruekeoTheme
+import com.chaima.truekeo.utils.BrandData
 import com.chaima.truekeo.utils.FormErrorText
 import kotlinx.coroutines.launch
 import java.util.Locale
@@ -104,7 +106,9 @@ fun ProductDetailsScreen(
 
     val nameOk = title.trim().isNotEmpty()
     val imagesOk = imageUris.isNotEmpty()
-    val brandOk = brand.isNotBlank()
+    val brandOk = brand.isBlank() || BrandData.knownBrands.any {
+        it.equals(brand.trim(), ignoreCase = true)
+    }
 
     val showNameError = triedSubmit && !nameOk
     val showImagesError = triedSubmit && !imagesOk
@@ -193,7 +197,18 @@ fun ProductDetailsScreen(
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = MaterialTheme.colorScheme.background
-                    )
+                    ),
+                    actions = {
+                        IconButton(onClick = {
+                            scope.launch { showDeleteConfirm = true }
+                        }) {
+                            Icon(
+                                imageVector = Icons.Rounded.Delete,
+                                contentDescription = stringResource(R.string.delete_conversation),
+                                tint = Color(0xFFfa375f)
+                            )
+                        }
+                    }
                 )
             },
             containerColor = MaterialTheme.colorScheme.background,
@@ -297,26 +312,6 @@ fun ProductDetailsScreen(
                             )
                         }
                     }
-
-                    Spacer(Modifier.height(12.dp))
-
-                    Button(
-                        onClick = { showDeleteConfirm = true },
-                        enabled = !isLoadingSaveOrDelete,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(52.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
-                        Text(
-                            text = stringResource(R.string.delete_product).uppercase(Locale.getDefault()),
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontFamily = FontFamily(Font(R.font.saira_medium))
-                        )
-                    }
-
-                    Spacer(Modifier.height(24.dp))
                 }
             }
         }

@@ -33,6 +33,7 @@ import com.chaima.truekeo.managers.ImageStorageManager
 import com.chaima.truekeo.models.User
 import com.chaima.truekeo.ui.theme.TruekeoTheme
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 @Composable
 fun EditProfileScreen(
@@ -47,9 +48,22 @@ fun EditProfileScreen(
     var isLoading by remember { mutableStateOf(false) }
     var showDialog by remember { mutableStateOf(false) }
 
+    // Valores originales (para comparar)
+    val originalName = remember { user?.firstAndLastName ?: "" }
+    val originalUsername = remember { user?.username ?: "" }
+
+    // Valores editables
     var name by remember { mutableStateOf(user?.firstAndLastName ?: "") }
     var username by remember { mutableStateOf(user?.username ?: "") }
     var itemImageUri by remember { mutableStateOf<Uri?>(null) }
+
+    val hasChanges by remember(name, username, itemImageUri) {
+        derivedStateOf {
+            name != originalName ||
+                    username != originalUsername ||
+                    itemImageUri != null
+        }
+    }
 
     val pickItemImageLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -58,124 +72,127 @@ fun EditProfileScreen(
     }
 
     TruekeoTheme(dynamicColor = false) {
-        LazyColumn(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
-                .padding(20.dp),
+                .padding(horizontal = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = stringResource(R.string.edit_profile),
-                        fontSize = 32.sp,
-                        fontFamily = FontFamily(Font(R.font.saira_medium)),
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.weight(1f),
-                        textAlign = TextAlign.Start
-                    )
+            Spacer(modifier = Modifier.height(24.dp))
 
-                    Icon(
-                        imageVector = Icons.Filled.Close,
-                        contentDescription = "Close",
-                        modifier = Modifier
-                            .size(28.dp)
-                            .clickable { showDialog = true }
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                AsyncImage(
-                    model = itemImageUri ?: user?.avatarUrl,
-                    contentDescription = user?.username,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .size(140.dp)
-                        .clip(CircleShape)
-                        .clickable { pickItemImageLauncher.launch("image/*") }
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Text(
-                    text = stringResource(R.string.change_picture),
-                    fontSize = 16.sp,
+                    text = stringResource(R.string.edit_profile),
+                    fontSize = 32.sp,
+                    fontFamily = FontFamily(Font(R.font.saira_medium)),
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.clickable { pickItemImageLauncher.launch("image/*") }
+                    modifier = Modifier.weight(1f),
+                    textAlign = TextAlign.Start
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
-
-                OutlinedTextField(
-                    value = name,
-                    onValueChange = { name = it },
-                    label = { Text(stringResource(R.string.name)) },
-                    singleLine = true,
-                    shape = RoundedCornerShape(8.dp),
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                OutlinedTextField(
-                    value = username,
-                    onValueChange = { username = it },
-                    label = { Text(stringResource(R.string.user)) },
-                    singleLine = true,
-                    shape = RoundedCornerShape(8.dp),
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Button(
-                    onClick = {
-                        if (!isLoading) {
-                            isLoading = true
-                            saveProfile(
-                                user = user,
-                                name = name,
-                                username = username,
-                                itemImageUri = itemImageUri,
-                                context = context,
-                                scope = scope,
-                                authManager = authManager,
-                                onComplete = {
-                                    isLoading = false
-                                    onSaveChangesClick()
-                                }
-                            )
-                        }
-                    },
+                Icon(
+                    imageVector = Icons.Filled.Close,
+                    contentDescription = "Close",
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.secondary
-                    )
-                ) {
-                    if (isLoading) {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator(color = Color.White)
-                        }
-                    } else {
-                        Text(
-                            text = stringResource(R.string.save),
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontFamily = FontFamily(Font(R.font.saira_medium))
+                        .size(28.dp)
+                        .clickable { if (hasChanges) showDialog = true else onCloseClick() }
+                )
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            AsyncImage(
+                model = itemImageUri ?: user?.avatarUrl,
+                contentDescription = user?.username,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(140.dp)
+                    .clip(CircleShape)
+                    .clickable { pickItemImageLauncher.launch("image/*") }
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = stringResource(R.string.change_picture),
+                fontSize = 16.sp,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.clickable { pickItemImageLauncher.launch("image/*") }
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = name,
+                onValueChange = { name = it },
+                label = { Text(stringResource(R.string.name)) },
+                singleLine = true,
+                shape = RoundedCornerShape(8.dp),
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(7.dp))
+
+            OutlinedTextField(
+                value = username,
+                onValueChange = { username = it },
+                label = { Text(stringResource(R.string.user)) },
+                singleLine = true,
+                shape = RoundedCornerShape(8.dp),
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Button(
+                onClick = {
+                    if (!isLoading) {
+                        isLoading = true
+                        saveProfile(
+                            user = user,
+                            name = name,
+                            username = username,
+                            itemImageUri = itemImageUri,
+                            context = context,
+                            scope = scope,
+                            authManager = authManager,
+                            onComplete = {
+                                isLoading = false
+                                onSaveChangesClick()
+                            }
                         )
                     }
+                },
+                enabled = hasChanges && !isLoading,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.secondary
+                )
+            ) {
+                if (isLoading) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(color = Color.White)
+                    }
+                } else {
+                    Text(
+                        text = stringResource(R.string.save).uppercase(Locale.getDefault()),
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontFamily = FontFamily(Font(R.font.saira_medium))
+                    )
                 }
             }
+
+            Spacer(Modifier.height(24.dp))
         }
 
         if (showDialog) {

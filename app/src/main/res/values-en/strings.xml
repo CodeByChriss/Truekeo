@@ -155,4 +155,7 @@
 
     <string name="discard_changes">Discard changes</string>
     <string name="discard_changes_message">You have unsaved changes. Are you sure you want to leave?</string>
+
+    <string name="no_products_yet">You haven\'t uploaded any products yet</string>
+    <string name="no_products_yet_subtitle">Create one to start swapping</string>
 </resources>

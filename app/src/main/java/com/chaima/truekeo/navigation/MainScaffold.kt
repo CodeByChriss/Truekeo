@@ -75,7 +75,9 @@ fun MainScaffold(rootNavController: NavController) {
             composable(NavBarRoutes.CreateTrueke.route) {
                 CreateTruekeTab(navController = navController)
             }
-            composable(NavBarRoutes.CreateProduct.route) { CreateProductTab() }
+            composable(NavBarRoutes.CreateProduct.route) {
+                CreateProductTab(navController = navController)
+            }
 
             composable(
                 route = NavBarRoutes.TruekeDetails.route,
