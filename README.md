@@ -82,13 +82,13 @@ En el cuarto sprint se ha llevado a cabo la integración completa del sistema, l
   - Integración del mapa interactivo con publicaciones en tiempo real.
   - Resolución de conflictos y errores derivados de la integración de módulos.
 
-- [ ] **Pruebas, validación y documentación**
+- [x] **Pruebas, validación y documentación**
   - Pruebas funcionales de navegación, autenticación y publicación de truekes.
   - Validación de flujos completos de trueke.
   - Corrección de bugs detectados durante el testing.
   - Elaboración de informes técnicos y documentación del proyecto.
 
-- [ ] **Publicación y distribución**
+- [x] **Publicación y distribución**
   - Generación de versión release firmada.
   - Configuración de ficha en Google Play.
   - Subida y despliegue de la aplicación en producción.
@@ -161,3 +161,34 @@ dependencies {
 ```
 
 **Propósito:** Incorporación de un conjunto ampliado de iconos Material para mejorar la experiencia visual y la claridad de la interfaz de usuario.
+
+### 🔄 Gestión de Estados del Trueke
+
+La aplicación gestiona un ciclo de vida completo para cada intercambio:
+
+1. **OPEN:** Visible en el mapa para todos los usuarios.
+2. **RESERVED:** Acuerdo entre dos usuarios, el anuncio desaparece del mapa general.
+3. **COMPLETED:** Intercambio finalizado, registro histórico para ambos perfiles.
+
+### 🏷️ Sistema de Branding e Inteligencia de Datos
+
+Para garantizar que la base de datos de objetos sea coherente y facilitar la búsqueda de productos, hemos implementado un sistema de autocompletado inteligente basado en un motor de búsqueda local.
+
+**Objeto BrandData**
+En lugar de depender de llamadas constantes a una API externa, hemos diseñado un objeto de utilidad (BrandData) que contiene un repositorio curado de más de 200 marcas líderes categorizadas por sectores (Tecnología, Moda, Hogar, Motor, etc.).
+
+**Características principales:**
+- Búsqueda Reactiva: A medida que el usuario escribe, el sistema filtra en tiempo real las coincidencias, permitiendo seleccionar marcas complejas con solo un par de pulsaciones.
+- Normalización Automática: El sistema corrige automáticamente el formato de texto (ej. convierte "sAmSuNg" en "Samsung"), asegurando una estética uniforme en toda la plataforma.
+- Sanitización de Seguridad: Se filtran caracteres especiales y emojis para evitar inconsistencias en el almacenamiento.
+
+```kotlin
+// Lógica de filtrado en tiempo real en BrandData.kt
+fun search(query: String, limit: Int = 8): List<String> {
+    if (query.isBlank()) return emptyList()
+
+    return knownBrands
+        .filter { it.contains(query, ignoreCase = true) } // Búsqueda case-insensitive
+        .take(limit) // Limitamos resultados para optimizar la UI
+}
+```
