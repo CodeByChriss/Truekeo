@@ -4,7 +4,11 @@ Somos una plataforma de intercambio local que facilita el trueque de objetos ent
 
 Impulsamos una economía circular basada en el intercambio responsable, donde cada objeto encuentra un nuevo propietario en lugar de convertirse en residuo.
 
-App en: **[Google Play](https://play.google.com/store/apps/details?id=com.chaima.truekeo)**
+<p align="center">
+  <a href="https://play.google.com/store/apps/details?id=com.chaima.truekeo">
+    <img src="https://img.shields.io/badge/Google%20Play-Disponible-brightgreen?style=for-the-badge&logo=google-play&logoColor=white" alt="Google Play"/>
+  </a>
+</p>
 
 ## Equipo de trabajo
 [SM] **Scrum Master** [malmorox](https://github.com/malmorox)<br>
@@ -28,7 +32,7 @@ El diseño inicial de la aplicación ha sido desarrollado en Figma, donde se ha 
 
 ## Metodología de trabajo
 
-El desarrollo del proyecto se está llevando a cabo siguiendo la metodología ágil SCRUM, organizando el trabajo en sprints para facilitar la planificación, el seguimiento y la entrega incremental de funcionalidades.
+El desarrollo se organizó en **4 sprints** a lo largo de 3 meses, siguiendo la metodología ágil SCRUM para facilitar la planificación, el seguimiento y la entrega incremental de funcionalidades.
 
 ### Sprint 1 – Análisis y prototipado (1 semana)
 
@@ -95,6 +99,21 @@ En el cuarto sprint se ha llevado a cabo la integración completa del sistema, l
 
 🚀 **Release alpha publicada en Google Play**
 
+## Ciclo de vida de un Trueke
+
+Cada intercambio pasa por los siguientes estados:
+
+```
+OPEN ──────────► RESERVED ──────────► COMPLETED
+  │                 │                     │
+Visible en     Acuerdo entre        Intercambio
+el mapa         dos usuarios           exitoso
+```
+
+- **`OPEN`** → El anuncio está publicado y visible en el mapa para todos los usuarios.
+- **`RESERVED`** → Dos usuarios han acordado el intercambio. El anuncio desaparece del mapa general.
+- **`COMPLETED`** → El trueke se ha realizado. Queda registrado en el historial de ambos perfiles.
+
 ## Implementación técnica y uso de librerías
 
 Este apartado documenta las principales librerías utilizadas en el proyecto y cómo se han implementado.
@@ -138,21 +157,41 @@ Este apartado documenta las principales librerías utilizadas en el proyecto y c
 
 https://github.com/zetbaitsu/Compressor
 
-**Propósito:** Optimización de recursos multimedia mediante la reducción del peso de las imágenes antes de la transferencia de datos.
+**Propósito:** Optimización de recursos multimedia mediante la reducción del peso de las imágenes antes de subirlas a Supabase.
 
 **Funcionalidades implementadas:**
-- **Compresión adaptativa:** Reducción de dimensiones a un máximo de 320px, garantizando nitidez en pantallas de alta densidad (hasta 160dp) sin penalizar el rendimiento.
-- **Ahorro de ancho de banda:** Disminución drástica del peso del archivo (calidad 80%) para acelerar las subidas en conexiones móviles.
-- **Integración con corrutinas:** Procesamiento asíncrono de imágenes para evitar bloqueos en el hilo principal de la interfaz durante la manipulación de archivos.
+- **Compresión adaptativa:** Reducción de dimensiones a un máximo de **320px** y calidad **80%**.
+- **Integración con corrutinas:** Procesamiento asíncrono de imágenes para evitar bloqueos en el hilo principal de la UI.
+
+```kotlin
+// Compresión de imagen antes de la subida
+val compressedFile = Compressor.compress(context, originalFile) {
+    resolution(320, 320)
+    quality(80)
+}
+```
 
 ### 🖼️ Coil (v3.3.0)
 
 **Funcionalidades implementadas:**
 - Carga asíncrona de imágenes de productos y avatares de usuario con `AsyncImage`
-- Recorte de imágenes con formas personalizadas (circular para avatares, redondeada para productos)
+- Recorte de imágenes con formas personalizadas (circular para avatares, con bordes redondeados para productos)
 - Ajuste automático del contenido con `ContentScale.Crop`
 
+```kotlin
+AsyncImage(
+    model = item.imageUrls.first(),
+    contentDescription = "Imagen del producto",
+    modifier = Modifier
+        .size(80.dp)
+        .clip(CircleShape), // circular para avatares
+    contentScale = ContentScale.Crop
+)
+```
+
 ### 🧩 Material Icons Extended
+
+**Propósito:** Incorporación de un conjunto ampliado de iconos Material para mejorar la experiencia visual y la claridad de la interfaz de usuario.
 
 ```gradle
 dependencies {
@@ -160,17 +199,9 @@ dependencies {
 }
 ```
 
-**Propósito:** Incorporación de un conjunto ampliado de iconos Material para mejorar la experiencia visual y la claridad de la interfaz de usuario.
+## Lógica propia desarrollada
 
-### 🔄 Gestión de Estados del Trueke
-
-La aplicación gestiona un ciclo de vida completo para cada intercambio:
-
-1. **OPEN:** Visible en el mapa para todos los usuarios.
-2. **RESERVED:** Acuerdo entre dos usuarios, el anuncio desaparece del mapa general.
-3. **COMPLETED:** Intercambio finalizado, registro histórico para ambos perfiles.
-
-### 🏷️ Sistema de Branding e Inteligencia de Datos
+### Sistema de Branding – `BrandData`
 
 Para garantizar que la base de datos de objetos sea coherente y facilitar la búsqueda de productos, hemos implementado un sistema de autocompletado inteligente basado en un motor de búsqueda local.
 
