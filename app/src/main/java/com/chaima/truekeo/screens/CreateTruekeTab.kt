@@ -12,6 +12,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -259,7 +260,8 @@ fun CreateTruekeTab(
                         Text(
                             text = stringResource(R.string.create).uppercase(Locale.getDefault()),
                             style = MaterialTheme.typography.bodyLarge,
-                            fontFamily = FontFamily(Font(R.font.saira_medium))
+                            fontFamily = FontFamily(Font(R.font.saira_medium)),
+                            color = Color.White
                         )
                     }
                 }
