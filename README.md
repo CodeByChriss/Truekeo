@@ -223,3 +223,73 @@ fun search(query: String, limit: Int = 8): List<String> {
         .take(limit) // Limitamos resultados para optimizar la UI
 }
 ```
+
+---
+
+## Galería
+
+### Flujo Creación de Trueke
+<table align="center" style="border: none;">
+  <tr>
+    <td align="center" style="border: none;">
+      <strong>Crear Producto</strong><br>
+      <img src="./resources/flujoCreacionTrueke_CrearProducto.png" width="220" alt="Creación de un producto">
+    </td>
+    <td align="center" style="border: none;">
+      <strong>Crear Trueke</strong><br>
+      <img src="./resources/flujoCreacionTrueke_CrearTrueke.png" width="220" alt="Creación del trueke">
+    </td>
+    <td align="center" style="border: none;">
+      <strong>Truekes Pendientes</strong><br>
+      <img src="./resources/flujoCreacionTrueke_TruekesPendientes.png" width="220" alt="Truekes pendientes">
+    </td>
+    <td align="center" style="border: none;">
+      <strong>Trueke al Detalle</strong><br>
+      <img src="./resources/flujoCreacionTrueke_TruekeDetalle.png" width="220" alt="Detalles del trueke">
+    </td>
+  </tr>
+</table>
+
+### Flujo Intercambio
+<table align="center" style="border: none;">
+  <tr>
+    <td align="center" style="border: none;">
+      <strong>Crear Producto</strong><br>
+      <img src="./resources/flujoIntercambio_CrearProducto.png" width="220" alt="Creación del producto">
+    </td>
+    <td align="center" style="border: none;">
+      <strong>Encontrar Trueke</strong><br>
+      <img src="./resources/flujoIntercambio_EncontrarTrueke.png" width="220" alt="Buscando un trueke">
+    </td>
+    <td align="center" style="border: none;">
+      <strong>Hacer Propuesta</strong><br>
+      <img src="./resources/flujoIntercambio_Propuesta.png" width="220" alt="Haciendo propuesta">
+    </td>
+    <td align="center" style="border: none;">
+      <strong>Esperar Respuesta</strong><br>
+      <img src="./resources/flujoIntercambio_EsperarRespuesta.png" width="220" alt="Esperando respuesta">
+    </td>
+  </tr>
+</table>
+
+### Flujo Completar Trueke
+<table align="center" style="border: none;">
+  <tr>
+    <td align="center" style="border: none;">
+      <strong>Aceptar Propuesta</strong><br>
+      <img src="./resources/flujoIntercambio_AceptarPropuesta.png" width="220" alt="Aceptar o rechazar propuesta">
+    </td>
+    <td align="center" style="border: none;">
+      <strong>Trueke Aceptado</strong><br>
+      <img src="./resources/flujoIntercambio_TruekeAceptado.png" width="220" alt="Trueke aceptado">
+    </td>
+    <td align="center" style="border: none;">
+      <strong>Marcar Trueke como Completado</strong><br>
+      <img src="./resources/flujoIntercambio_MarcarTruekeCompletado.png" width="220" alt="Marcar trueke como completado">
+    </td>
+    <td align="center" style="border: none;">
+      <strong>Trueke Completado</strong><br>
+      <img src="./resources/flujoIntercambio_TruekeCompletado.png" width="220" alt="Trueke completado">
+    </td>
+  </tr>
+</table>
