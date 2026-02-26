@@ -99,6 +99,8 @@ En el cuarto sprint se ha llevado a cabo la integración completa del sistema, l
 
 🚀 **Release alpha publicada en Google Play**
 
+---
+
 ## Ciclo de vida de un Trueke
 
 Cada intercambio pasa por los siguientes estados:
@@ -113,6 +115,8 @@ el mapa         dos usuarios           exitoso
 - **`OPEN`** → El anuncio está publicado y visible en el mapa para todos los usuarios.
 - **`RESERVED`** → Dos usuarios han acordado el intercambio. El anuncio desaparece del mapa general.
 - **`COMPLETED`** → El trueke se ha realizado. Queda registrado en el historial de ambos perfiles.
+
+---
 
 ## Implementación técnica y uso de librerías
 
@@ -130,46 +134,6 @@ Este apartado documenta las principales librerías utilizadas en el proyecto y c
     ```
 - Sistema de clicks en marcadores que despliega un Bottom Sheet con información detallada del Trueke.
 - Animaciones suaves de cámara (`flyTo`) al seleccionar ubicaciones.
-
-### 🔥 Firebase Authentication y Firestore
-
-**Propósito:** Gestión centralizada de autenticación y persistencia de perfiles de usuario en Firestore
-
-**Funcionalidades implementadas:**
-- **Autenticación híbrida y social:** Integración de `FirebaseAuth` para registro con Email/Password y soporte para `GoogleAuthProvider`.
-- **Identificación dual de usuario:** Sistema de inicio de sesión flexible que permite el acceso mediante ***correo electrónico*** o ***nombre de usuario***, realizando consultas dinámicas en Firestore.
-- **Garantía de unicidad (transacciones):** Uso de `db.runTransaction` para asegurar que no existan duplicados en la colección de `usernames` durante el registro o actualización.
-- **Gestión automática de perfiles:** Generación de nombres de usuario aleatorios con lógica de reintento automático para nuevos registros mediante proveedores externos (Google).
-- **Flujos ssíncronos con corrutinas:** Implementación de `suspend functions` y extensión `.await()` para un manejo eficiente y no bloqueante de las tareas de Firebase.
-- **Seguridad en el registro:** Implementación de envío automático de correo de verificación tras la creación de cuenta exitosa.
-
-### 💾 Supabase
-
-**Propósito:** Almacenamiento de archivos binarios y gestión de activos multimedia de alta disponibilidad mediante Supabase Storage.
-
-**Funcionalidades implementadas:**
-- **Gestión de buckets:** Configuración de contenedores públicos para el almacenamiento centralizado de avatares de usuario.
-- **Optimización de almacenamiento (Upsert):** Implementación de lógica de subida con sobrescritura automática (`upsert = true`) para minimizar el uso de cuota en el tier gratuito.
-- **Políticas de seguridad (RLS):** Configuración de Row Level Security para controlar los permisos de lectura y escritura de archivos desde el cliente móvil.
-- **Generación de URLs públicas:** Obtención dinámica de enlaces permanentes para la persistencia de rutas de imagen en los perfiles de Firestore.
-
-### 🖼️ Compressor (v3.0.1)
-
-https://github.com/zetbaitsu/Compressor
-
-**Propósito:** Optimización de recursos multimedia mediante la reducción del peso de las imágenes antes de subirlas a Supabase.
-
-**Funcionalidades implementadas:**
-- **Compresión adaptativa:** Reducción de dimensiones a un máximo de **320px** y calidad **80%**.
-- **Integración con corrutinas:** Procesamiento asíncrono de imágenes para evitar bloqueos en el hilo principal de la UI.
-
-```kotlin
-// Compresión de imagen antes de la subida
-val compressedFile = Compressor.compress(context, originalFile) {
-    resolution(320, 320)
-    quality(80)
-}
-```
 
 ### 🖼️ Coil (v3.3.0)
 
@@ -189,6 +153,24 @@ AsyncImage(
 )
 ```
 
+### 🖼️ Compressor (v3.0.1)
+
+https://github.com/zetbaitsu/Compressor
+
+**Propósito:** Optimización de recursos multimedia mediante la reducción del peso de las imágenes antes de subirlas a Supabase.
+
+**Funcionalidades implementadas:**
+- **Compresión adaptativa:** Reducción de dimensiones a un máximo de **320px** y calidad **80%**.
+- **Integración con corrutinas:** Procesamiento asíncrono de imágenes para evitar bloqueos en el hilo principal de la UI.
+
+```kotlin
+// Compresión de imagen antes de la subida
+val compressedFile = Compressor.compress(context, originalFile) {
+    resolution(320, 320)
+    quality(80)
+}
+```
+
 ### 🧩 Material Icons Extended
 
 **Propósito:** Incorporación de un conjunto ampliado de iconos Material para mejorar la experiencia visual y la claridad de la interfaz de usuario.
@@ -199,19 +181,48 @@ dependencies {
 }
 ```
 
+---
+
+## Persistencia y base de datos
+
+### 🔥 Firebase Authentication y Firestore
+
+**Propósito:** Gestión centralizada de autenticación y persistencia de datos en Firestore.
+
+**Funcionalidades implementadas:**
+- **Autenticación híbrida y social:** Integración de `FirebaseAuth` para registro con Email/Password y soporte para `GoogleAuthProvider`.
+- **Identificación dual de usuario:** Sistema de inicio de sesión flexible que permite el acceso mediante ***correo electrónico*** o ***nombre de usuario***, realizando consultas dinámicas en Firestore.
+- **Garantía de unicidad (transacciones):** Uso de `db.runTransaction` para asegurar que no existan duplicados en la colección de `usernames` durante el registro o actualización.
+- **Gestión automática de perfiles:** Generación de nombres de usuario aleatorios con lógica de reintento automático para nuevos registros mediante proveedores externos (Google).
+- **Flujos ssíncronos con corrutinas:** Implementación de `suspend functions` y extensión `.await()` para un manejo eficiente y no bloqueante de las tareas de Firebase.
+- **Seguridad en el registro:** Implementación de envío automático de correo de verificación tras la creación de cuenta exitosa.
+
+### 💾 Supabase
+
+**Propósito:** Almacenamiento y gestión de activos multimedia de alta disponibilidad mediante Supabase Storage.
+
+**Funcionalidades implementadas:**
+- **Gestión de buckets:** Configuración de contenedores públicos para el almacenamiento centralizado de avatares de usuario.
+- **Optimización de almacenamiento (Upsert):** Implementación de lógica de subida con sobrescritura automática (`upsert = true`) para minimizar el uso de cuota en el tier gratuito.
+- **Políticas de seguridad (RLS):** Configuración de Row Level Security para controlar los permisos de lectura y escritura de archivos desde el cliente móvil.
+- **Generación de URLs públicas:** Obtención dinámica de enlaces permanentes para la persistencia de rutas de imagen en los perfiles de Firestore.
+
 ## Lógica propia desarrollada
+
+Además de las librerías externas, la aplicación incluye lógica desarrollada desde cero para cubrir necesidades específicas del proyecto.
 
 ### Sistema de Branding – `BrandData`
 
-Para garantizar que la base de datos de objetos sea coherente y facilitar la búsqueda de productos, hemos implementado un sistema de autocompletado inteligente basado en un motor de búsqueda local.
+Al publicar un producto, el usuario puede indicar su marca. Para facilitar esta tarea y mantener los datos limpios y consistentes, hemos desarrollado un buscador de marcas propio.
 
-**Objeto BrandData**
-En lugar de depender de llamadas constantes a una API externa, hemos diseñado un objeto de utilidad (BrandData) que contiene un repositorio curado de más de 200 marcas líderes categorizadas por sectores (Tecnología, Moda, Hogar, Motor, etc.).
+**¿Cómo funciona?**
 
-**Características principales:**
-- Búsqueda Reactiva: A medida que el usuario escribe, el sistema filtra en tiempo real las coincidencias, permitiendo seleccionar marcas complejas con solo un par de pulsaciones.
-- Normalización Automática: El sistema corrige automáticamente el formato de texto (ej. convierte "sAmSuNg" en "Samsung"), asegurando una estética uniforme en toda la plataforma.
-- Sanitización de Seguridad: Se filtran caracteres especiales y emojis para evitar inconsistencias en el almacenamiento.
+La app incluye un catálogo interno de más de 200 marcas organizadas por categorías (tecnología, moda, hogar, motor, etc.). A medida que el usuario escribe, el buscador filtra las coincidencias en tiempo real y muestra sugerencias desplegables, sin necesidad de conectarse a ninguna API externa.
+
+Además, el sistema corrige automáticamente el formato del texto (por ejemplo, convierte `"sAmSuNg"` en `"Samsung"`) y elimina caracteres no válidos como emojis o símbolos especiales, asegurando que los datos guardados tengan siempre un aspecto uniforme.
+
+**Resultado:** una experiencia de escritura más rápida y fluida, y una base de datos de productos más ordenada y coherente.
+
 
 ```kotlin
 // Lógica de filtrado en tiempo real en BrandData.kt
@@ -228,67 +239,73 @@ fun search(query: String, limit: Int = 8): List<String> {
 
 ## Galería
 
-### Flujo Creación de Trueke
+### Flujo de creación de un trueke
 <table align="center" style="border: none;">
   <tr>
+    <th>Crear producto</th>
+    <th>Crear trueke</th>
+    <th>Truekes pendientes</th>
+    <th>Trueke al detalle</th>
+  </tr>
+  <tr>
     <td align="center" style="border: none;">
-      <strong>Crear Producto</strong><br>
       <img src="./resources/flujoCreacionTrueke_CrearProducto.png" width="220" alt="Creación de un producto">
     </td>
     <td align="center" style="border: none;">
-      <strong>Crear Trueke</strong><br>
       <img src="./resources/flujoCreacionTrueke_CrearTrueke.png" width="220" alt="Creación del trueke">
     </td>
     <td align="center" style="border: none;">
-      <strong>Truekes Pendientes</strong><br>
       <img src="./resources/flujoCreacionTrueke_TruekesPendientes.png" width="220" alt="Truekes pendientes">
     </td>
     <td align="center" style="border: none;">
-      <strong>Trueke al Detalle</strong><br>
       <img src="./resources/flujoCreacionTrueke_TruekeDetalle.png" width="220" alt="Detalles del trueke">
     </td>
   </tr>
 </table>
 
-### Flujo Intercambio
-<table align="center" style="border: none;">
+### Flujo de intercambio
+<table style="width:100%; table-layout:fixed;">
+  <tr>
+    <th>Crear producto</th>
+    <th>Encontrar trueke</th>
+    <th>Hacer propuesta</th>
+    <th>Esperar respuesta</th>
+  </tr>
   <tr>
     <td align="center" style="border: none;">
-      <strong>Crear Producto</strong><br>
       <img src="./resources/flujoIntercambio_CrearProducto.png" width="220" alt="Creación del producto">
     </td>
     <td align="center" style="border: none;">
-      <strong>Encontrar Trueke</strong><br>
       <img src="./resources/flujoIntercambio_EncontrarTrueke.png" width="220" alt="Buscando un trueke">
     </td>
     <td align="center" style="border: none;">
-      <strong>Hacer Propuesta</strong><br>
       <img src="./resources/flujoIntercambio_Propuesta.png" width="220" alt="Haciendo propuesta">
     </td>
     <td align="center" style="border: none;">
-      <strong>Esperar Respuesta</strong><br>
       <img src="./resources/flujoIntercambio_EsperarRespuesta.png" width="220" alt="Esperando respuesta">
     </td>
   </tr>
 </table>
 
-### Flujo Completar Trueke
-<table align="center" style="border: none;">
+### Flujo de completar un trueke
+<table style="width:100%; table-layout:fixed;">
+  <tr>
+    <th>Aceptar propuesta</th>
+    <th>Trueke aceptado</th>
+    <th>Marcar como completado</th>
+    <th>Trueke completado</th>
+  </tr>
   <tr>
     <td align="center" style="border: none;">
-      <strong>Aceptar Propuesta</strong><br>
       <img src="./resources/flujoIntercambio_AceptarPropuesta.png" width="220" alt="Aceptar o rechazar propuesta">
     </td>
     <td align="center" style="border: none;">
-      <strong>Trueke Aceptado</strong><br>
       <img src="./resources/flujoIntercambio_TruekeAceptado.png" width="220" alt="Trueke aceptado">
     </td>
     <td align="center" style="border: none;">
-      <strong>Marcar Trueke como Completado</strong><br>
       <img src="./resources/flujoIntercambio_MarcarTruekeCompletado.png" width="220" alt="Marcar trueke como completado">
     </td>
     <td align="center" style="border: none;">
-      <strong>Trueke Completado</strong><br>
       <img src="./resources/flujoIntercambio_TruekeCompletado.png" width="220" alt="Trueke completado">
     </td>
   </tr>
